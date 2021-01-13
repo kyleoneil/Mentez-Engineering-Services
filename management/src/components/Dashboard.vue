@@ -1,6 +1,6 @@
 <template>
     <div>
-        <p>HUWAW</p>
+        <p>Dashboard</p>
     </div>
 </template>
 <script>
