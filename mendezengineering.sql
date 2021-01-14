@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 14, 2021 at 02:07 PM
+-- Generation Time: Jan 14, 2021 at 02:17 PM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.2.34
 
@@ -265,6 +265,25 @@ INSERT INTO `sub_contractors` (`SubID`, `ServiceID`, `SubName`, `QuoID`) VALUES
 (2, 2, 'Euniel', 2),
 (3, 2, 'Carl', 3);
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `UserID` int(11) NOT NULL,
+  `Username` varchar(255) NOT NULL,
+  `Password` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`UserID`, `Username`, `Password`) VALUES
+(1, 'admin', 'admin');
+
 --
 -- Indexes for dumped tables
 --
@@ -346,6 +365,12 @@ ALTER TABLE `sub_contractors`
   ADD KEY `FK_QuoIDSub` (`QuoID`);
 
 --
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`UserID`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -414,6 +439,12 @@ ALTER TABLE `services`
 --
 ALTER TABLE `sub_contractors`
   MODIFY `SubID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables

@@ -1,10 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const mysql = require('mysql');
 const cors = require('cors');
 const methodOver = require('method-override');
 const bcrypt = require('bcrypt');
-const mysql = require("mysql");
 const connection= mysql.createConnection({
     host: "127.0.0.1",
     user: "root", 
@@ -21,6 +21,7 @@ app.use(cors())
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(methodOver("_method"));
 
+
 app.get('/',(req,res)=>{
     var xd;
     connection.query("SELECT * FROM users", (err, response) => {
@@ -30,4 +31,6 @@ app.get('/',(req,res)=>{
     })
     
 })
-app.listen(3000);
+app.listen(3000, () => {
+    console.log('Example app listening on port 3000!')
+});
