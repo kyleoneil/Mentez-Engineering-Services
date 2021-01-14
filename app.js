@@ -4,11 +4,12 @@ const session = require('express-session');
 const cors = require('cors');
 const methodOver = require('method-override');
 const bcrypt = require('bcrypt');
+const mysql = require("mysql");
 const connection= mysql.createConnection({
     host: "127.0.0.1",
     user: "root", 
     password :  "",
-    database: 'schoolest'
+    database: 'mendezengineering'
 });
 connection.connect((err)=>{
     if(err) throw err;
@@ -21,5 +22,12 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(methodOver("_method"));
 
 app.get('/',(req,res)=>{
-    res.send("welcome")
+    var xd;
+    connection.query("SELECT * FROM users", (err, response) => {
+       xd = response;
+       console.log(xd);
+       res.send(xd);
+    })
+    
 })
+app.listen(3000);
