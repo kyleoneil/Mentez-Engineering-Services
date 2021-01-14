@@ -23,3 +23,6 @@ app.use(methodOver("_method"));
 app.get('/',(req,res)=>{
     res.send("welcome")
 })
+app.listen(3000, () => {
+    console.log('Example app listening on port 3000!')
+});
