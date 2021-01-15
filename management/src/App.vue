@@ -1,22 +1,20 @@
 <template>
-  <router-view>></router-view>
+  <v-app>
+    <v-main style="padding:56px 0px 0px 180px">
+      <app-header></app-header>
+      <router-view></router-view>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-
+import Header from './components/Header.vue'
 export default {
   components: {
-  }
-}
-</script>
+    'app-header': Header,
+  },
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+  data: () => ({
+  }),
+};
+</script>

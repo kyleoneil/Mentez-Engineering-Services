@@ -1,10 +1,16 @@
 <template>
-    <div>
-        <p>HUWAW</p>
-    </div>
+  <div>
+    <p>asdas</p>
+
+
+  </div>
 </template>
 <script>
 export default {
-    
+  data () {
+    return {
+      
+    }
+  },
 }
 </script>
