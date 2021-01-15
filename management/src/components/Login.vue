@@ -9,7 +9,7 @@
       >
         <v-container
           class="grey lighten-5 mb-6"
-          style="padding: 0px"
+          style="padding: 0px; border-radius:5px"
         >
           <v-row no-gutters>
             <v-col>
