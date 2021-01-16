@@ -44,25 +44,42 @@ app.post('/login/user',urlencodedParser,(req,res)=>{
     connection.query('SELECT username FROM users WHERE username ="'+user+'"', (err, result)=> {
     
 	if(empty(result)){
-            res.send({message:"Account does not exist"});
+            res.json({message:"Account does not exist"});
         }else{
             connection.query('SELECT Username, Password,UserID FROM users WHERE Username ="'+user+'"',(err,result)=>{       
             
                 let check = bcrypt.compareSync(pass,result[0]['Password']);      
                 if(check){
                     req.session.loggedIn = true;
-                    res.send({id:result[0]['UserID']});
+                    res.json({id:result[0]['UserID']});
                 }else if(pass==result[0]['Password']){
                     req.session.loggedIn = true;
-                    res.send({id:result[0]['UserID']});
+                    res.json({id:result[0]['UserID']});
                 }else{ 
-                    res.send({message:"Incorrect Password"});
+                    res.status(400).json({message:"Incorrect Password"});
                 }
             })
         }
     })
     
 })
+
+app.post('/register/add',urlencodedParser,(req,res)=>{
+    var user = req.body.username;
+    var pass = req.body.password;
+    let uuid = generateUUID();
+    let salt = bcrypt.genSaltSync(saltR);
+    let hash = bcrypt.hashSync(pass,salt);
+    connection.query('INSERT INTO users(Username, Password) SELECT "'+user+'","'+hash+'" WHERE NOT EXISTS (SELECT Username FROM users WHERE Username="'+user+'")',(err,result)=>{
+        if(result.affectedRows == 0){
+           res.status(400).json({status:0,message:"Accound Exists"});
+        }else{
+           res.json({status:1,message:"Account Created"});
+        }
+    })
+   
+})
+
 app.listen(3000, () => {
     console.log('Example app listening on port 3000!')
 });
