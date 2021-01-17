@@ -88,16 +88,14 @@ app.get('/dashboard/quotation',(req,res)=>{
     })
    
 })
-app.get('/dashboard/montly',(req,res)=>{
+app.get('/dashboard/monthly',(req,res)=>{
     let date = new Date();
     let month = date.getMonth()+1;
     let year = date.getFullYear();
-    let start = year+'-'+month+'-'+'1';
-    let end = year+'-'+month+'-'+'31';
-    console.log(start);
-    console.log(end);
-     connection.query("SELECT SUM(Amount) FROM billings WHERE Date BETWEEN '?' AND '?'",[start,end],(err,result)=>{
-       console.log(result);
+    let start = year+'-'+month+'-'+1;
+    let end = year+'-'+month+'-'+31;
+     connection.query("SELECT SUM(Amount) FROM billings WHERE Date BETWEEN ? AND ?",[start,end],(err,result)=>{
+         console.log(err);
        res.json(result);
      })
     
