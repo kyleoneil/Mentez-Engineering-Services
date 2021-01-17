@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 17, 2021 at 03:59 AM
+-- Generation Time: Jan 17, 2021 at 03:32 PM
 -- Server version: 10.4.11-MariaDB
--- PHP Version: 7.4.3
+-- PHP Version: 7.4.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -31,7 +31,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `billings` (
   `BillID` int(11) NOT NULL,
   `Amount` int(11) NOT NULL,
-  `Date` date NOT NULL
+  `Date` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -39,9 +39,9 @@ CREATE TABLE `billings` (
 --
 
 INSERT INTO `billings` (`BillID`, `Amount`, `Date`) VALUES
-(1, 2000, '2020-07-21'),
-(2, 5000, '2021-02-13'),
-(3, 20000, '2020-10-07');
+(1, 2000, '2020-07-21 00:00:00'),
+(2, 5000, '2021-02-13 00:00:00'),
+(3, 20000, '2020-10-07 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -141,8 +141,8 @@ CREATE TABLE `project` (
   `MatListID` int(11) NOT NULL,
   `ProjTypeID` int(11) NOT NULL,
   `ProjSiteID` int(11) NOT NULL,
-  `ProjStart` date NOT NULL,
-  `ProjEnd` date NOT NULL
+  `ProjStart` datetime NOT NULL,
+  `ProjEnd` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -150,9 +150,9 @@ CREATE TABLE `project` (
 --
 
 INSERT INTO `project` (`ProjectID`, `MatListID`, `ProjTypeID`, `ProjSiteID`, `ProjStart`, `ProjEnd`) VALUES
-(1, 1, 3, 4, '2017-08-25', '2019-08-25'),
-(2, 2, 5, 2, '2020-10-05', '2022-02-02'),
-(3, 2, 1, 2, '0000-00-00', '2020-02-20');
+(1, 1, 3, 4, '2017-08-25 00:00:00', '2019-08-25 00:00:00'),
+(2, 2, 5, 2, '2020-10-05 00:00:00', '2022-02-02 00:00:00'),
+(3, 2, 1, 2, '0000-00-00 00:00:00', '2020-02-20 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -217,6 +217,15 @@ CREATE TABLE `quotation` (
   `updated` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `quotation`
+--
+
+INSERT INTO `quotation` (`QuoID`, `CustID`, `ProjectID`, `BillID`, `summation`, `UserID`, `created`, `updated`) VALUES
+(4, 3, 2, 1, 5000, 1, '2021-01-17 00:00:00', '2021-01-17 00:00:00'),
+(5, 1, 1, 2, 6000, 1, '2021-01-17 00:00:00', '2021-01-17 00:00:00'),
+(6, 1, 3, 3, 1000, 1, '2021-01-17 00:00:00', '0000-00-00 00:00:00');
+
 -- --------------------------------------------------------
 
 --
@@ -247,18 +256,41 @@ INSERT INTO `services` (`ServiceID`, `ServiceName`) VALUES
 CREATE TABLE `sub_contractors` (
   `SubID` int(11) NOT NULL,
   `ServiceID` int(11) NOT NULL,
-  `SubName` varchar(255) NOT NULL,
-  `QuoID` int(11) NOT NULL
+  `SubListID` int(11) NOT NULL,
+  `SubName` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `sub_contractors`
 --
 
-INSERT INTO `sub_contractors` (`SubID`, `ServiceID`, `SubName`, `QuoID`) VALUES
-(1, 1, 'Lance', 1),
-(2, 2, 'Euniel', 2),
-(3, 2, 'Carl', 3);
+INSERT INTO `sub_contractors` (`SubID`, `ServiceID`, `SubListID`, `SubName`) VALUES
+(6, 1, 4, 'Euniel'),
+(7, 2, 4, 'Carl'),
+(8, 1, 6, 'Euniel'),
+(9, 3, 5, 'Lance'),
+(10, 1, 5, 'Onilito'),
+(11, 4, 5, 'Euniel');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sub_contractors_list`
+--
+
+CREATE TABLE `sub_contractors_list` (
+  `SubListID` int(11) NOT NULL,
+  `QuoID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `sub_contractors_list`
+--
+
+INSERT INTO `sub_contractors_list` (`SubListID`, `QuoID`) VALUES
+(4, 4),
+(5, 5),
+(6, 6);
 
 -- --------------------------------------------------------
 
@@ -358,7 +390,14 @@ ALTER TABLE `services`
 ALTER TABLE `sub_contractors`
   ADD PRIMARY KEY (`SubID`),
   ADD KEY `FK_ServiceIDSub` (`ServiceID`),
-  ADD KEY `FK_QuoIDSub` (`QuoID`);
+  ADD KEY `FK_SubListIDSub` (`SubListID`);
+
+--
+-- Indexes for table `sub_contractors_list`
+--
+ALTER TABLE `sub_contractors_list`
+  ADD PRIMARY KEY (`SubListID`),
+  ADD KEY `FK_QuoIDSubList` (`QuoID`);
 
 --
 -- Indexes for table `users`
@@ -422,7 +461,7 @@ ALTER TABLE `project_type`
 -- AUTO_INCREMENT for table `quotation`
 --
 ALTER TABLE `quotation`
-  MODIFY `QuoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `QuoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `services`
@@ -434,7 +473,13 @@ ALTER TABLE `services`
 -- AUTO_INCREMENT for table `sub_contractors`
 --
 ALTER TABLE `sub_contractors`
-  MODIFY `SubID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `SubID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `sub_contractors_list`
+--
+ALTER TABLE `sub_contractors_list`
+  MODIFY `SubListID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -474,8 +519,14 @@ ALTER TABLE `quotation`
 -- Constraints for table `sub_contractors`
 --
 ALTER TABLE `sub_contractors`
-  ADD CONSTRAINT `FK_QuoIDSub` FOREIGN KEY (`QuoID`) REFERENCES `quotation` (`QuoID`),
-  ADD CONSTRAINT `FK_ServiceIDSub` FOREIGN KEY (`ServiceID`) REFERENCES `services` (`ServiceID`);
+  ADD CONSTRAINT `FK_ServiceIDSub` FOREIGN KEY (`ServiceID`) REFERENCES `services` (`ServiceID`),
+  ADD CONSTRAINT `FK_SubListIDSub` FOREIGN KEY (`SubListID`) REFERENCES `sub_contractors_list` (`SubListID`);
+
+--
+-- Constraints for table `sub_contractors_list`
+--
+ALTER TABLE `sub_contractors_list`
+  ADD CONSTRAINT `FK_QuoIDSubList` FOREIGN KEY (`QuoID`) REFERENCES `quotation` (`QuoID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
