@@ -88,6 +88,104 @@ app.get('/dashboard/quotation',(req,res)=>{
     })
    
 })
+app.get('/dashboard/montly',(req,res)=>{
+    let date = new Date();
+    let month = date.getMonth()+1;
+    let year = date.getFullYear();
+    let start = year+'-'+month+'-'+'1';
+    let end = year+'-'+month+'-'+'31';
+    console.log(start);
+    console.log(end);
+     connection.query("SELECT SUM(Amount) FROM billings WHERE Date BETWEEN '?' AND '?'",[start,end],(err,result)=>{
+       console.log(result);
+       res.json(result);
+     })
+    
+ })
+app.get('/materials',(req,res)=>{
+    if(req.session.loggedIn){
+        connection.query("SELECT * FROM materials"),(err,result)=>{
+            res.json({data:result});
+        }
+    }else{
+        res.redirect('/login')
+    }
+})
+app.post('/materials',urlencodedParser,(req,res)=>{
+    if(req.session.loggedIn){
+        connection.query("INSERT INTO materials VALUES (?,?)"),(err,result)=>{
+
+        }
+    }else{
+        res.redirect('/login')
+    }
+})
+app.get('/materials/:id',(req,res)=>{
+    let id = req.params.id;
+    if(req.session.loggedIn){
+        connection.query("SELECT * FROM materials WHERE MatID=?"),id,(err,result)=>{
+            res.json({data:result});
+        }
+    }else{
+        res.redirect('/login')
+    }
+})
+app.put('/materials/:id/edit',urlencodedParser,(req,res)=>{
+    if(req.session.loggedIn){
+
+    }else{
+        res.redirect('/login')
+    }
+})
+app.delete('/materials/:id/delete',urlencodedParser,(req,res)=>{
+    if(req.session.loggedIn){
+
+    }else{
+        res.redirect('/login')
+    }
+})
+app.get('/subcontractors',(req,res)=>{
+    if(req.session.loggedIn){
+        connection.query("SELECT * FROM subcontractors"),(err,result)=>{
+            res.json({data:result});
+        }
+    }else{
+        res.redirect('/login')
+    }
+})
+app.get('/projects',(req,res)=>{
+    if(req.session.loggedIn){
+        connection.query("SELECT * FROM project"),(err,result)=>{
+            res.json({data:result});
+        }
+    }else{
+        res.redirect('/login')
+    }
+})
+app.get('/projects/:id',(req,res)=>{
+    let id = req.params.id;
+    if(req.session.loggedIn){
+        connection.query("SELECT * FROM project WHERE ProjectID=?"),id,(err,result)=>{
+            res.json({data:result});
+        }
+    }else{
+        res.redirect('/login')
+    }
+})
+app.put('/projects/:id/edit',(req,res)=>{
+    if(req.session.loggedIn){
+
+    }else{
+        res.redirect('/login')
+    }
+})
+app.delete('/projects/:id/delete',(req,res)=>{
+    if(req.session.loggedIn){
+
+    }else{
+        res.redirect('/login')
+    }
+})
 
 app.listen(3000, () => {
     console.log('Example app listening on port 3000!')
