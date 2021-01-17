@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.3
+-- version 5.0.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 14, 2021 at 02:17 PM
--- Server version: 10.4.14-MariaDB
--- PHP Version: 7.2.34
+-- Generation Time: Jan 17, 2021 at 03:59 AM
+-- Server version: 10.4.11-MariaDB
+-- PHP Version: 7.4.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -210,17 +211,11 @@ CREATE TABLE `quotation` (
   `CustID` int(11) NOT NULL,
   `ProjectID` int(11) NOT NULL,
   `BillID` int(11) NOT NULL,
-  `summation` int(11) NOT NULL
+  `summation` int(11) NOT NULL,
+  `UserID` int(11) NOT NULL,
+  `created` datetime NOT NULL,
+  `updated` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `quotation`
---
-
-INSERT INTO `quotation` (`QuoID`, `CustID`, `ProjectID`, `BillID`, `summation`) VALUES
-(1, 3, 1, 1, 3000),
-(2, 2, 2, 1, 4000),
-(3, 1, 3, 1, 6000);
 
 -- --------------------------------------------------------
 
@@ -348,7 +343,8 @@ ALTER TABLE `quotation`
   ADD PRIMARY KEY (`QuoID`),
   ADD KEY `FK_QCustIDQuo` (`CustID`),
   ADD KEY `FK_ProjectIDQuo` (`ProjectID`),
-  ADD KEY `FK_BillIDQuo` (`BillID`);
+  ADD KEY `FK_BillIDQuo` (`BillID`),
+  ADD KEY `FK_UserIDQuo` (`UserID`);
 
 --
 -- Indexes for table `services`
@@ -471,7 +467,8 @@ ALTER TABLE `project`
 ALTER TABLE `quotation`
   ADD CONSTRAINT `FK_BillIDQuo` FOREIGN KEY (`BillID`) REFERENCES `billings` (`BillID`),
   ADD CONSTRAINT `FK_ProjectIDQuo` FOREIGN KEY (`ProjectID`) REFERENCES `project` (`ProjectID`),
-  ADD CONSTRAINT `FK_QCustIDQuo` FOREIGN KEY (`CustID`) REFERENCES `customers` (`CustID`);
+  ADD CONSTRAINT `FK_QCustIDQuo` FOREIGN KEY (`CustID`) REFERENCES `customers` (`CustID`),
+  ADD CONSTRAINT `FK_UserIDQuo` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`);
 
 --
 -- Constraints for table `sub_contractors`
