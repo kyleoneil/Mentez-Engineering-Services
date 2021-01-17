@@ -13,10 +13,11 @@
           src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
         ></v-img>
       </v-list-item-avatar>
+      <h3>Mendez Engineering Services</h3>
     </v-app-bar>
     
     <v-navigation-drawer
-      style="margin-top:50px"
+      style="margin-top:49px"
       fixed
       permanent
       width="170px"
@@ -28,6 +29,7 @@
           style="padding-left:21px"
           v-for="item in items"
           :key="item.title"
+          :to="item.url"
           link
         >
           <v-list-item-icon>
@@ -47,9 +49,9 @@ export default {
   data () {
     return {
         items: [
-          { title: 'Dashboard', icon: 'mdi-home-city' },
-          { title: 'Services', icon: 'mdi-account' },
-          { title: 'Accounts', icon: 'mdi-account-group-outline' },
+          { title: 'Dashboard', icon: 'mdi-home-city', url: '/dashboard' },
+          { title: 'Services', icon: 'mdi-account', url: '/services' },
+          { title: 'Accounts', icon: 'mdi-account-group-outline', url: '/accountlist' },
         ],
     }
   },
