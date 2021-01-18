@@ -40,7 +40,7 @@
         <v-divider></v-divider>
         <v-container class="mx-2">
             <v-layout row wrap >
-                <v-flex xs12 sm6 md4 lg3 v-for="person in people" :key="person.name">
+                <v-flex xs12 sm6 md4 lg3 v-for="(person, x) in people" :key="x">
                     <v-card class="text-center ma-3" style="background-color: #E5E5E5;">
                         <v-responsive class="pt-4">
                             <v-avatar size="100" >
