@@ -13,7 +13,7 @@
           src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
         ></v-img>
       </v-list-item-avatar>
-      <h3>Mendez Engineering Services</h3>
+      <h3>Mentez Engineering Services</h3>
     </v-app-bar>
     
     <v-navigation-drawer
