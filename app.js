@@ -32,7 +32,7 @@ app.use(session({
     resave: true
 }));
 
-app.post('/login/user',urlencodedParser,(req,res)=>{
+app.post('/login',urlencodedParser,(req,res)=>{
     var xd;
     let user = req.body.username;
     let pass = req.body.password;
@@ -64,7 +64,7 @@ app.post('/login/user',urlencodedParser,(req,res)=>{
     
 })
 
-app.post('/register/add',urlencodedParser,(req,res)=>{
+app.post('/register',urlencodedParser,(req,res)=>{
     var user = req.body.username;
     var pass = req.body.password;
     let uuid = generateUUID();
@@ -72,7 +72,7 @@ app.post('/register/add',urlencodedParser,(req,res)=>{
     let hash = bcrypt.hashSync(pass,salt);
     connection.query('INSERT INTO users(Username, Password) SELECT "'+user+'","'+hash+'" WHERE NOT EXISTS (SELECT Username FROM users WHERE Username="'+user+'")',(err,result)=>{
         if(result.affectedRows == 0){
-           res.status(400).json({status:0,message:"Accound Exists"});
+           res.status(400).json({status:0,message:"Account Exists"});
         }else{
            res.json({status:1,message:"Account Created"});
         }
@@ -80,12 +80,16 @@ app.post('/register/add',urlencodedParser,(req,res)=>{
    
 })
 app.get('/dashboard/quotation',(req,res)=>{
-    
-   console.log("xd")
-    connection.query('SELECT Q.QuoID,Q.summation,Q.created,PT.ProjDesc,U.Username FROM quotation Q JOIN users U ON Q.UserID = U.UserID JOIN project P ON Q.ProjectID = P.ProjectID JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID',(err,result)=>{
-      console.log(result);
-      res.json(result);
+    if(req.session.loggedIn){
+        console.log("xd")
+        connection.query('SELECT Q.QuoID,Q.summation,Q.created,PT.ProjDesc,U.Username FROM quotation Q JOIN users U ON Q.UserID = U.UserID JOIN project P ON Q.ProjectID = P.ProjectID JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID',(err,result)=>{
+        console.log(result);
+        res.json(result);
     })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+ 
    
 })
 app.get('/dashboard/monthly',(req,res)=>{
@@ -100,6 +104,30 @@ app.get('/dashboard/monthly',(req,res)=>{
      })
     
  })
+ app.get("/material/categories",(req,res)=>{
+    if(req.session.loggedIn){
+        connection.query("SELECT ServiceName FROM services",(err,result)=>{
+            console.log(err);
+            res.json(result);
+        })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+ })
+
+ app.get("/material/categories/:id",(req,res)=>{
+
+    if(req.session.loggedIn){
+        console.log(req.params.id);
+        connection.query("SELECT MatDetailsID, MatDescription, MatName, MatPrice FROM mat_details WHERE ServiceID="+req.params.id,(err,result)=>{
+            console.log(err);
+            res.json(result);
+        })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+ })
+
 app.get('/materials',(req,res)=>{
     if(req.session.loggedIn){
         connection.query("SELECT * FROM materials"),(err,result)=>{

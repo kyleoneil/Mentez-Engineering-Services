@@ -1,0 +1,5 @@
+Login = "/login"
+Register = "/register"
+GetDashboardQuo = "/dashboard/quotation"
+GetMatCategories = "/material/categories"
+GetMatPerCategories= "/material/categories/:id"
