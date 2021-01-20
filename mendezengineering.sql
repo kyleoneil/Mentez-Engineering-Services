@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.1
+-- version 5.0.3
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 17, 2021 at 03:32 PM
--- Server version: 10.4.11-MariaDB
--- PHP Version: 7.4.1
+-- Generation Time: Jan 20, 2021 at 03:19 PM
+-- Server version: 10.4.14-MariaDB
+-- PHP Version: 7.2.34
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -97,19 +96,22 @@ INSERT INTO `materials` (`MatID`, `MatDetailsID`, `MatListID`, `TotalPrice`, `Ma
 
 CREATE TABLE `mat_details` (
   `MatDetailsID` int(11) NOT NULL,
+  `ServiceID` int(11) DEFAULT NULL,
   `MatDescription` varchar(255) NOT NULL,
   `MatName` varchar(255) NOT NULL,
-  `MatPrice` int(11) NOT NULL
+  `MatPrice` int(11) NOT NULL,
+  `MatStatus` varchar(255) NOT NULL,
+  `MatQuantity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `mat_details`
 --
 
-INSERT INTO `mat_details` (`MatDetailsID`, `MatDescription`, `MatName`, `MatPrice`) VALUES
-(1, 'Wood', 'Flooring', 100),
-(2, 'Tiles', 'Flooring', 200),
-(3, 'Chandelier', 'Ceiling', 300);
+INSERT INTO `mat_details` (`MatDetailsID`, `ServiceID`, `MatDescription`, `MatName`, `MatPrice`, `MatStatus`, `MatQuantity`) VALUES
+(1, 2, 'Wood', 'Flooring', 100, 'IN STOCK', 100),
+(2, 3, 'Tiles', 'Flooring', 200, 'IN STOCK', 100),
+(3, 3, 'Chandelier', 'Ceiling', 300, 'IN STOCK', 100);
 
 -- --------------------------------------------------------
 
@@ -186,19 +188,20 @@ INSERT INTO `project_site` (`ProjSiteID`, `City`, `Barangay`, `StreetNumber`, `P
 
 CREATE TABLE `project_type` (
   `ProjTypeID` int(11) NOT NULL,
-  `ProjDesc` varchar(255) NOT NULL
+  `ProjDesc` varchar(255) DEFAULT NULL,
+  `ProjType` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `project_type`
 --
 
-INSERT INTO `project_type` (`ProjTypeID`, `ProjDesc`) VALUES
-(1, 'Flooring'),
-(2, 'Mason'),
-(3, 'Ceiling'),
-(4, 'Glass'),
-(5, 'Foundation');
+INSERT INTO `project_type` (`ProjTypeID`, `ProjDesc`, `ProjType`) VALUES
+(1, 'Flooring', 'Dummy'),
+(2, 'Mason', 'Dummy'),
+(3, 'Ceiling', 'Dummy'),
+(4, 'Glass', 'Dummy'),
+(5, 'Foundation', 'Dummy');
 
 -- --------------------------------------------------------
 
@@ -211,8 +214,11 @@ CREATE TABLE `quotation` (
   `CustID` int(11) NOT NULL,
   `ProjectID` int(11) NOT NULL,
   `BillID` int(11) NOT NULL,
-  `summation` int(11) NOT NULL,
   `UserID` int(11) NOT NULL,
+  `summation` int(11) NOT NULL,
+  `DeliveryCharges` int(11) NOT NULL,
+  `LaborCharges` int(11) NOT NULL,
+  `BendingCharges` int(11) DEFAULT NULL,
   `created` datetime NOT NULL,
   `updated` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -221,10 +227,10 @@ CREATE TABLE `quotation` (
 -- Dumping data for table `quotation`
 --
 
-INSERT INTO `quotation` (`QuoID`, `CustID`, `ProjectID`, `BillID`, `summation`, `UserID`, `created`, `updated`) VALUES
-(4, 3, 2, 1, 5000, 1, '2021-01-17 00:00:00', '2021-01-17 00:00:00'),
-(5, 1, 1, 2, 6000, 1, '2021-01-17 00:00:00', '2021-01-17 00:00:00'),
-(6, 1, 3, 3, 1000, 1, '2021-01-17 00:00:00', '0000-00-00 00:00:00');
+INSERT INTO `quotation` (`QuoID`, `CustID`, `ProjectID`, `BillID`, `UserID`, `summation`, `DeliveryCharges`, `LaborCharges`, `BendingCharges`, `created`, `updated`) VALUES
+(4, 3, 2, 1, 1, 5000, 3000, 1000, 2000, '2021-01-17 00:00:00', '2021-01-17 00:00:00'),
+(5, 1, 1, 2, 1, 6000, 3000, 1000, 2000, '2021-01-17 00:00:00', '2021-01-17 00:00:00'),
+(6, 1, 3, 3, 1, 1000, 3000, 1000, 2000, '2021-01-17 00:00:00', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -339,7 +345,8 @@ ALTER TABLE `materials`
 -- Indexes for table `mat_details`
 --
 ALTER TABLE `mat_details`
-  ADD PRIMARY KEY (`MatDetailsID`);
+  ADD PRIMARY KEY (`MatDetailsID`),
+  ADD KEY `FK_ServiceIDmat_det` (`ServiceID`);
 
 --
 -- Indexes for table `mat_list`
@@ -497,6 +504,12 @@ ALTER TABLE `users`
 ALTER TABLE `materials`
   ADD CONSTRAINT `FK_MatDetailsID` FOREIGN KEY (`MatDetailsID`) REFERENCES `mat_details` (`MatDetailsID`),
   ADD CONSTRAINT `FK_MatListID` FOREIGN KEY (`MatListID`) REFERENCES `mat_list` (`MatListID`);
+
+--
+-- Constraints for table `mat_details`
+--
+ALTER TABLE `mat_details`
+  ADD CONSTRAINT `FK_ServiceIDmat_det` FOREIGN KEY (`ServiceID`) REFERENCES `services` (`ServiceID`);
 
 --
 -- Constraints for table `project`
