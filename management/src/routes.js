@@ -1,6 +1,7 @@
 import Login from './components/Login.vue'
 import Dashboard from './components/Dashboard.vue'
 import Services from './components/Services.vue'
+import AccountList from './components/AccountList.vue'
 
 
 export default[

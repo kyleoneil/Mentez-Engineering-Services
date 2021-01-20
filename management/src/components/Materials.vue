@@ -72,7 +72,7 @@
                 <div class="caption grey--text">Name</div>
                 <div>{{materials.name}}</div>
             </v-flex>
-            <v-flex xs12 sm4 md4>
+            <v-flex xs12 sm4 md3>
                 <div class="caption grey--text">Description</div>
                 <div>{{materials.Description}}</div>
             </v-flex>
@@ -83,6 +83,10 @@
             <v-flex xs6 sm4 md2>
                 <div class="caption grey--text">Quantity</div>
                 <div>{{materials.quantity}}</div>
+            </v-flex>
+            <v-flex xs6 sm4 md1>
+                <div class="caption grey--text">Prize</div>
+                <div>{{materials.prize}}</div>
             </v-flex>
             <v-flex xs6 sm4 md1>
                 <v-btn text>
@@ -103,28 +107,28 @@ export default {
     data() {
         return {
             roofing:[
-                {name:'Duratile', Description:'discription', status:'status', quantity:'10'},
-                {name:'Durarib', Description:'discription', status:'status', quantity:'10'},
-                {name:'Duratile', Description:'discription', status:'status', quantity:'10'},
-                {name:'Durarib', Description:'discription', status:'status', quantity:'10'},
+                {name:'Duratile', Description:'discription', status:'status', quantity:'10', prize:'234'},
+                {name:'Durarib', Description:'discription', status:'status', quantity:'10', prize:'234'},
+                {name:'Duratile', Description:'discription', status:'status', quantity:'10', prize:'234'},
+                {name:'Durarib', Description:'discription', status:'status', quantity:'10', prize:'234'},
             ],
             masonry:[
-                {name:'hmmm', Description:'discription', status:'status', quantity:'5'},
-                {name:'hhahahaa', Description:'discription', status:'status', quantity:'6'},
-                {name:'general bato', Description:'discription', status:'status', quantity:'7'},
-                {name:'stone', Description:'discription', status:'status', quantity:'8'},
+                {name:'hmmm', Description:'discription', status:'status', quantity:'5', prize:'234'},
+                {name:'hhahahaa', Description:'discription', status:'status', quantity:'6', prize:'234'},
+                {name:'general bato', Description:'discription', status:'status', quantity:'7', prize:'234'},
+                {name:'stone', Description:'discription', status:'status', quantity:'8', prize:'234'},
             ],
             electrical:[
-                {name:'thor', Description:'discription', status:'status', quantity:'14'},
-                {name:'hammer', Description:'discription', status:'status', quantity:'13'},
-                {name:'thunder', Description:'discription', status:'status', quantity:'12'},
-                {name:'god', Description:'discription', status:'status', quantity:'11'},
+                {name:'thor', Description:'discription', status:'status', quantity:'14', prize:'234'},
+                {name:'hammer', Description:'discription', status:'status', quantity:'13', prize:'234'},
+                {name:'thunder', Description:'discription', status:'status', quantity:'12', prize:'234'},
+                {name:'god', Description:'discription', status:'status', quantity:'11', prize:'234'},
             ],
             plumbing:[
-                {name:'Duratile', Description:'discription', status:'status', quantity:'10'},
-                {name:'Durarib', Description:'discription', status:'status', quantity:'10'},
-                {name:'Duratile', Description:'discription', status:'status', quantity:'10'},
-                {name:'Durarib', Description:'discription', status:'status', quantity:'10'},
+                {name:'Duratile', Description:'discription', status:'status', quantity:'10', prize:'234'},
+                {name:'Durarib', Description:'discription', status:'status', quantity:'10', prize:'234'},
+                {name:'Duratile', Description:'discription', status:'status', quantity:'10', prize:'234'},
+                {name:'Durarib', Description:'discription', status:'status', quantity:'10', prize:'234'},
             ],
             maurice:[]
         }
