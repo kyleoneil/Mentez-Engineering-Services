@@ -92,6 +92,20 @@ app.get('/dashboard/quotation',(req,res)=>{
  
    
 })
+app.get('/dashboard/quotation/:id',(req,res)=>{
+    let id = req.params.id;
+    // if(req.session.loggedIn){
+        connection.query('SELECT Q.QuoID,Q.summation,Q.created,PT.ProjDesc,group_concat(S.subName) AS subcontractors FROM quotation Q JOIN project P ON Q.ProjectID = P.ProjectID AND Q.QuoID=? JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID JOIN sub_contractors S ON S.SubListID=Q.QuoID GROUP BY Q.QuoID',id,(err,result)=>{
+        console.log(result);
+        res.json(result);
+    })
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
+ 
+   
+})
+
 app.get('/dashboard/monthly',(req,res)=>{
     let date = new Date();
     let month = date.getMonth()+1;
@@ -134,7 +148,7 @@ app.get('/materials',(req,res)=>{
             res.json({data:result});
         }
     }else{
-        res.redirect('/login')
+        res.status(400).send({message:"Session Timeout"})
     }
 })
 app.post('/materials',urlencodedParser,(req,res)=>{
@@ -143,7 +157,7 @@ app.post('/materials',urlencodedParser,(req,res)=>{
 
         }
     }else{
-        res.redirect('/login')
+        res.status(400).send({message:"Session Timeout"})
     }
 })
 app.get('/materials/:id',(req,res)=>{
@@ -153,21 +167,21 @@ app.get('/materials/:id',(req,res)=>{
             res.json({data:result});
         }
     }else{
-        res.redirect('/login')
+        res.status(400).send({message:"Session Timeout"})
     }
 })
 app.put('/materials/:id/edit',urlencodedParser,(req,res)=>{
     if(req.session.loggedIn){
 
     }else{
-        res.redirect('/login')
+        res.status(400).send({message:"Session Timeout"})
     }
 })
 app.delete('/materials/:id/delete',urlencodedParser,(req,res)=>{
     if(req.session.loggedIn){
 
     }else{
-        res.redirect('/login')
+        res.status(400).send({message:"Session Timeout"})
     }
 })
 app.get('/subcontractors',(req,res)=>{
@@ -176,7 +190,7 @@ app.get('/subcontractors',(req,res)=>{
             res.json({data:result});
         }
     }else{
-        res.redirect('/login')
+        res.status(400).send({message:"Session Timeout"})
     }
 })
 app.get('/projects',(req,res)=>{
@@ -185,7 +199,7 @@ app.get('/projects',(req,res)=>{
             res.json({data:result});
         }
     }else{
-        res.redirect('/login')
+        res.status(400).send({message:"Session Timeout"})
     }
 })
 app.get('/projects/:id',(req,res)=>{
@@ -195,21 +209,21 @@ app.get('/projects/:id',(req,res)=>{
             res.json({data:result});
         }
     }else{
-        res.redirect('/login')
+        res.status(400).send({message:"Session Timeout"})
     }
 })
 app.put('/projects/:id/edit',(req,res)=>{
     if(req.session.loggedIn){
 
     }else{
-        res.redirect('/login')
+        res.status(400).send({message:"Session Timeout"})
     }
 })
 app.delete('/projects/:id/delete',(req,res)=>{
     if(req.session.loggedIn){
 
     }else{
-        res.redirect('/login')
+        res.status(400).send({message:"Session Timeout"})
     }
 })
 

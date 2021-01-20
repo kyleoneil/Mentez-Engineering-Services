@@ -15,11 +15,11 @@
                 </v-card-title>
 
                 <v-card-text>
-                    <v-form class="px-3">
-                        <v-text-field label="FullName" prepend-icon="mdi-pencil"></v-text-field>
-                        <v-text-field label="ContactNumber" prepend-icon="mdi-dialpad"></v-text-field>
-                        <v-text-field label="UserName"  prepend-icon="mdi-account"></v-text-field>
-                        <v-text-field label="Password"  prepend-icon="mdi-lock"></v-text-field>
+                    <v-form class="px-3" @submit="postData" method="post">
+                        <v-text-field label="FullName" prepend-icon="mdi-pencil" v-model="name"></v-text-field>
+                        <v-text-field label="ContactNumber" prepend-icon="mdi-dialpad" v-model="contact"></v-text-field>
+                        <v-text-field label="UserName"  prepend-icon="mdi-account" v-model="username"></v-text-field>
+                        <v-text-field label="Password"  prepend-icon="mdi-lock" v-model="password"></v-text-field>
                         
                         <v-divider></v-divider>
 
@@ -29,7 +29,7 @@
                                 Cancel
                             </v-btn>
                     
-                            <v-btn color="primary" text @click="dialog = false">
+                            <v-btn color="primary" text @click="dialog = false" type="submit">
                                 Submit
                             </v-btn>
                         </v-card-actions>
@@ -129,7 +129,9 @@ export default {
         }
     },
     methods:{
-        
+        postData(){
+
+        }
     }
    
 }
