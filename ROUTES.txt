@@ -6,3 +6,16 @@ GetMatPerCategories= "/material/categories/:id"
 GetQuos="/quotation"
 DeleteQuo="/quotation/:id" method=delete;
 
+
+/----------MATERIAL----------/
+GetMaterial = /materials
+AddMaterial = /materials/add
+DeleteMaterial = /materials/delete?id=?
+UpdateMaterial = /materials/update?id=?
+
+
+/----------SUB CONTRACTORS----------/
+GetSubcontractors = /subcontractors
+AddSubcontractors = /subcontractors/add
+UpdateSubcontractors= /subcontractors/update?id=?
+DeleteSubcontractors = /subcontractors/delete?id=?

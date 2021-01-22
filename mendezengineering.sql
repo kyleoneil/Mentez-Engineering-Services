@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 20, 2021 at 03:19 PM
+-- Generation Time: Jan 22, 2021 at 04:40 PM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.2.34
 
@@ -111,7 +111,9 @@ CREATE TABLE `mat_details` (
 INSERT INTO `mat_details` (`MatDetailsID`, `ServiceID`, `MatDescription`, `MatName`, `MatPrice`, `MatStatus`, `MatQuantity`) VALUES
 (1, 2, 'Wood', 'Flooring', 100, 'IN STOCK', 100),
 (2, 3, 'Tiles', 'Flooring', 200, 'IN STOCK', 100),
-(3, 3, 'Chandelier', 'Ceiling', 300, 'IN STOCK', 100);
+(3, 3, 'Chandelier', 'Ceiling', 300, 'IN STOCK', 100),
+(8, 2, 'onilito4', 'onilito2', 69, 'HAHAY', 233323),
+(9, 3, 'sample', 'sample', 200, 'sample', 200);
 
 -- --------------------------------------------------------
 
@@ -263,40 +265,44 @@ CREATE TABLE `sub_contractors` (
   `SubID` int(11) NOT NULL,
   `ServiceID` int(11) NOT NULL,
   `SubListID` int(11) NOT NULL,
-  `SubName` varchar(255) NOT NULL
+  `SubName` varchar(255) NOT NULL,
+  `created` datetime NOT NULL,
+  `updated` datetime DEFAULT NULL,
+  `deleted` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `sub_contractors`
 --
 
-INSERT INTO `sub_contractors` (`SubID`, `ServiceID`, `SubListID`, `SubName`) VALUES
-(6, 1, 4, 'Euniel'),
-(7, 2, 4, 'Carl'),
-(8, 1, 6, 'Euniel'),
-(9, 3, 5, 'Lance'),
-(10, 1, 5, 'Onilito'),
-(11, 4, 5, 'Euniel');
+INSERT INTO `sub_contractors` (`SubID`, `ServiceID`, `SubListID`, `SubName`, `created`, `updated`, `deleted`) VALUES
+(6, 1, 4, 'Euniel', '2021-01-22 21:14:17', NULL, NULL),
+(7, 2, 4, 'Carl', '2021-01-22 21:14:17', NULL, NULL),
+(8, 1, 6, 'Euniel', '2021-01-22 21:14:17', NULL, NULL),
+(9, 3, 5, 'Lance', '2021-01-22 21:14:17', NULL, NULL),
+(10, 1, 5, 'Onilito', '2021-01-22 21:14:17', NULL, NULL),
+(11, 4, 5, 'Euniel', '2021-01-22 21:14:17', NULL, NULL);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sub_contractors_list`
+-- Table structure for table `sub_contractors_labor`
 --
 
-CREATE TABLE `sub_contractors_list` (
+CREATE TABLE `sub_contractors_labor` (
   `SubListID` int(11) NOT NULL,
-  `QuoID` int(11) NOT NULL
+  `QuoID` int(11) NOT NULL,
+  `LaborFee` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `sub_contractors_list`
+-- Dumping data for table `sub_contractors_labor`
 --
 
-INSERT INTO `sub_contractors_list` (`SubListID`, `QuoID`) VALUES
-(4, 4),
-(5, 5),
-(6, 6);
+INSERT INTO `sub_contractors_labor` (`SubListID`, `QuoID`, `LaborFee`) VALUES
+(4, 4, 698),
+(5, 5, 698),
+(6, 6, 698);
 
 -- --------------------------------------------------------
 
@@ -307,15 +313,17 @@ INSERT INTO `sub_contractors_list` (`SubListID`, `QuoID`) VALUES
 CREATE TABLE `users` (
   `UserID` int(11) NOT NULL,
   `Username` varchar(255) NOT NULL,
-  `Password` varchar(255) NOT NULL
+  `Password` varchar(255) NOT NULL,
+  `Email` varchar(255) NOT NULL,
+  `Name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`UserID`, `Username`, `Password`) VALUES
-(1, 'admin', 'admin');
+INSERT INTO `users` (`UserID`, `Username`, `Password`, `Email`, `Name`) VALUES
+(1, 'admin', 'admin', '', '');
 
 --
 -- Indexes for dumped tables
@@ -400,9 +408,9 @@ ALTER TABLE `sub_contractors`
   ADD KEY `FK_SubListIDSub` (`SubListID`);
 
 --
--- Indexes for table `sub_contractors_list`
+-- Indexes for table `sub_contractors_labor`
 --
-ALTER TABLE `sub_contractors_list`
+ALTER TABLE `sub_contractors_labor`
   ADD PRIMARY KEY (`SubListID`),
   ADD KEY `FK_QuoIDSubList` (`QuoID`);
 
@@ -438,7 +446,7 @@ ALTER TABLE `materials`
 -- AUTO_INCREMENT for table `mat_details`
 --
 ALTER TABLE `mat_details`
-  MODIFY `MatDetailsID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `MatDetailsID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `mat_list`
@@ -480,12 +488,12 @@ ALTER TABLE `services`
 -- AUTO_INCREMENT for table `sub_contractors`
 --
 ALTER TABLE `sub_contractors`
-  MODIFY `SubID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `SubID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
--- AUTO_INCREMENT for table `sub_contractors_list`
+-- AUTO_INCREMENT for table `sub_contractors_labor`
 --
-ALTER TABLE `sub_contractors_list`
+ALTER TABLE `sub_contractors_labor`
   MODIFY `SubListID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
@@ -533,12 +541,12 @@ ALTER TABLE `quotation`
 --
 ALTER TABLE `sub_contractors`
   ADD CONSTRAINT `FK_ServiceIDSub` FOREIGN KEY (`ServiceID`) REFERENCES `services` (`ServiceID`),
-  ADD CONSTRAINT `FK_SubListIDSub` FOREIGN KEY (`SubListID`) REFERENCES `sub_contractors_list` (`SubListID`);
+  ADD CONSTRAINT `FK_SubListIDSub` FOREIGN KEY (`SubListID`) REFERENCES `sub_contractors_labor` (`SubListID`);
 
 --
--- Constraints for table `sub_contractors_list`
+-- Constraints for table `sub_contractors_labor`
 --
-ALTER TABLE `sub_contractors_list`
+ALTER TABLE `sub_contractors_labor`
   ADD CONSTRAINT `FK_QuoIDSubList` FOREIGN KEY (`QuoID`) REFERENCES `quotation` (`QuoID`);
 COMMIT;
 

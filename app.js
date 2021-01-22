@@ -124,7 +124,7 @@ app.get('/quotation',(req,res)=>{
  
    
 })
-app.post('/quotation',(req,res)=>{
+app.post('/quotation/add',(req,res)=>{
     // if(req.session.loggedIn){
     connection.query('INSERT INTO project_site SET City=?,Barangay=?,StreetNumber=?,PostalCode=?',[],(err,result)=>{
         connection.query('INSERT INTO project_type SET ProjDesc=?,ProjType=?',[],(err,type)=>{
@@ -153,6 +153,7 @@ app.delete('/quotation/:id',(req,res)=>{
         }
     })
 })
+
 app.get('/dashboard/monthly',(req,res)=>{
     let date = new Date();
     let month = date.getMonth()+1;
@@ -165,6 +166,8 @@ app.get('/dashboard/monthly',(req,res)=>{
      })
     
  })
+
+ 
  app.get("/material/categories",(req,res)=>{
     if(req.session.loggedIn){
         connection.query("SELECT ServiceName FROM services",(err,result)=>{
