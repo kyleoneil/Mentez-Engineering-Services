@@ -39,9 +39,18 @@
                         <div class=".text-md-body-1">
                           Project
                         </div>
-                        <v-text-field
-                          label="Type of Project"
-                        ></v-text-field>
+                        <v-row>
+                          <v-col>
+                            <v-text-field
+                              label="Project Description"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col>
+                            <v-text-field
+                              label="Type of Project"
+                            ></v-text-field>
+                          </v-col>
+                        </v-row>
                         <div class=".text-md-body-1">
                           Schedule Date
                         </div>
@@ -51,7 +60,7 @@
                               ref="menu"
                               v-model="menu"
                               :close-on-content-click="false"
-                              :return-value.sync="date"
+                              :return-value.sync="date_from"
                               transition="scale-transition"
                               offset-y
                               min-width="auto"
@@ -82,7 +91,7 @@
                                 <v-btn
                                   text
                                   color="primary"
-                                  @click="$refs.menu.save(date)"
+                                  @click="$refs.menu.save(date_from)"
                                 >
                                   OK
                                 </v-btn>
@@ -94,7 +103,7 @@
                               ref="menu2"
                               v-model="menu2"
                               :close-on-content-click="false"
-                              :return-value.sync="date"
+                              :return-value.sync="date_until"
                               transition="scale-transition"
                               offset-y
                               min-width="auto"
@@ -125,7 +134,7 @@
                                 <v-btn
                                   text
                                   color="primary"
-                                  @click="$refs.menu2.save(date)"
+                                  @click="$refs.menu2.save(date_until)"
                                 >
                                   OK
                                 </v-btn>
@@ -220,10 +229,10 @@
                           </v-btn>
                         </v-fab-transition>
                         <v-layout row wrap>
-                          <v-flex xs12 md4>
+                          <v-flex xs12 md3>
                             <div class="caption grey--text">Material</div>
                           </v-flex>
-                          <v-flex xs12 md4>
+                          <v-flex xs12 md5>
                             <div class="caption grey--text">Description</div>
                           </v-flex>
                           <v-flex xs12 md1>
@@ -236,27 +245,25 @@
                         </v-layout>
 
                         <v-layout row wrap>
-                          <v-flex xs12 md4 style="margin: 10px 0px">
-                            <div class="text-caption">Plainsheet</div>
+                          <v-flex xs12 md3 pr-1 style="margin: 10px 0px;">
+                            <div class="text-caption">Plainsheetsssssss</div>
                           </v-flex>
-                          <v-flex xs12 md4 style="margin: 10px 0px">
-                            <div class="text-caption">0.40mm x 0.915m x 2.44 m</div>
+                          <v-flex xs12 md5 pr-1 style="margin: 10px 0px">
+                            <div class="text-caption">0.40mm x 0.915m x 2.44m</div>
                           </v-flex>
-                          <v-flex xs12 md1 style="margin: 10px 0px">
+                          <v-flex xs12 md1 pr-1 style="margin: 10px 0px">
                             <div class="text-caption">200</div>
                           </v-flex>
-                          <v-flex xs12 md2 style="margin: 10px 0px">
+                          <v-flex xs12 md2 pr-1 style="margin: 10px 0px">
                             <div class="text-caption">900.52</div>
                           </v-flex>
                           <v-flex xs6 xs4 md1 style="margin: 10px 0px">
                             <v-btn text>
-                              <v-icon
-                                size="20px"
-                              >
-                              mdi-pencil</v-icon>
+                              <v-icon small color="black">mdi-minus</v-icon>
                             </v-btn>
-                        </v-flex>
+                          </v-flex>
                         </v-layout>
+                        
                       </v-card>
                       
                     </v-window-item>
@@ -301,7 +308,7 @@
           <v-flex xs12 md3>
             <div class="caption grey--text">Type</div>
           </v-flex>
-          <v-flex xs12 md2>
+          <v-flex xs12 md3>
             <div class="caption grey--text">Customer</div>
           </v-flex>
           <v-flex xs12 md4>
@@ -313,33 +320,84 @@
           <v-flex xs12 md3>
             <div class="caption grey--text">Service</div>
           </v-flex>
+          <v-flex xs12 md1>
+            <div class="subtitle-2"></div>
+          </v-flex>
         </v-layout>
 
         <v-layout>
           <v-flex xs12 md1>
             <div class="subtitle-2">1</div>
           </v-flex>
-          <v-flex xs12 md3>
+          <v-flex xs12 md3 pr-1>
             <div class="subtitle-2">Build a House</div>
           </v-flex>
-          <v-flex xs12 md3>
+          <v-flex xs12 md3 pr-1>
             <div class="subtitle-2">Residence</div>
           </v-flex>
-          <v-flex xs12 md2>
+          <v-flex xs12 md3 pr-1>
             <div class="subtitle-2">La onila</div>
           </v-flex>
-          <v-flex xs12 md4>
+          <v-flex xs12 md4 pr-1>
             <div class="subtitle-2">2021-01-19 - 2021-01-30</div>
           </v-flex>
-          <v-flex xs12 md3>
+          <v-flex xs12 md3 pr-1>
             <div class="subtitle-2">Dimsum Corp</div>
           </v-flex>
-          <v-flex xs12 md3>
+          <v-flex xs12 md3 pr-1>
             <div class="subtitle-2">Plumbing</div>
           </v-flex>
+          <v-flex xs12 md1>
+            <v-speed-dial
+              v-model="fab"
+              :top="top"
+              :bottom="bottom"
+              :right="right"
+              :left="left"
+              :direction="direction"
+              :open-on-hover="hover"
+              :transition="transition"
+            >
+              <template v-slot:activator>
+                <v-btn
+                  v-model="fab"
+                  text
+                  x-small
+                >
+                  <v-icon>
+                    mdi-dots-horizontal
+                  </v-icon>
+                </v-btn>
+              </template>
+              <v-btn
+                fab
+                dark
+                x-small
+                color="indigo"
+              >
+                <v-icon>mdi-text-box-search-outline</v-icon>
+              </v-btn>
+              <v-btn
+                fab
+                dark
+                x-small
+                color="green"
+              >
+                <v-icon>mdi-pencil</v-icon>
+              </v-btn>
+              <v-btn
+                fab
+                dark
+                x-small
+                color="red"
+              >
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
+            </v-speed-dial>
+          </v-flex>
         </v-layout>
-
       </v-card>
+      
     </v-container>
   </div>  
 </template>
@@ -348,6 +406,15 @@
 export default {
   data: () => {
     return {
+      direction: 'top',
+      fab: false,
+      hover: false,
+      top: false,
+      right: false,
+      bottom: false,
+      left: false,
+      transition: 'slide-y-reverse-transition',
+
       dialog: false,
       step: 1,
       
