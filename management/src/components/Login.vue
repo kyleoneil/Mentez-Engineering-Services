@@ -18,6 +18,7 @@
                 width="230px"
                 height="400px"
                 style="border-radius: 5px 0px 0px 5px"
+                light
               >
               <v-container
                 style="padding-top: 50px"
@@ -79,7 +80,7 @@
 </template>
 
 <script>
-// import axios from 'axios';
+import axios from 'axios';
 export default {
   data(){
     return{
@@ -93,29 +94,27 @@ export default {
       ],
       rules: [
         value => !!value || 'Required.',
-        value => (value && value.length >= 3) || 'Min 3 characters',
       ],
     }
   },
   methods:{
     submit: function(){
-      // axios({
-      //   method: 'POST',
-      //   url: 'http://localhost:3000/login',
-      //   data:{
-      //     email: this.email,
-      //     password: this.password
-      //   },
-      //   withCredentials: true
-      // })
-      // .then((response) =>{
-      //   if(response.status == 200 && response.data.verify == "success"){
-      //     this.$router.push('/dashboard');
-      //   }
-      //   if(response.status == 200 && response.data.verify == "failed"){
-      //     this.$router.go();
-      //   }
-      // })
+      axios({
+        method: 'POST',
+        url: 'http://localhost:3000/login',
+        data: {
+          username: this.username,
+          password: this.password
+        },
+      })
+      .then((response) =>{
+        if(response.status == 200 && response.data.status == 200){
+          this.$router.push('/dashboard');
+        }
+        if(response.status == 400 && response.data.status == 200){
+          this.$router.go();
+        }
+      })
     }
   }
 }
