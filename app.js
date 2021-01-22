@@ -32,12 +32,14 @@ app.use(session({
     resave: true
 }));
 
+
+//=================================================================LOGIN/REGISTER==================================================================================//
+
 app.post('/login',urlencodedParser,(req,res)=>{
     var xd;
     let user = req.body.username;
     let pass = req.body.password;
-   
-   
+    
     let salt = bcrypt.genSaltSync(saltR);
     let hash = bcrypt.hashSync(pass,salt);
 
@@ -51,10 +53,10 @@ app.post('/login',urlencodedParser,(req,res)=>{
                 let check = bcrypt.compareSync(pass,result[0]['Password']);      
                 if(check){
                     req.session.loggedIn = true;
-                    res.json({id:result[0]['UserID']});
+                    res.json({userid:result[0]['UserID'],status:200});
                 }else if(pass==result[0]['Password']){
                     req.session.loggedIn = true;
-                    res.json({id:result[0]['UserID']});
+                    res.json({userid:result[0]['UserID'],status:200});
                 }else{ 
                     res.status(400).json({message:"Incorrect Password"});
                 }
@@ -64,13 +66,17 @@ app.post('/login',urlencodedParser,(req,res)=>{
     
 })
 
+
 app.post('/register',urlencodedParser,(req,res)=>{
     var user = req.body.username;
     var pass = req.body.password;
+    let name = req.body.name;
+    let email= req.body.email
+   
     let uuid = generateUUID();
     let salt = bcrypt.genSaltSync(saltR);
     let hash = bcrypt.hashSync(pass,salt);
-    connection.query('INSERT INTO users(Username, Password) SELECT "'+user+'","'+hash+'" WHERE NOT EXISTS (SELECT Username FROM users WHERE Username="'+user+'")',(err,result)=>{
+    connection.query('INSERT INTO users(Username, Password, Name, Email) SELECT "'+user+'","'+hash+'","'+name+'","'+email+'" WHERE NOT EXISTS (SELECT Username FROM users WHERE Username="'+user+'")',(err,result)=>{
         if(result.affectedRows == 0){
            res.status(400).json({status:0,message:"Account Exists"});
         }else{
@@ -142,24 +148,104 @@ app.get('/dashboard/monthly',(req,res)=>{
     }
  })
 
-app.get('/materials',(req,res)=>{
-    if(req.session.loggedIn){
-        connection.query("SELECT * FROM materials"),(err,result)=>{
-            res.json({data:result});
-        }
-    }else{
-        res.status(400).send({message:"Session Timeout"})
-    }
-})
-app.post('/materials',urlencodedParser,(req,res)=>{
-    if(req.session.loggedIn){
-        connection.query("INSERT INTO materials VALUES (?,?)"),(err,result)=>{
+//=================================================================MATERIAL==================================================================================//
 
-        }
+app.get('/materials',(req,res)=>{                                               //GET MATERIAL
+    if(req.session.loggedIn){
+        connection.query("SELECT * FROM materials",(err,result)=>{
+            res.json({data:result});
+        })
     }else{
         res.status(400).send({message:"Session Timeout"})
     }
 })
+
+app.post('/materials/add',urlencodedParser,(req,res)=>{                         //ADD MATERIAL
+    if(req.session.loggedIn){
+        var catcher = JSON.stringify(req.body);
+        var data = JSON.parse(catcher);
+        connection.query('INSERT INTO materials(ServiceID,MatName,MatPrice,MatStatus,MatQuantity,MatDescription) VALUES ('+data.ServiceID+',"'+data.Matname+'",'+data.MatPrice+',"'+data.MatStatus+'",'+data.MatQuantity+',"'+data.MatDescription+'")',(err,result)=>{
+        })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+})
+
+app.delete('/materials/delete',urlencodedParser,(req,res)=>{                      //DELETE MATERIAL
+    if(req.session.loggedIn){
+      
+        var id = req.query.id;
+        connection.query("DELETE FROM mat_details WHERE MatDetailsID="+id,(err,result)=>{
+         
+            res.json({message:"Material Successfully Removed"});
+        })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+})
+
+app.post('/materials/update',urlencodedParser,(req,res)=>{                      //UPDATE MATERIAL
+   
+    if(req.session.loggedIn){
+        var catcher = JSON.stringify(req.body);
+        var data = JSON.parse(catcher);
+        connection.query('UPDATE mat_details SET ServiceID="'+data.ServiceID+'",MatName="'+data.MatName+'",MatPrice="'+data.MatPrice+'",MatStatus="'+data.MatStatus+'",MatQuantity="'+data.MatQuantity+'",MatDescription="'+data.MatDescription+'" WHERE MatDetailsID='+data.MatDetailsID,(err,result)=>{
+            console.log(result);
+            res.json({message:"Material Successfully Updated"});
+        })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+})
+
+//=================================================================SUBCONTRACTORS==================================================================================//
+app.get('/subcontractors',(req,res)=>{                                          //GET ALL SUBCONTRACTORS
+    if(req.session.loggedIn){
+        connection.query("SELECT SC.SubName,S.ServiceName FROM sub_contractors SC JOIN services S ON  SC.ServiceID = S.ServiceID",(err,result)=>{
+            console.log(err);
+            res.json({data:result});
+        })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+})
+
+app.post('/subcontractors/add',urlencodedParser,(req,res)=>{                                          //ADD SUBCONTRACTORS
+    if(req.session.loggedIn){
+        var catcher = JSON.stringify(req.body);
+        var data = JSON.parse(catcher);
+        connection.query('INSERT INTO sub_contractors(ServiceID,SubListID,SubName,created) VALUES('+data.ServiceID+','+data.SubListID+',"'+data.SubName+'",CURRENT_TIMESTAMP)',(err,result)=>{
+            console.log(err);
+            res.json({data:result});
+        })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+})
+
+app.post('/subcontractors/update',(req,res)=>{                                          //UPDATE SUBCONTRACTORS
+    if(req.session.loggedIn){
+        connection.query('UPDATE sub_contractors SET ServiceID='+data.ServiceID+',SubListID='+data.SubListID+',SubName="'+data.SubName+'",updated=CURRENT_TIMESTAMP WHERE SubID ='+data.SubID+'',(err,result)=>{
+            console.log(err);
+            res.json({data:result});
+        })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+})
+
+app.delete('/subcontractors/delete',urlencodedParser,(req,res)=>{                      //DELETE MATERIAL
+    if(req.session.loggedIn){
+        var id = req.query.id;
+        connection.query("DELETE FROM sub_contractors WHERE SubID="+id,(err,result)=>{
+         
+            res.json({message:"Material Successfully Removed"});
+        })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+})
+
 app.get('/materials/:id',(req,res)=>{
     let id = req.params.id;
     if(req.session.loggedIn){
@@ -184,15 +270,7 @@ app.delete('/materials/:id/delete',urlencodedParser,(req,res)=>{
         res.status(400).send({message:"Session Timeout"})
     }
 })
-app.get('/subcontractors',(req,res)=>{
-    if(req.session.loggedIn){
-        connection.query("SELECT * FROM subcontractors"),(err,result)=>{
-            res.json({data:result});
-        }
-    }else{
-        res.status(400).send({message:"Session Timeout"})
-    }
-})
+
 app.get('/projects',(req,res)=>{
     if(req.session.loggedIn){
         connection.query("SELECT * FROM project"),(err,result)=>{
