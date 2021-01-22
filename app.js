@@ -112,6 +112,47 @@ app.get('/dashboard/quotation/:id',(req,res)=>{
    
 })
 
+app.get('/quotation',(req,res)=>{
+    // if(req.session.loggedIn){
+        connection.query('SELECT Q.QuoID,Q.summation,Q.created,PT.ProjDesc,PT.ProjType,U.Username,C.CustName FROM quotation Q JOIN customers C ON Q.CustID=C.CustID JOIN users U ON Q.UserID = U.UserID JOIN project P ON Q.ProjectID = P.ProjectID JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID ',(err,result)=>{
+        console.log(result);
+        res.json(result);
+    })
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
+ 
+   
+})
+app.post('/quotation',(req,res)=>{
+    // if(req.session.loggedIn){
+    connection.query('INSERT INTO project_site SET City=?,Barangay=?,StreetNumber=?,PostalCode=?',[],(err,result)=>{
+        connection.query('INSERT INTO project_type SET ProjDesc=?,ProjType=?',[],(err,type)=>{
+            connection.query('INSERT INTO mat_list SET TotalListPrice=?',[],(err,mat)=>{
+                connection.query('INSERT INTO project SET ProjSiteID=?,ProjTypeID=?,MatListID=?,ProjStart=?,ProjEnd=?',[result.ProjSiteID,type.ProjTypeID,mat.MatListID],(err,project)=>{
+                    connection.query('INSERT INTO customers SET CustName=?',[],(err,cust)=>{
+                        connection.query('INSERT INTO quotation SET summation=?,DeliveryCharges=?,LaborCharges=?,BendingCharges=?,created=?,updated=?,CustID=?,ProjectID=?,UserID=?',[cust.CustID,ProjID],(err,quot)=>{
+                            console.log(quot);
+                        })
+                    })
+                })
+            })
+        })
+    })
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
+ 
+   
+})
+app.delete('/quotation/:id',(req,res)=>{
+    let id = req.params.id;
+    connection.query('UPDATE quotation SET deleted=1 WHERE id=?',id,(err,result)=>{
+        if(result.affectedRows != 0){
+            res.json({status:1,message:"Quotation Deleted"});
+        }
+    })
+})
 app.get('/dashboard/monthly',(req,res)=>{
     let date = new Date();
     let month = date.getMonth()+1;
