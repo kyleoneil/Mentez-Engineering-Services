@@ -33,7 +33,7 @@ app.use(session({
 }));
 
 
-//=================================================================LOGIN/REGISTER==================================================================================//
+//=================================================================LOGIN/REGISTER/USERS==================================================================================//
 
 app.post('/login',urlencodedParser,(req,res)=>{
     var xd;
@@ -95,9 +95,23 @@ app.get('/users',(req,res)=>{
     }else{
         res.status(400).send({message:"Session Timeout"})
     }
- 
-   
 })
+
+app.post('/users/update',urlencodedParser,(req,res)=>{
+    if(req.session.loggedIn){
+        let name = req.body.data.name;
+        let email= req.body.data.email
+        let id = req.query.id
+        console.log("xd")
+        connection.query('UPDATE users SET name="'+name+'",email="'+email+'" WHERE UserID='+id+'',(err,result)=>{
+        console.log(result);
+        res.json({message:"Account Creation Successfull"});
+    })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+})
+
 app.get('/dashboard/quotation',(req,res)=>{
     if(req.session.loggedIn){
         console.log("xd")
