@@ -245,7 +245,7 @@ app.post('/materials/update',urlencodedParser,(req,res)=>{                      
 //=================================================================SUBCONTRACTORS==================================================================================//
 app.get('/subcontractors',(req,res)=>{                                          //GET ALL SUBCONTRACTORS
     if(req.session.loggedIn){
-        connection.query("SELECT SC.SubName,S.ServiceName FROM sub_contractors SC JOIN services S ON  SC.ServiceID = S.ServiceID",(err,result)=>{
+        connection.query("SELECT SC.SubName,S.ServiceName FROM sub_contractors SC JOIN services S ON  SC.ServiceID = S.ServiceID WHERE deleted IS NULL ",(err,result)=>{
             console.log(err);
             res.json({data:result});
         })
@@ -267,9 +267,11 @@ app.post('/subcontractors/add',urlencodedParser,(req,res)=>{                    
     }
 })
 
-app.post('/subcontractors/update',(req,res)=>{                                          //UPDATE SUBCONTRACTORS
+app.post('/subcontractors/update',urlencodedParser,(req,res)=>{                                          //UPDATE SUBCONTRACTORS
     if(req.session.loggedIn){
-        connection.query('UPDATE sub_contractors SET ServiceID='+data.ServiceID+',SubListID='+data.SubListID+',SubName="'+data.SubName+'",updated=CURRENT_TIMESTAMP WHERE SubID ='+data.SubID+'',(err,result)=>{
+        var catcher = JSON.stringify(req.body);
+        var data = JSON.parse(catcher)
+        connection.query('UPDATE sub_contractors SET ServiceID='+data.ServiceID+',SubName="'+data.SubName+'",updated=CURRENT_TIMESTAMP WHERE SubID ='+req.query.id+'',(err,result)=>{
             console.log(err);
             res.json({data:result});
         })
@@ -278,17 +280,28 @@ app.post('/subcontractors/update',(req,res)=>{                                  
     }
 })
 
-app.delete('/subcontractors/delete',urlencodedParser,(req,res)=>{                      //DELETE MATERIAL
+app.post('/subcontractors/delete',urlencodedParser,(req,res)=>{                                           //DELETE SUBCONTRACTOR
     if(req.session.loggedIn){
-        var id = req.query.id;
-        connection.query("DELETE FROM sub_contractors WHERE SubID="+id,(err,result)=>{
-         
-            res.json({message:"Material Successfully Removed"});
+        connection.query('UPDATE sub_contractors SET deleted = CURRENT_TIMESTAMP WHERE SubID='+req.query.id+'',(err,result)=>{
+            console.log(result);
+            res.json({data:result,message:"Subcontractor Successfully Deleted"});
         })
     }else{
         res.status(400).send({message:"Session Timeout"})
     }
 })
+
+// app.delete('/subcontractors/delete',urlencodedParser,(req,res)=>{                      //DELETE SUBCONTRACTOR
+//     if(req.session.loggedIn){
+//         var id = req.query.id;
+//         connection.query("DELETE FROM sub_contractors WHERE SubID="+id,(err,result)=>{
+         
+//             res.json({message:"Material Successfully Removed"});
+//         })
+//     }else{
+//         res.status(400).send({message:"Session Timeout"})
+//     }
+// })
 
 app.get('/materials/:id',(req,res)=>{
     let id = req.params.id;
