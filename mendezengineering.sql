@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.3
+-- version 5.0.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 22, 2021 at 04:40 PM
--- Server version: 10.4.14-MariaDB
--- PHP Version: 7.2.34
+-- Generation Time: Jan 23, 2021 at 11:03 AM
+-- Server version: 10.4.11-MariaDB
+-- PHP Version: 7.4.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -50,19 +51,23 @@ INSERT INTO `billings` (`BillID`, `Amount`, `Date`) VALUES
 
 CREATE TABLE `customers` (
   `CustID` int(11) NOT NULL,
-  `CustName` varchar(255) NOT NULL
+  `CustName` varchar(255) NOT NULL,
+  `StreetNumber` varchar(255) NOT NULL,
+  `Barangay` varchar(255) NOT NULL,
+  `City` varchar(255) NOT NULL,
+  `PostalCode` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `customers`
 --
 
-INSERT INTO `customers` (`CustID`, `CustName`) VALUES
-(1, 'Onil'),
-(2, 'Onilito'),
-(3, 'Onilito Gwapito'),
-(4, 'Oneil'),
-(5, 'ImbaOnil');
+INSERT INTO `customers` (`CustID`, `CustName`, `StreetNumber`, `Barangay`, `City`, `PostalCode`) VALUES
+(1, 'Onil', '', '', '', ''),
+(2, 'Onilito', '', '', '', ''),
+(3, 'Onilito Gwapito', '', '', '', ''),
+(4, 'Oneil', '', '', '', ''),
+(5, 'ImbaOnil', '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -73,7 +78,7 @@ INSERT INTO `customers` (`CustID`, `CustName`) VALUES
 CREATE TABLE `materials` (
   `MatID` int(11) NOT NULL,
   `MatDetailsID` int(11) NOT NULL,
-  `MatListID` int(11) NOT NULL,
+  `MatListID` int(11) DEFAULT NULL,
   `TotalPrice` int(11) NOT NULL,
   `MatQty` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -221,18 +226,19 @@ CREATE TABLE `quotation` (
   `DeliveryCharges` int(11) NOT NULL,
   `LaborCharges` int(11) NOT NULL,
   `BendingCharges` int(11) DEFAULT NULL,
-  `created` datetime NOT NULL,
-  `updated` datetime NOT NULL
+  `created` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated` datetime NOT NULL DEFAULT current_timestamp(),
+  `deleted` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `quotation`
 --
 
-INSERT INTO `quotation` (`QuoID`, `CustID`, `ProjectID`, `BillID`, `UserID`, `summation`, `DeliveryCharges`, `LaborCharges`, `BendingCharges`, `created`, `updated`) VALUES
-(4, 3, 2, 1, 1, 5000, 3000, 1000, 2000, '2021-01-17 00:00:00', '2021-01-17 00:00:00'),
-(5, 1, 1, 2, 1, 6000, 3000, 1000, 2000, '2021-01-17 00:00:00', '2021-01-17 00:00:00'),
-(6, 1, 3, 3, 1, 1000, 3000, 1000, 2000, '2021-01-17 00:00:00', '0000-00-00 00:00:00');
+INSERT INTO `quotation` (`QuoID`, `CustID`, `ProjectID`, `BillID`, `UserID`, `summation`, `DeliveryCharges`, `LaborCharges`, `BendingCharges`, `created`, `updated`, `deleted`) VALUES
+(4, 3, 2, 1, 1, 5000, 3000, 1000, 2000, '2021-01-17 00:00:00', '2021-01-17 00:00:00', 0),
+(5, 1, 1, 2, 1, 6000, 3000, 1000, 2000, '2021-01-17 00:00:00', '2021-01-17 00:00:00', 0),
+(6, 1, 3, 3, 1, 1000, 3000, 1000, 2000, '2021-01-17 00:00:00', '0000-00-00 00:00:00', 0);
 
 -- --------------------------------------------------------
 
