@@ -68,10 +68,10 @@ app.post('/login',urlencodedParser,(req,res)=>{
 
 
 app.post('/register',urlencodedParser,(req,res)=>{
-    var user = req.body.username;
-    var pass = req.body.password;
-    let name = req.body.name;
-    let email= req.body.email
+    var user = req.body.data.username;
+    var pass = req.body.data.password;
+    let name = req.body.data.name;
+    let email= req.body.data.email
    
     let uuid = generateUUID();
     let salt = bcrypt.genSaltSync(saltR);
