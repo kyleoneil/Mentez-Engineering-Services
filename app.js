@@ -103,7 +103,7 @@ app.get('/quotation',(req,res)=>{
     // if(req.session.loggedIn){
         connection.query('SELECT Q.*,PT.ProjDesc,PT.ProjType,PS.*,C.CustName,group_concat(S.subName,"-",SE.ServiceName) AS subcontractors,group_concat(MD.MatName,"-",MD.MatDescription,"-",M.MatQty,"-",MD.MatPrice) AS materials, C.* FROM quotation Q JOIN customers C ON Q.CustID=C.CustID JOIN users U ON Q.UserID = U.UserID JOIN project P ON Q.ProjectID = P.ProjectID JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID JOIN project_site PS ON P.ProjectID=PS.ProjSiteID JOIN mat_list ML ON P.MatListID= ML.MatListID JOIN materials M ON M.MatListID = ML.MatListID JOIN mat_details MD ON MD.MatDetailsID=M.MatDetailsID JOIN sub_contractors_labor SL ON SL.QuoID= Q.QuoID JOIN sub_contractors S ON SL.SubListID=S.SubListID JOIN services SE ON S.ServiceID=SE.ServiceID GROUP BY SL.QuoID,P.MatListID ',(err,result)=>{
         console.log(result);
-        res.json({data:result});
+        res.status(200).json({data:result});
     })
     // }else{
     //     res.status(400).send({message:"Session Timeout"})
@@ -116,7 +116,7 @@ app.get('/quotation/:id',(req,res)=>{
     // if(req.session.loggedIn){
         connection.query('SELECT Q.*,PT.ProjDesc,PT.ProjType,PS.*,C.CustName,group_concat(S.subName,"-",SE.ServiceName) AS subcontractors,group_concat(MD.MatName,"-",MD.MatDescription,"-",M.MatQty,"-",MD.MatPrice) AS materials, C.* FROM quotation Q JOIN customers C ON Q.CustID=C.CustID AND Q.QuoID=? JOIN users U ON Q.UserID = U.UserID JOIN project P ON Q.ProjectID = P.ProjectID JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID JOIN project_site PS ON P.ProjectID=PS.ProjSiteID JOIN mat_list ML ON P.MatListID= ML.MatListID JOIN materials M ON M.MatListID = ML.MatListID JOIN mat_details MD ON MD.MatDetailsID=M.MatDetailsID JOIN sub_contractors_labor SL ON SL.QuoID= Q.QuoID JOIN sub_contractors S ON SL.SubListID=S.SubListID JOIN services SE ON S.ServiceID=SE.ServiceID GROUP BY SL.QuoID,P.MatListID ',id,(err,result)=>{
         console.log(result);
-        res.json({data:result});
+        res.status(200).json({data:result});
     })
     // }else{
     //     res.status(400).send({message:"Session Timeout"})
