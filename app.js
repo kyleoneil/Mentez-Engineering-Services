@@ -73,7 +73,7 @@ app.post('/register',urlencodedParser,(req,res)=>{
     let name = req.body.data.name;
     let email= req.body.data.email
    
-    let uuid = generateUUID();
+ 
     let salt = bcrypt.genSaltSync(saltR);
     let hash = bcrypt.hashSync(pass,salt);
     connection.query('INSERT INTO users(Username, Password, Name, Email) SELECT "'+user+'","'+hash+'","'+name+'","'+email+'" WHERE NOT EXISTS (SELECT Username FROM users WHERE Username="'+user+'")',(err,result)=>{
