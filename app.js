@@ -85,6 +85,19 @@ app.post('/register',urlencodedParser,(req,res)=>{
     })
    
 })
+app.get('/users',(req,res)=>{
+    if(req.session.loggedIn){
+        console.log("xd")
+        connection.query('SELECT * FROM Users',(err,result)=>{
+        console.log(result);
+        res.json(result);
+    })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+ 
+   
+})
 app.get('/dashboard/quotation',(req,res)=>{
     if(req.session.loggedIn){
         console.log("xd")
