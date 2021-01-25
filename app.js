@@ -96,6 +96,18 @@ app.get('/users',(req,res)=>{
         res.status(400).send({message:"Session Timeout"})
     }
 })
+app.get('/users',(req,res)=>{
+    if(req.session.loggedIn){
+        console.log("xd")
+        connection.query('SELECT * FROM users WHERE UserID='+req.query.id+'',(err,result)=>{
+        console.log(result);
+        res.json(result);
+    })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+})
+
 
 app.post('/users/update',urlencodedParser,(req,res)=>{
     if(req.session.loggedIn){
