@@ -76,7 +76,7 @@ app.post('/register',urlencodedParser,(req,res)=>{
  
     let salt = bcrypt.genSaltSync(saltR);
     let hash = bcrypt.hashSync(pass,salt);
-    connection.query('INSERT INTO users(Username, Password, Name, Email) SELECT "'+user+'","'+hash+'","'+name+'","'+email+'" WHERE NOT EXISTS (SELECT Username FROM users WHERE Username="'+user+'")',(err,result)=>{
+    connection.query('INSERT INTO users(Username, Password, Name, Email,created) SELECT "'+user+'","'+hash+'","'+name+'","'+email+'",CURRENT_TIMESTAMP WHERE NOT EXISTS (SELECT Username FROM users WHERE Username="'+user+'")',(err,result)=>{
         if(result.affectedRows == 0){
            res.status(400).json({status:0,message:"Account Exists"});
         }else{
@@ -96,7 +96,7 @@ app.get('/users',(req,res)=>{
         res.status(400).send({message:"Session Timeout"})
     }
 })
-app.get('/users',(req,res)=>{
+app.get('/users/get',(req,res)=>{
     if(req.session.loggedIn){
         console.log("xd")
         connection.query('SELECT * FROM users WHERE UserID='+req.query.id+'',(err,result)=>{
@@ -112,12 +112,26 @@ app.get('/users',(req,res)=>{
 app.post('/users/update',urlencodedParser,(req,res)=>{
     if(req.session.loggedIn){
         let name = req.body.data.name;
-        let email= req.body.data.email
+        let email= req.body.data.email;
+        let username= req.body.data.username;
         let id = req.query.id
-        console.log("xd")
-        connection.query('UPDATE users SET name="'+name+'",email="'+email+'" WHERE UserID='+id+'',(err,result)=>{
+        console.log(username)
+        connection.query('UPDATE users SET Username="'+username+'", Name="'+name+'",Email="'+email+'",updated = CURRENT_TIMESTAMP WHERE UserID='+id+'',(err,result)=>{
         console.log(result);
-        res.json({message:"Account Creation Successfull"});
+        res.json({message:"Account Updated Successfull"});
+    })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+})
+
+app.post('/users/delete',urlencodedParser,(req,res)=>{
+    if(req.session.loggedIn){
+
+        let id = req.query.id
+        connection.query('UPDATE FROM users SET deleted = CURRENT_TIMESTAMP WHERE UserID='+id+'',(err,result)=>{
+        console.log(result);
+        res.json({message:"Account Removed Successfull"});
     })
     }else{
         res.status(400).send({message:"Session Timeout"})
