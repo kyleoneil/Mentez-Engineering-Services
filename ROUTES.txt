@@ -1,8 +1,8 @@
 Login = "/login"
 Register = "/register"
 GetDashboardQuo = "/dashboard/quotation"
-GetMatCategories = "/material/categories"
-GetMatPerCategories= "/material/categories/:id"
+
+
 GetQuos="/quotation"
 DeleteQuo="/quotation/:id" method=delete;
 
@@ -12,10 +12,18 @@ GetMaterial = /materials
 AddMaterial = /materials/add
 DeleteMaterial = /materials/delete?id=?
 UpdateMaterial = /materials/update?id=?
-
+GetMatPerCategories= "/material/categories/:id"
 
 /----------SUB CONTRACTORS----------/
 GetSubcontractors = /subcontractors
 AddSubcontractors = /subcontractors/add
 UpdateSubcontractors= /subcontractors/update?id=?
 DeleteSubcontractors = /subcontractors/delete?id=?
+
+
+/----------SERVICES ----------/
+GetMatCategories = "/material/categories"
+GetServices = /material/categories
+AddServices = /material/categories/add
+UpdateServices = /material/categories/update?id=?
+DeleteServices = /material/categories/delete?id=?

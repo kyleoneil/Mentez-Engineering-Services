@@ -112,6 +112,8 @@ app.post('/users/update',urlencodedParser,(req,res)=>{
     }
 })
 
+//=================================================================QUOTATION==================================================================================//
+
 app.get('/dashboard/quotation',(req,res)=>{
     if(req.session.loggedIn){
         console.log("xd")
@@ -239,8 +241,9 @@ app.get('/dashboard/monthly',(req,res)=>{
     
  })
 
- 
- app.get("/material/categories",(req,res)=>{
+ //=================================================================MATERIAL==================================================================================//
+
+ app.get("/material/categories",(req,res)=>{                                                //GET SERVICES
     if(req.session.loggedIn){
         connection.query("SELECT ServiceName FROM services",(err,result)=>{
             console.log(err);
@@ -251,7 +254,7 @@ app.get('/dashboard/monthly',(req,res)=>{
     }
  })
 
- app.get("/material/categories/:id",(req,res)=>{
+ app.get("/material/categories/:id",(req,res)=>{                                            //GET MATERIAL PER SERVICE
 
     if(req.session.loggedIn){
         console.log(req.params.id);
@@ -264,7 +267,46 @@ app.get('/dashboard/monthly',(req,res)=>{
     }
  })
 
-//=================================================================MATERIAL==================================================================================//
+ app.post("/material/categories/add",urlencodedParser,(req,res)=>{                                           //ADD SERVICE
+    if(req.session.loggedIn){
+        var catcher = JSON.stringify(req.body);
+        var data = JSON.parse(catcher);
+        console.log(data);
+        connection.query('INSERT INTO services (ServiceName) VALUES("'+data.ServiceName+'")',(err,result)=>{
+            console.log(err);
+            res.json({result,message:"Service Successfully Added"});
+        })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+ })
+ app.post("/material/categories/update",(req,res)=>{                                        //UPDATE SERVICE
+    if(req.session.loggedIn){
+        var catcher = JSON.stringify(req.body);
+        var data = JSON.parse(catcher);
+        connection.query('UPDATE services SET ServiceName="'+data.ServiceName+'" WHERE ServiceID='+req.query.id,(err,result)=>{
+            console.log(err);
+            res.json({result,message:"Service Successfully Updated"});
+        })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+})
+app.delete("/material/categories/delete",urlencodedParser,(req,res)=>{
+    if(req.session.loggedIn){
+        console.log(req.query.id);
+        connection.query('DELETE FROM services WHERE ServiceID='+req.query.id+'',(err,result)=>{
+            console.log(err);
+            res.json({result,message:"Service Successfully Deleted"});
+        })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+})
+
+
+
+
 
 app.get('/materials',(req,res)=>{                                               //GET MATERIAL
     if(req.session.loggedIn){
