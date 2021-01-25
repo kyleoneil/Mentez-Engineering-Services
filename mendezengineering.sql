@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.1
+-- version 5.0.3
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 23, 2021 at 11:03 AM
--- Server version: 10.4.11-MariaDB
--- PHP Version: 7.4.3
+-- Generation Time: Jan 25, 2021 at 06:18 PM
+-- Server version: 10.4.14-MariaDB
+-- PHP Version: 7.2.34
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -51,23 +50,19 @@ INSERT INTO `billings` (`BillID`, `Amount`, `Date`) VALUES
 
 CREATE TABLE `customers` (
   `CustID` int(11) NOT NULL,
-  `CustName` varchar(255) NOT NULL,
-  `StreetNumber` varchar(255) NOT NULL,
-  `Barangay` varchar(255) NOT NULL,
-  `City` varchar(255) NOT NULL,
-  `PostalCode` varchar(255) NOT NULL
+  `CustName` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `customers`
 --
 
-INSERT INTO `customers` (`CustID`, `CustName`, `StreetNumber`, `Barangay`, `City`, `PostalCode`) VALUES
-(1, 'Onil', '', '', '', ''),
-(2, 'Onilito', '', '', '', ''),
-(3, 'Onilito Gwapito', '', '', '', ''),
-(4, 'Oneil', '', '', '', ''),
-(5, 'ImbaOnil', '', '', '', '');
+INSERT INTO `customers` (`CustID`, `CustName`) VALUES
+(1, 'Onil'),
+(2, 'Onilito'),
+(3, 'Onilito Gwapito'),
+(4, 'Oneil'),
+(5, 'ImbaOnil');
 
 -- --------------------------------------------------------
 
@@ -78,7 +73,7 @@ INSERT INTO `customers` (`CustID`, `CustName`, `StreetNumber`, `Barangay`, `City
 CREATE TABLE `materials` (
   `MatID` int(11) NOT NULL,
   `MatDetailsID` int(11) NOT NULL,
-  `MatListID` int(11) DEFAULT NULL,
+  `MatListID` int(11) NOT NULL,
   `TotalPrice` int(11) NOT NULL,
   `MatQty` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -226,19 +221,18 @@ CREATE TABLE `quotation` (
   `DeliveryCharges` int(11) NOT NULL,
   `LaborCharges` int(11) NOT NULL,
   `BendingCharges` int(11) DEFAULT NULL,
-  `created` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated` datetime NOT NULL DEFAULT current_timestamp(),
-  `deleted` int(11) NOT NULL DEFAULT 0
+  `created` datetime NOT NULL,
+  `updated` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `quotation`
 --
 
-INSERT INTO `quotation` (`QuoID`, `CustID`, `ProjectID`, `BillID`, `UserID`, `summation`, `DeliveryCharges`, `LaborCharges`, `BendingCharges`, `created`, `updated`, `deleted`) VALUES
-(4, 3, 2, 1, 1, 5000, 3000, 1000, 2000, '2021-01-17 00:00:00', '2021-01-17 00:00:00', 0),
-(5, 1, 1, 2, 1, 6000, 3000, 1000, 2000, '2021-01-17 00:00:00', '2021-01-17 00:00:00', 0),
-(6, 1, 3, 3, 1, 1000, 3000, 1000, 2000, '2021-01-17 00:00:00', '0000-00-00 00:00:00', 0);
+INSERT INTO `quotation` (`QuoID`, `CustID`, `ProjectID`, `BillID`, `UserID`, `summation`, `DeliveryCharges`, `LaborCharges`, `BendingCharges`, `created`, `updated`) VALUES
+(4, 3, 2, 1, 1, 5000, 3000, 1000, 2000, '2021-01-17 00:00:00', '2021-01-17 00:00:00'),
+(5, 1, 1, 2, 1, 6000, 3000, 1000, 2000, '2021-01-17 00:00:00', '2021-01-17 00:00:00'),
+(6, 1, 3, 3, 1, 1000, 3000, 1000, 2000, '2021-01-17 00:00:00', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -259,7 +253,9 @@ INSERT INTO `services` (`ServiceID`, `ServiceName`) VALUES
 (1, 'Delivery'),
 (2, 'Wiring'),
 (3, 'Lighting'),
-(4, 'Plumming');
+(4, 'Plumming'),
+(6, 'Electrical'),
+(7, 'Dummy');
 
 -- --------------------------------------------------------
 
@@ -282,8 +278,7 @@ CREATE TABLE `sub_contractors` (
 --
 
 INSERT INTO `sub_contractors` (`SubID`, `ServiceID`, `SubListID`, `SubName`, `created`, `updated`, `deleted`) VALUES
-(6, 1, 4, 'Euniel', '2021-01-22 21:14:17', NULL, NULL),
-(7, 2, 4, 'Carl', '2021-01-22 21:14:17', NULL, NULL),
+(7, 2, 4, 'Carlita', '2021-01-22 21:14:17', '2021-01-23 14:15:55', '2021-01-23 14:03:12'),
 (8, 1, 6, 'Euniel', '2021-01-22 21:14:17', NULL, NULL),
 (9, 3, 5, 'Lance', '2021-01-22 21:14:17', NULL, NULL),
 (10, 1, 5, 'Onilito', '2021-01-22 21:14:17', NULL, NULL),
@@ -321,15 +316,20 @@ CREATE TABLE `users` (
   `Username` varchar(255) NOT NULL,
   `Password` varchar(255) NOT NULL,
   `Email` varchar(255) NOT NULL,
-  `Name` varchar(255) NOT NULL
+  `Name` varchar(255) NOT NULL,
+  `created` datetime DEFAULT NULL,
+  `updated` datetime DEFAULT NULL,
+  `deleted` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`UserID`, `Username`, `Password`, `Email`, `Name`) VALUES
-(1, 'admin', 'admin', '', '');
+INSERT INTO `users` (`UserID`, `Username`, `Password`, `Email`, `Name`, `created`, `updated`, `deleted`) VALUES
+(1, 'Onilito', 'admin', 's', 'ss', '2021-01-26 00:36:17', '2021-01-26 00:44:57', NULL),
+(2, 'Onilitoa', '$2b$10$lW0ZYHuISkfgCwDY4VjsYeuJL9X11jVnL3q4HjYz8fU4L9ZJAU/4u', 's', 'ss', '2021-01-26 00:36:21', '2021-01-26 01:15:17', NULL),
+(3, 'sss', '$2b$10$doAughbkFldywBctOeVq7.RwPDdSn5vHmhpghjbe42sElLb7fkg7u', 's', 'ss', '2021-01-26 00:38:43', NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -488,7 +488,7 @@ ALTER TABLE `quotation`
 -- AUTO_INCREMENT for table `services`
 --
 ALTER TABLE `services`
-  MODIFY `ServiceID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ServiceID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `sub_contractors`
@@ -506,7 +506,7 @@ ALTER TABLE `sub_contractors_labor`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
