@@ -128,9 +128,11 @@ app.get('/dashboard/quotation',(req,res)=>{
 
 app.get('/quotation',(req,res)=>{
     // if(req.session.loggedIn){
-        connection.query('SELECT Q.*,PT.ProjDesc,PT.ProjType,PS.*,C.CustName,C.StreetNumber AS CustStreet,C.City AS CustCity,C.Barangay AS CustBarangay,C.PostalCode AS CustPostal,group_concat(S.subName,"-",SE.ServiceName) AS subcontractors,group_concat(MD.MatName,"-",MD.MatDescription,"-",M.MatQty,"-",MD.MatPrice) AS materials FROM quotation Q JOIN customers C ON Q.CustID=C.CustID JOIN users U ON Q.UserID = U.UserID JOIN project P ON Q.ProjectID = P.ProjectID JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID JOIN project_site PS ON P.ProjectID=PS.ProjSiteID JOIN mat_list ML ON P.MatListID= ML.MatListID JOIN materials M ON M.MatListID = ML.MatListID JOIN mat_details MD ON MD.MatDetailsID=M.MatDetailsID JOIN sub_contractors_labor SL ON SL.QuoID= Q.QuoID JOIN sub_contractors S ON SL.SubListID=S.SubListID JOIN services SE ON S.ServiceID=SE.ServiceID GROUP BY SL.QuoID,P.MatListID ',(err,result)=>{
+        connection.query('SELECT Q.*,P.ProjID,PT.ProjDesc,PT.ProjType,PS.*,C.CustName,C.StreetNumber AS CustStreet,C.City AS CustCity,C.Barangay AS CustBarangay,C.PostalCode AS CustPostal,group_concat(S.subName,"-",SE.ServiceName) AS subcontractors FROM quotation Q JOIN customers C ON Q.CustID=C.CustID JOIN users U ON Q.UserID = U.UserID JOIN project P ON Q.ProjectID = P.ProjectID JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID JOIN project_site PS ON P.ProjectID=PS.ProjSiteID JOIN sub_contractors_labor SL ON SL.QuoID= Q.QuoID JOIN sub_contractors S ON SL.SubListID=S.SubListID JOIN services SE ON S.ServiceID=SE.ServiceID GROUP BY SL.QuoID,P.MatListID ',(err,result)=>{
         console.log(result);
-        res.status(200).json({data:result});
+        connection.query('SELECT MD.MatName,MD.MatDescription,M.MatQty,MD.MatPrice,P.ProjID FROM project P JOIN mat_list ML ON P.MatListID= ML.MatListID JOIN materials M ON M.MatListID = ML.MatListID JOIN mat_details MD ON MD.MatDetailsID=M.MatDetailsID',(err,mat)=>{
+            res.status(200).json({data:result,materials:mat});
+        })
     })
     // }else{
     //     res.status(400).send({message:"Session Timeout"})
@@ -141,9 +143,11 @@ app.get('/quotation',(req,res)=>{
 app.get('/quotation/:id',(req,res)=>{
     let id = req.params.id;
     // if(req.session.loggedIn){
-        connection.query('SELECT Q.*,PT.ProjDesc,PT.ProjType,PS.*,C.CustName,C.StreetNumber AS CustStreet,C.City AS CustCity,C.Barangay AS CustBarangay,C.PostalCode AS CustPostal,group_concat(S.subName,"-",SE.ServiceName) AS subcontractors,group_concat(MD.MatName,"-",MD.MatDescription,"-",M.MatQty,"-",MD.MatPrice) AS materials FROM quotation Q JOIN customers C ON Q.CustID=C.CustID AND Q.QuoID=? JOIN users U ON Q.UserID = U.UserID JOIN project P ON Q.ProjectID = P.ProjectID JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID JOIN project_site PS ON P.ProjectID=PS.ProjSiteID JOIN mat_list ML ON P.MatListID= ML.MatListID JOIN materials M ON M.MatListID = ML.MatListID JOIN mat_details MD ON MD.MatDetailsID=M.MatDetailsID JOIN sub_contractors_labor SL ON SL.QuoID= Q.QuoID JOIN sub_contractors S ON SL.SubListID=S.SubListID JOIN services SE ON S.ServiceID=SE.ServiceID GROUP BY SL.QuoID,P.MatListID ',id,(err,result)=>{
-        console.log(result);
-        res.status(200).json({data:result});
+        connection.query('SELECT Q.*,P.ProjID,PT.ProjDesc,PT.ProjType,PS.*,C.CustName,C.StreetNumber AS CustStreet,C.City AS CustCity,C.Barangay AS CustBarangay,C.PostalCode AS CustPostal,group_concat(S.subName,"-",SE.ServiceName) AS subcontractors FROM quotation Q JOIN customers C ON Q.CustID=C.CustID AND Q.QuoID=? JOIN users U ON Q.UserID = U.UserID JOIN project P ON Q.ProjectID = P.ProjectID JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID JOIN project_site PS ON P.ProjectID=PS.ProjSiteID JOIN sub_contractors_labor SL ON SL.QuoID= Q.QuoID JOIN sub_contractors S ON SL.SubListID=S.SubListID JOIN services SE ON S.ServiceID=SE.ServiceID GROUP BY SL.QuoID',id,(err,result)=>{
+        connection.query('SELECT MD.MatName,MD.MatDescription,M.MatQty,MD.MatPrice FROM project P JOIN mat_list ML ON P.ProjectID=? AND P.MatListID= ML.MatListID JOIN materials M ON M.MatListID = ML.MatListID JOIN mat_details MD ON MD.MatDetailsID=M.MatDetailsID',result.ProjID,(err,mat)=>{
+            res.status(200).json({data:result,materials:mat});
+        })
+        
     })
     // }else{
     //     res.status(400).send({message:"Session Timeout"})
@@ -153,13 +157,20 @@ app.post('/quotation/add',urlencodedParser,(req,res)=>{
     // if(req.session.loggedIn){
         var catcher = JSON.stringify(req.body);
         var data = JSON.parse(catcher);
-    connection.query('INSERT INTO project_site SET City=?,Barangay=?,StreetNumber=?,PostalCode=?',[data.City,data.Barangay,data.StreetNumber,data.PostalCode],(err,result)=>{
-        connection.query('INSERT INTO project_type SET ProjDesc=?,ProjType=?',[data.ProjDesc,data.ProjType],(err,type)=>{
+    connection.query('INSERT INTO project_site SET City=?,Barangay=?,StreetNumber=?,PostalCode=?',[data.project_city,data.project_barangay,data.project_street,data.project_postal_code],(err,result)=>{
+        connection.query('INSERT INTO project_type SET ProjDesc=?,ProjType=?',[data.proj_description,data.project_type],(err,type)=>{
             connection.query('INSERT INTO mat_list SET TotalListPrice=?',[data.totalListPrice],(err,mat)=>{
-                connection.query('INSERT INTO project SET ProjSiteID=?,ProjTypeID=?,MatListID=?,ProjStart=?,ProjEnd=?',[result.ProjSiteID,type.ProjTypeID,mat.MatListID,data.ProjStart,ProjEnd],(err,project)=>{
-                    connection.query('INSERT INTO customers SET CustName=?,StreetNumber=?,Barangay=?,City=?,PostalCode=?',[data.CustName,data.CustStreetNumber,data.CustCity,data.CustBarangay,data.CustPostalCode],(err,cust)=>{
-                        connection.query('INSERT INTO quotation SET summation=?,DeliveryCharges=?,LaborCharges=?,BendingCharges=?,created=?,updated=?,CustID=?,ProjectID=?,UserID=?',[data.summation,data.Delivery,data.Labor,data.Bendingcust.CustID,project.ProjID,data.userid],(err,quot)=>{
+                for(var i=0;i<data.material.length;i++){
+                    connection.query('SELECT MatDetailsID FROM mat_details WHERE MatDescription=?',[data.material[i].material_name],(err,dets)=>{
+                        connection.query('INSERT INTO materials SET MatListID=?,MatDetailsID=?,MatQty=?,TotalPrice=?',[mat.MatListID,dets.MatDetailsID,data.material[i].material_quantity,data.material[i].material_price])
+                        connection.query('UPDATE mat_details SET MatQuantity=? WHERE MatDetailsID=?',[dets.MatQuantity-data.materials[i].material_quantity,dets.MatDetailsID])
+                    })
+                }
+                connection.query('INSERT INTO project SET ProjSiteID=?,ProjTypeID=?,MatListID=?,ProjStart=?,ProjEnd=?',[result.ProjSiteID,type.ProjTypeID,mat.MatListID,data.date_from,date_until],(err,project)=>{
+                    connection.query('INSERT INTO customers SET CustName=?,StreetNumber=?,Barangay=?,City=?,PostalCode=?',[data.customer_name,data.customer_street,data.customer_barangay,data.customer_city,data.customer_postal_code],(err,cust)=>{
+                        connection.query('INSERT INTO quotation SET summation=?,DeliveryCharges=?,LaborCharges=?,BendingCharges=?,created=?,updated=?,CustID=?,ProjectID=?,UserID=?',[data.quotation_summation,data.quotation_delivery,data.quotation_labor,data.quotation_bendingcharges,cust.CustID,project.ProjID,data.userid],(err,quot)=>{
                             console.log(quot);
+                            res.status(200).json({message: "Quotation Created"})
                         })
                     })
                 })
@@ -171,6 +182,40 @@ app.post('/quotation/add',urlencodedParser,(req,res)=>{
     // }
  
    
+})
+app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
+    // if(req.session.loggedIn){
+        let id = req.params.id;
+        var catcher = JSON.stringify(req.body);
+        var data = JSON.parse(catcher);
+        connection.query('SELECT * FROM quotation WHERE QuoID=?',id,(err,quots)=>{
+            connection.query('SELECT * FROM project WHERE ProjectID=?',quots.ProjectID,(err,proj)=>{
+                connection.query('UPDATE quotation SET summation=?,DeliveryCharges=?,LaborCharges=?,Bendingcharges=?,updated=CURRENT_TIMESTAMP WHERE QuoID=?',[data.quotation_summation,data.quotation_delivery,data.quotation_labor,data.quotation_bendingcharges,id])
+            connection.query('UPDATE project_site SET City=?,Barangay=?,StreetNumber=?,PostalCode=? WHERE ProjSiteID=?',[data.project_city,data.project_barangay,data.project_street,data.project_postal_code,proj.ProjSiteID],(err,result)=>{
+        connection.query('UPDATE project_type SET ProjDesc=?,ProjType=? WHERE ProjTypeID=?',[data.proj_description,data.project_type,proj.ProjTypeID],(err,type)=>{
+            connection.query('UPDATE mat_list SET TotalListPrice=? WHERE MatListID=?',[data.totalListPrice],(err,mat)=>{
+                for(var i=0;i<data.material.length;i++){
+                    connection.query('SELECT * FROM materials M JOIN mat_details MD ON M.MatDetailsID=MD.MatDetailsID AND MD.MatDescription=? ',[data.material[i].material_name],(err,dets)=>{
+                        if(dets==null){
+                            connection.query('INSERT INTO materials SET MatListID=?,MatDetailsID=?,MatQty=?,TotalPrice=?',[mat.MatListID,dets.MatDetailsID,data.material[i].material_quantity,data.material[i].material_price])
+                            connection.query('UPDATE mat_details SET MatQuantity=? WHERE MatDetailsID=?',[dets.MatQuantity-data.materials[i].material_quantity,dets.MatDetailsID])
+                        }
+                    })
+                }
+                connection.query('UPDATE project SET ProjStart=?,ProjEnd=? WHERE ProjectID=?',[data.date_from,date_until],(err,project)=>{
+                    connection.query('UPDATE customers SET CustName=?,StreetNumber=?,Barangay=?,City=?,PostalCode=? WHERE CustID=?',[data.customer_name,data.customer_street,data.customer_barangay,data.customer_city,data.customer_postal_code],(err,cust)=>{
+                    })
+                })
+            })
+        })
+    })
+            })
+            res.status(200).json({message: "Quotation Updated"})
+        })
+        
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
 })
 app.delete('/quotation/:id',urlencodedParser,(req,res)=>{
     let id = req.params.id;
