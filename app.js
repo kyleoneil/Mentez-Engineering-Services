@@ -142,9 +142,9 @@ app.get('/dashboard/quotation',(req,res)=>{
 
 app.get('/quotation',(req,res)=>{
     // if(req.session.loggedIn){
-        connection.query('SELECT Q.*,P.ProjID,PT.ProjDesc,PT.ProjType,PS.*,C.CustName,C.StreetNumber AS CustStreet,C.City AS CustCity,C.Barangay AS CustBarangay,C.PostalCode AS CustPostal,group_concat(S.subName,"-",SE.ServiceName) AS subcontractors FROM quotation Q JOIN customers C ON Q.CustID=C.CustID JOIN users U ON Q.UserID = U.UserID JOIN project P ON Q.ProjectID = P.ProjectID JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID JOIN project_site PS ON P.ProjectID=PS.ProjSiteID JOIN sub_contractors_labor SL ON SL.QuoID= Q.QuoID JOIN sub_contractors S ON SL.SubListID=S.SubListID JOIN services SE ON S.ServiceID=SE.ServiceID GROUP BY SL.QuoID,P.MatListID ',(err,result)=>{
+        connection.query('SELECT Q.*,P.ProjectID,PT.ProjDesc,PT.ProjType,PS.*,C.CustName,C.StreetNumber AS CustStreet,C.City AS CustCity,C.Barangay AS CustBarangay,C.PostalCode AS CustPostal,group_concat(S.subName,"-",SE.ServiceName) AS subcontractors FROM quotation Q JOIN customers C ON Q.CustID=C.CustID JOIN users U ON Q.UserID = U.UserID JOIN project P ON Q.ProjectID = P.ProjectID JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID JOIN project_site PS ON P.ProjectID=PS.ProjSiteID JOIN sub_contractors_labor SL ON SL.QuoID= Q.QuoID JOIN sub_contractors S ON SL.SubListID=S.SubListID JOIN services SE ON S.ServiceID=SE.ServiceID GROUP BY SL.QuoID',(err,result)=>{
         console.log(result);
-        connection.query('SELECT MD.MatName,MD.MatDescription,M.MatQty,MD.MatPrice,P.ProjID FROM project P JOIN mat_list ML ON P.MatListID= ML.MatListID JOIN materials M ON M.MatListID = ML.MatListID JOIN mat_details MD ON MD.MatDetailsID=M.MatDetailsID',(err,mat)=>{
+        connection.query('SELECT MD.MatName,MD.MatDescription,M.MatQty,MD.MatPrice,P.ProjectID FROM project P JOIN mat_list ML ON P.MatListID= ML.MatListID JOIN materials M ON M.MatListID = ML.MatListID JOIN mat_details MD ON MD.MatDetailsID=M.MatDetailsID',(err,mat)=>{
             res.status(200).json({data:result,materials:mat});
         })
     })
@@ -157,8 +157,9 @@ app.get('/quotation',(req,res)=>{
 app.get('/quotation/:id',(req,res)=>{
     let id = req.params.id;
     // if(req.session.loggedIn){
-        connection.query('SELECT Q.*,P.ProjID,PT.ProjDesc,PT.ProjType,PS.*,C.CustName,C.StreetNumber AS CustStreet,C.City AS CustCity,C.Barangay AS CustBarangay,C.PostalCode AS CustPostal,group_concat(S.subName,"-",SE.ServiceName) AS subcontractors FROM quotation Q JOIN customers C ON Q.CustID=C.CustID AND Q.QuoID=? JOIN users U ON Q.UserID = U.UserID JOIN project P ON Q.ProjectID = P.ProjectID JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID JOIN project_site PS ON P.ProjectID=PS.ProjSiteID JOIN sub_contractors_labor SL ON SL.QuoID= Q.QuoID JOIN sub_contractors S ON SL.SubListID=S.SubListID JOIN services SE ON S.ServiceID=SE.ServiceID GROUP BY SL.QuoID',id,(err,result)=>{
-        connection.query('SELECT MD.MatName,MD.MatDescription,M.MatQty,MD.MatPrice FROM project P JOIN mat_list ML ON P.ProjectID=? AND P.MatListID= ML.MatListID JOIN materials M ON M.MatListID = ML.MatListID JOIN mat_details MD ON MD.MatDetailsID=M.MatDetailsID',result.ProjID,(err,mat)=>{
+        connection.query('SELECT Q.*,P.ProjectID,PT.ProjDesc,PT.ProjType,PS.*,C.CustName,C.StreetNumber AS CustStreet,C.City AS CustCity,C.Barangay AS CustBarangay,C.PostalCode AS CustPostal,group_concat(S.subName,"-",SE.ServiceName) AS subcontractors FROM quotation Q JOIN customers C ON Q.CustID=C.CustID AND Q.QuoID=? JOIN users U ON Q.UserID = U.UserID JOIN project P ON Q.ProjectID = P.ProjectID JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID JOIN project_site PS ON P.ProjectID=PS.ProjSiteID JOIN sub_contractors_labor SL ON SL.QuoID= Q.QuoID JOIN sub_contractors S ON SL.SubListID=S.SubListID JOIN services SE ON S.ServiceID=SE.ServiceID GROUP BY SL.QuoID',id,(err,result)=>{
+            connection.query('SELECT MD.MatName,MD.MatDescription,M.MatQty,MD.MatPrice FROM project P JOIN mat_list ML ON P.MatListID= ML.MatListID AND P.ProjectID=? JOIN materials M ON M.MatListID = ML.MatListID JOIN mat_details MD ON MD.MatDetailsID=M.MatDetailsID',result[0].ProjectID,(err2,mat)=>{
+
             res.status(200).json({data:result,materials:mat});
         })
         
