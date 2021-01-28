@@ -272,7 +272,7 @@ app.get('/dashboard/monthly',(req,res)=>{
 
  app.get("/material/categories",(req,res)=>{                                                //GET SERVICES
     if(req.session.loggedIn){
-        connection.query("SELECT ServiceName FROM services",(err,result)=>{
+        connection.query("SELECT ServiceName, ServiceID FROM services",(err,result)=>{
             console.log(err);
             res.json(result);
         })
@@ -287,7 +287,7 @@ app.get('/dashboard/monthly',(req,res)=>{
         console.log(req.params.id);
         connection.query("SELECT MatDetailsID, MatDescription, MatName, MatPrice FROM mat_details WHERE ServiceID="+req.params.id,(err,result)=>{
             console.log(err);
-            res.json(result);
+            res.json(res                                                                                 ult);
         })
     }else{
         res.status(400).send({message:"Session Timeout"})
@@ -300,7 +300,7 @@ app.get('/dashboard/monthly',(req,res)=>{
         var data = JSON.parse(catcher);
         console.log(data);
         connection.query('INSERT INTO services (ServiceName) VALUES("'+data.ServiceName+'")',(err,result)=>{
-            console.log(err);
+            console.log(err);                            
             res.json({result,message:"Service Successfully Added"});
         })
     }else{
