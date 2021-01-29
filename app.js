@@ -287,7 +287,7 @@ app.get('/dashboard/monthly',(req,res)=>{
         console.log(req.params.id);
         connection.query("SELECT MatDetailsID, MatDescription, MatName, MatPrice FROM mat_details WHERE ServiceID="+req.params.id,(err,result)=>{
             console.log(err);
-            res.json(res                                                                                 ult);
+            res.json(res)                                                               
         })
     }else{
         res.status(400).send({message:"Session Timeout"})
@@ -349,7 +349,8 @@ app.post('/materials/add',urlencodedParser,(req,res)=>{                         
     if(req.session.loggedIn){
         var catcher = JSON.stringify(req.body);
         var data = JSON.parse(catcher);
-        connection.query('INSERT INTO materials(ServiceID,MatName,MatPrice,MatStatus,MatQuantity,MatDescription) VALUES ('+data.ServiceID+',"'+data.Matname+'",'+data.MatPrice+',"'+data.MatStatus+'",'+data.MatQuantity+',"'+data.MatDescription+'")',(err,result)=>{
+        connection.query('INSERT INTO mat_details(ServiceID,MatName,MatPrice,MatStatus,MatQuantity,MatDescription) VALUES ('+data.ServiceID+',"'+data.Matname+'",'+data.MatPrice+',"'+data.MatStatus+'",'+data.MatQuantity+',"'+data.MatDescription+'")',(err,result)=>{
+       
         })
     }else{
         res.status(400).send({message:"Session Timeout"})
@@ -400,6 +401,19 @@ app.post('/subcontractors/add',urlencodedParser,(req,res)=>{                    
         var catcher = JSON.stringify(req.body);
         var data = JSON.parse(catcher);
         connection.query('INSERT INTO sub_contractors(ServiceID,SubListID,SubName,created) VALUES('+data.ServiceID+','+data.SubListID+',"'+data.SubName+'",CURRENT_TIMESTAMP)',(err,result)=>{
+            console.log(err);
+            res.json({data:result});
+        })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+})
+
+app.post('/subcontractors/addsub',urlencodedParser,(req,res)=>{                                          //ADD SUBCONTRACTORS
+    if(req.session.loggedIn){
+        var catcher = JSON.stringify(req.body);
+        var data = JSON.parse(catcher);
+        connection.query('INSERT INTO sub_contractors(ServiceID,SubName,created) VALUES('+data.ServiceID+',"'+data.SubName+'",CURRENT_TIMESTAMP)',(err,result)=>{
             console.log(err);
             res.json({data:result});
         })

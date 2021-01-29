@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 25, 2021 at 06:18 PM
+-- Generation Time: Jan 29, 2021 at 06:17 PM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.2.34
 
@@ -113,7 +113,8 @@ INSERT INTO `mat_details` (`MatDetailsID`, `ServiceID`, `MatDescription`, `MatNa
 (2, 3, 'Tiles', 'Flooring', 200, 'IN STOCK', 100),
 (3, 3, 'Chandelier', 'Ceiling', 300, 'IN STOCK', 100),
 (8, 2, 'onilito4', 'onilito2', 69, 'HAHAY', 233323),
-(9, 3, 'sample', 'sample', 200, 'sample', 200);
+(9, 3, 'sample', 'sample', 200, 'sample', 200),
+(10, 2, 's', 'asda', 2, 'a', 2);
 
 -- --------------------------------------------------------
 
@@ -266,7 +267,7 @@ INSERT INTO `services` (`ServiceID`, `ServiceName`) VALUES
 CREATE TABLE `sub_contractors` (
   `SubID` int(11) NOT NULL,
   `ServiceID` int(11) NOT NULL,
-  `SubListID` int(11) NOT NULL,
+  `SubListID` int(11) DEFAULT NULL,
   `SubName` varchar(255) NOT NULL,
   `created` datetime NOT NULL,
   `updated` datetime DEFAULT NULL,
@@ -282,7 +283,9 @@ INSERT INTO `sub_contractors` (`SubID`, `ServiceID`, `SubListID`, `SubName`, `cr
 (8, 1, 6, 'Euniel', '2021-01-22 21:14:17', NULL, NULL),
 (9, 3, 5, 'Lance', '2021-01-22 21:14:17', NULL, NULL),
 (10, 1, 5, 'Onilito', '2021-01-22 21:14:17', NULL, NULL),
-(11, 4, 5, 'Euniel', '2021-01-22 21:14:17', NULL, NULL);
+(11, 4, 5, 'Euniel', '2021-01-22 21:14:17', NULL, NULL),
+(15, 1, 6, 'SD', '2021-01-30 01:11:52', NULL, NULL),
+(17, 1, NULL, 'SD', '2021-01-30 01:16:56', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -329,7 +332,8 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`UserID`, `Username`, `Password`, `Email`, `Name`, `created`, `updated`, `deleted`) VALUES
 (1, 'Onilito', 'admin', 's', 'ss', '2021-01-26 00:36:17', '2021-01-26 00:44:57', NULL),
 (2, 'Onilitoa', '$2b$10$lW0ZYHuISkfgCwDY4VjsYeuJL9X11jVnL3q4HjYz8fU4L9ZJAU/4u', 's', 'ss', '2021-01-26 00:36:21', '2021-01-26 01:15:17', NULL),
-(3, 'sss', '$2b$10$doAughbkFldywBctOeVq7.RwPDdSn5vHmhpghjbe42sElLb7fkg7u', 's', 'ss', '2021-01-26 00:38:43', NULL, NULL);
+(3, 'sss', '$2b$10$doAughbkFldywBctOeVq7.RwPDdSn5vHmhpghjbe42sElLb7fkg7u', 's', 'ss', '2021-01-26 00:38:43', NULL, NULL),
+(4, 'sssss', '$2b$10$lT2npkChdG69Gq9KjJOIfu9TfTG3T.1OzX5BkgqP87L4Gy.YOjAj2', 's', 'ssss', '2021-01-28 23:47:25', NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -452,7 +456,7 @@ ALTER TABLE `materials`
 -- AUTO_INCREMENT for table `mat_details`
 --
 ALTER TABLE `mat_details`
-  MODIFY `MatDetailsID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `MatDetailsID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `mat_list`
@@ -494,7 +498,7 @@ ALTER TABLE `services`
 -- AUTO_INCREMENT for table `sub_contractors`
 --
 ALTER TABLE `sub_contractors`
-  MODIFY `SubID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `SubID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `sub_contractors_labor`
@@ -506,7 +510,7 @@ ALTER TABLE `sub_contractors_labor`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
