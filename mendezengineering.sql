@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 29, 2021 at 06:17 PM
+-- Generation Time: Feb 03, 2021 at 05:11 PM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.2.34
 
@@ -101,20 +101,23 @@ CREATE TABLE `mat_details` (
   `MatName` varchar(255) NOT NULL,
   `MatPrice` int(11) NOT NULL,
   `MatStatus` varchar(255) NOT NULL,
-  `MatQuantity` int(11) NOT NULL
+  `MatQuantity` int(11) NOT NULL,
+  `created` datetime DEFAULT NULL,
+  `updated` datetime DEFAULT NULL,
+  `deleted` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `mat_details`
 --
 
-INSERT INTO `mat_details` (`MatDetailsID`, `ServiceID`, `MatDescription`, `MatName`, `MatPrice`, `MatStatus`, `MatQuantity`) VALUES
-(1, 2, 'Wood', 'Flooring', 100, 'IN STOCK', 100),
-(2, 3, 'Tiles', 'Flooring', 200, 'IN STOCK', 100),
-(3, 3, 'Chandelier', 'Ceiling', 300, 'IN STOCK', 100),
-(8, 2, 'onilito4', 'onilito2', 69, 'HAHAY', 233323),
-(9, 3, 'sample', 'sample', 200, 'sample', 200),
-(10, 2, 's', 'asda', 2, 'a', 2);
+INSERT INTO `mat_details` (`MatDetailsID`, `ServiceID`, `MatDescription`, `MatName`, `MatPrice`, `MatStatus`, `MatQuantity`, `created`, `updated`, `deleted`) VALUES
+(1, 2, 'Wood', 'Flooring', 100, 'IN STOCK', 100, NULL, NULL, NULL),
+(2, 3, 'Tiles', 'Flooring', 200, 'IN STOCK', 100, NULL, NULL, NULL),
+(3, 3, 'Chandelier', 'Ceiling', 300, 'IN STOCK', 100, NULL, NULL, NULL),
+(8, 2, 'onilito4', 'onilito2', 69, 'HAHAY', 233323, NULL, NULL, NULL),
+(9, 3, 'sample', 'sample', 200, 'sample', 200, NULL, NULL, NULL),
+(10, 2, 's', 'asda', 2, 'a', 2, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 

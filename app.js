@@ -88,7 +88,7 @@ app.post('/register',urlencodedParser,(req,res)=>{
 app.get('/users',(req,res)=>{
     if(req.session.loggedIn){
         console.log("xd")
-        connection.query('SELECT * FROM users',(err,result)=>{
+        connection.query('SELECT * FROM users WHERE deleted IS NULL',(err,result)=>{
         console.log(result);
         res.json(result);
     })
@@ -99,7 +99,7 @@ app.get('/users',(req,res)=>{
 app.get('/users/get',(req,res)=>{
     if(req.session.loggedIn){
         console.log("xd")
-        connection.query('SELECT * FROM users WHERE UserID='+req.query.id+'',(err,result)=>{
+        connection.query('SELECT * FROM users WHERE UserID='+req.query.id+' ',(err,result)=>{
         console.log(result);
         res.json(result);
     })
@@ -129,7 +129,7 @@ app.post('/users/delete',urlencodedParser,(req,res)=>{
     if(req.session.loggedIn){
 
         let id = req.query.id
-        connection.query('UPDATE FROM users SET deleted = CURRENT_TIMESTAMP WHERE UserID='+id+'',(err,result)=>{
+        connection.query('UPDATE users SET deleted = CURRENT_TIMESTAMP WHERE UserID='+id+'',(err,result)=>{
         console.log(result);
         res.json({message:"Account Removed Successfull"});
     })
@@ -285,7 +285,7 @@ app.get('/dashboard/monthly',(req,res)=>{
 
     if(req.session.loggedIn){
         console.log(req.params.id);
-        connection.query("SELECT MatDetailsID, MatDescription, MatName, MatPrice FROM mat_details WHERE ServiceID="+req.params.id,(err,result)=>{
+        connection.query("SELECT MatDetailsID, MatDescription, MatName, MatPrice, MatStatus, MatQuantity FROM mat_details WHERE ServiceID="+req.params.id,(err,result)=>{
             console.log(err);
             res.json(res)                                                               
         })
@@ -334,10 +334,9 @@ app.delete("/material/categories/delete",urlencodedParser,(req,res)=>{
 
 
 
-
 app.get('/materials',(req,res)=>{                                               //GET MATERIAL
     if(req.session.loggedIn){
-        connection.query("SELECT * FROM materials",(err,result)=>{
+        connection.query("SELECT * FROM materials WHERE deleted IS NULL",(err,result)=>{
             res.json({data:result});
         })
     }else{
@@ -349,7 +348,7 @@ app.post('/materials/add',urlencodedParser,(req,res)=>{                         
     if(req.session.loggedIn){
         var catcher = JSON.stringify(req.body);
         var data = JSON.parse(catcher);
-        connection.query('INSERT INTO mat_details(ServiceID,MatName,MatPrice,MatStatus,MatQuantity,MatDescription) VALUES ('+data.ServiceID+',"'+data.Matname+'",'+data.MatPrice+',"'+data.MatStatus+'",'+data.MatQuantity+',"'+data.MatDescription+'")',(err,result)=>{
+        connection.query('INSERT INTO mat_details(ServiceID,MatName,MatPrice,MatStatus,MatQuantity,MatDescription,created) VALUES ('+data.ServiceID+',"'+data.Matname+'",'+data.MatPrice+',"'+data.MatStatus+'",'+data.MatQuantity+',"'+data.MatDescription+'",CURRENT_TIMESTAMP)',(err,result)=>{
        
         })
     }else{
@@ -361,7 +360,7 @@ app.delete('/materials/delete',urlencodedParser,(req,res)=>{                    
     if(req.session.loggedIn){
       
         var id = req.query.id;
-        connection.query("DELETE FROM mat_details WHERE MatDetailsID="+id,(err,result)=>{
+        connection.query("UPDATE mat_details SET deleted = CURRENT_TIMESTAMP WHERE MatDetailsID="+id,(err,result)=>{
          
             res.json({message:"Material Successfully Removed"});
         })
@@ -375,7 +374,7 @@ app.post('/materials/update',urlencodedParser,(req,res)=>{                      
     if(req.session.loggedIn){
         var catcher = JSON.stringify(req.body);
         var data = JSON.parse(catcher);
-        connection.query('UPDATE mat_details SET ServiceID="'+data.ServiceID+'",MatName="'+data.MatName+'",MatPrice="'+data.MatPrice+'",MatStatus="'+data.MatStatus+'",MatQuantity="'+data.MatQuantity+'",MatDescription="'+data.MatDescription+'" WHERE MatDetailsID='+data.MatDetailsID,(err,result)=>{
+        connection.query('UPDATE mat_details SET updated = CURRENT_TIMESTAMP, ServiceID="'+data.ServiceID+'",MatName="'+data.MatName+'",MatPrice="'+data.MatPrice+'",MatStatus="'+data.MatStatus+'",MatQuantity="'+data.MatQuantity+'",MatDescription="'+data.MatDescription+'" WHERE MatDetailsID='+data.MatDetailsID,(err,result)=>{
             console.log(result);
             res.json({message:"Material Successfully Updated"});
         })
