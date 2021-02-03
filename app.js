@@ -356,7 +356,7 @@ app.post('/materials/add',urlencodedParser,(req,res)=>{                         
     }
 })
 
-app.delete('/materials/delete',urlencodedParser,(req,res)=>{                      //DELETE MATERIAL
+app.post('/materials/delete',urlencodedParser,(req,res)=>{                      //DELETE MATERIAL
     if(req.session.loggedIn){
       
         var id = req.query.id;
