@@ -86,56 +86,56 @@ app.post('/register',urlencodedParser,(req,res)=>{
    
 })
 app.get('/users',(req,res)=>{
-    if(req.session.loggedIn){
-        console.log("xd")
-        connection.query('SELECT * FROM users WHERE deleted IS NULL',(err,result)=>{
-        console.log(result);
+    // if(req.session.loggedIn){
+       
+        connection.query('SELECT * FROM users WHERE deleted IS NULL' ,(err,result)=>{
+        
         res.json(result);
     })
-    }else{
-        res.status(400).send({message:"Session Timeout"})
-    }
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
 })
 app.get('/users/get',(req,res)=>{
-    if(req.session.loggedIn){
-        console.log("xd")
-        connection.query('SELECT * FROM users WHERE UserID='+req.query.id+' ',(err,result)=>{
-        console.log(result);
+    // if(req.session.loggedIn){
+        connection.query('SELECT * FROM users WHERE UserID='+req.query.id+'',(err,result)=>{
+      
         res.json(result);
     })
-    }else{
-        res.status(400).send({message:"Session Timeout"})
-    }
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
 })
 
 
 app.post('/users/update',urlencodedParser,(req,res)=>{
-    if(req.session.loggedIn){
-        let name = req.body.data.name;
-        let email= req.body.data.email;
-        let username= req.body.data.username;
+    // if(req.session.loggedIn){
+        let name = req.body.data.Name;
+        let email= req.body.data.Email;
+        let username= req.body.data.Username;
         let id = req.query.id
         console.log(username)
-        connection.query('UPDATE users SET Username="'+username+'", Name="'+name+'",Email="'+email+'",updated = CURRENT_TIMESTAMP WHERE UserID='+id+'',(err,result)=>{
+        connection.query('UPDATE users SET Username="'+username+'", Name="'+name+'",Email="'+email+'" WHERE UserID='+id+'',(err,result)=>{
         console.log(result);
         res.json({message:"Account Updated Successfull"});
     })
-    }else{
-        res.status(400).send({message:"Session Timeout"})
-    }
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
 })
 
 app.post('/users/delete',urlencodedParser,(req,res)=>{
-    if(req.session.loggedIn){
+    // if(req.session.loggedIn){
 
         let id = req.query.id
         connection.query('UPDATE users SET deleted = CURRENT_TIMESTAMP WHERE UserID='+id+'',(err,result)=>{
         console.log(result);
+        console.log(err);
         res.json({message:"Account Removed Successfull"});
     })
-    }else{
-        res.status(400).send({message:"Session Timeout"})
-    }
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
 })
 
 //=================================================================QUOTATION==================================================================================//
@@ -271,27 +271,27 @@ app.get('/dashboard/monthly',(req,res)=>{
  //=================================================================MATERIAL==================================================================================//
 
  app.get("/material/categories",(req,res)=>{                                                //GET SERVICES
-    if(req.session.loggedIn){
+    // if(req.session.loggedIn){
         connection.query("SELECT ServiceName, ServiceID FROM services",(err,result)=>{
             console.log(err);
             res.json(result);
         })
-    }else{
-        res.status(400).send({message:"Session Timeout"})
-    }
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
  })
 
  app.get("/material/categories/:id",(req,res)=>{                                            //GET MATERIAL PER SERVICE
 
-    if(req.session.loggedIn){
+    // if(req.session.loggedIn){
         console.log(req.params.id);
-        connection.query("SELECT MatDetailsID, MatDescription, MatName, MatPrice, MatStatus, MatQuantity FROM mat_details WHERE ServiceID="+req.params.id,(err,result)=>{
+        connection.query('SELECT MatDetailsID, MatDescription, MatName, MatStatus, MatQuantity, MatPrice FROM mat_details WHERE ServiceID='+req.params.id+' AND deleted IS NULL',(err,result)=>{
             console.log(err);
-            res.json(res)                                                               
+            res.json(result);
         })
-    }else{
-        res.status(400).send({message:"Session Timeout"})
-    }
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
  })
 
  app.post("/material/categories/add",urlencodedParser,(req,res)=>{                                           //ADD SERVICE
@@ -335,90 +335,78 @@ app.delete("/material/categories/delete",urlencodedParser,(req,res)=>{
 
 
 app.get('/materials',(req,res)=>{                                               //GET MATERIAL
-    if(req.session.loggedIn){
+    // if(req.session.loggedIn){
         connection.query("SELECT * FROM materials WHERE deleted IS NULL",(err,result)=>{
             res.json({data:result});
         })
-    }else{
-        res.status(400).send({message:"Session Timeout"})
-    }
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
 })
 
 app.post('/materials/add',urlencodedParser,(req,res)=>{                         //ADD MATERIAL
-    if(req.session.loggedIn){
+    // if(req.session.loggedIn){
         var catcher = JSON.stringify(req.body);
         var data = JSON.parse(catcher);
-        connection.query('INSERT INTO mat_details(ServiceID,MatName,MatPrice,MatStatus,MatQuantity,MatDescription,created) VALUES ('+data.ServiceID+',"'+data.Matname+'",'+data.MatPrice+',"'+data.MatStatus+'",'+data.MatQuantity+',"'+data.MatDescription+'",CURRENT_TIMESTAMP)',(err,result)=>{
-       
+        connection.query('INSERT INTO mat_details(ServiceID,MatName,MatPrice,MatStatus,MatQuantity,MatDescription, created) VALUES ('+data.ServiceID+',"'+data.Matname+'",'+data.MatPrice+',"'+data.MatStatus+'",'+data.MatQuantity+',"'+data.MatDescription+'", CURRENT_TIMESTAMP)',(err,result)=>{
+        console.log(err)
         })
-    }else{
-        res.status(400).send({message:"Session Timeout"})
-    }
+
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
 })
 
 app.post('/materials/delete',urlencodedParser,(req,res)=>{                      //DELETE MATERIAL
-    if(req.session.loggedIn){
+    // if(req.session.loggedIn){
       
         var id = req.query.id;
         connection.query("UPDATE mat_details SET deleted = CURRENT_TIMESTAMP WHERE MatDetailsID="+id,(err,result)=>{
-         
+            console.log(err)
             res.json({message:"Material Successfully Removed"});
         })
-    }else{
-        res.status(400).send({message:"Session Timeout"})
-    }
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
 })
 
 app.post('/materials/update',urlencodedParser,(req,res)=>{                      //UPDATE MATERIAL
    
-    if(req.session.loggedIn){
+    // if(req.session.loggedIn){
         var catcher = JSON.stringify(req.body);
         var data = JSON.parse(catcher);
-        connection.query('UPDATE mat_details SET updated = CURRENT_TIMESTAMP, ServiceID="'+data.ServiceID+'",MatName="'+data.MatName+'",MatPrice="'+data.MatPrice+'",MatStatus="'+data.MatStatus+'",MatQuantity="'+data.MatQuantity+'",MatDescription="'+data.MatDescription+'" WHERE MatDetailsID='+data.MatDetailsID,(err,result)=>{
-            console.log(result);
+        connection.query('UPDATE mat_details SET updated = CURRENT_TIMESTAMP, MatName="'+data.MatName+'",MatPrice="'+data.MatPrice+'",MatStatus="'+data.MatStatus+'",MatQuantity="'+data.MatQuantity+'",MatDescription="'+data.MatDescription+'" WHERE MatDetailsID='+data.MatDetailsID,(err,result)=>{
+            console.log(err);
             res.json({message:"Material Successfully Updated"});
         })
-    }else{
-        res.status(400).send({message:"Session Timeout"})
-    }
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
 })
 
 //=================================================================SUBCONTRACTORS==================================================================================//
 app.get('/subcontractors',(req,res)=>{                                          //GET ALL SUBCONTRACTORS
-    if(req.session.loggedIn){
-        connection.query("SELECT SC.SubName,S.ServiceName FROM sub_contractors SC JOIN services S ON  SC.ServiceID = S.ServiceID WHERE deleted IS NULL ",(err,result)=>{
+    // if(req.session.loggedIn){
+        connection.query("SELECT SC.SubName,S.ServiceName,SC.SubID FROM sub_contractors SC JOIN services S ON  SC.ServiceID = S.ServiceID WHERE deleted IS NULL ",(err,result)=>{
             console.log(err);
             res.json({data:result});
         })
-    }else{
-        res.status(400).send({message:"Session Timeout"})
-    }
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
 })
 
 app.post('/subcontractors/add',urlencodedParser,(req,res)=>{                                          //ADD SUBCONTRACTORS
-    if(req.session.loggedIn){
+    // if(req.session.loggedIn){
         var catcher = JSON.stringify(req.body);
         var data = JSON.parse(catcher);
         connection.query('INSERT INTO sub_contractors(ServiceID,SubListID,SubName,created) VALUES('+data.ServiceID+','+data.SubListID+',"'+data.SubName+'",CURRENT_TIMESTAMP)',(err,result)=>{
             console.log(err);
             res.json({data:result});
         })
-    }else{
-        res.status(400).send({message:"Session Timeout"})
-    }
-})
-
-app.post('/subcontractors/addsub',urlencodedParser,(req,res)=>{                                          //ADD SUBCONTRACTORS
-    if(req.session.loggedIn){
-        var catcher = JSON.stringify(req.body);
-        var data = JSON.parse(catcher);
-        connection.query('INSERT INTO sub_contractors(ServiceID,SubName,created) VALUES('+data.ServiceID+',"'+data.SubName+'",CURRENT_TIMESTAMP)',(err,result)=>{
-            console.log(err);
-            res.json({data:result});
-        })
-    }else{
-        res.status(400).send({message:"Session Timeout"})
-    }
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
 })
 
 app.post('/subcontractors/update',urlencodedParser,(req,res)=>{                                          //UPDATE SUBCONTRACTORS
@@ -435,14 +423,15 @@ app.post('/subcontractors/update',urlencodedParser,(req,res)=>{                 
 })
 
 app.post('/subcontractors/delete',urlencodedParser,(req,res)=>{                                           //DELETE SUBCONTRACTOR
-    if(req.session.loggedIn){
+    // if(req.session.loggedIn){
         connection.query('UPDATE sub_contractors SET deleted = CURRENT_TIMESTAMP WHERE SubID='+req.query.id+'',(err,result)=>{
             console.log(result);
+            console.log(err)
             res.json({data:result,message:"Subcontractor Successfully Deleted"});
         })
-    }else{
-        res.status(400).send({message:"Session Timeout"})
-    }
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
 })
 
 // app.delete('/subcontractors/delete',urlencodedParser,(req,res)=>{                      //DELETE SUBCONTRACTOR

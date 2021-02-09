@@ -254,12 +254,10 @@ CREATE TABLE `services` (
 --
 
 INSERT INTO `services` (`ServiceID`, `ServiceName`) VALUES
-(1, 'Delivery'),
-(2, 'Wiring'),
-(3, 'Lighting'),
-(4, 'Plumming'),
-(6, 'Electrical'),
-(7, 'Dummy');
+(1, 'Roofing'),
+(2, 'Masonry'),
+(3, 'Electrical'),
+(4, 'Plumbing');
 
 -- --------------------------------------------------------
 

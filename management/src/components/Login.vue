@@ -103,8 +103,8 @@ export default {
         method: 'POST',
         url: 'http://localhost:3000/login',
         data: {
-          username: this.username,
-          password: this.password
+          username: 'admin',
+          password: 'admin'
         },
       })
       .then((response) =>{
@@ -116,6 +116,6 @@ export default {
         }
       })
     }
-  }
+  },
 }
 </script>
