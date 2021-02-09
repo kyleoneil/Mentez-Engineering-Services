@@ -29,10 +29,10 @@
                 <v-card-text > 
                     <!-- <v-form class="px-3"> -->
                         <v-select :items="selected" label="Category" prepend-icon="mdi-menu" v-model="category" clearable></v-select>
-                        <v-text-field label="Name" prepend-icon="mdi-pencil" v-model="Mat.name" clearable></v-text-field>
-                        <v-text-field label="Decription"  prepend-icon="fa-edit" v-model="Mat.Description" clearable></v-text-field>
-                        <v-text-field label="Quantity"  prepend-icon="mdi-minus" v-model="Mat.quantity" clearable></v-text-field>
-                        <v-text-field label="Price"  prepend-icon="mdi-plus" v-model="Mat.prize" clearable></v-text-field>
+                        <v-text-field :rules="inputRules" label="Name" prepend-icon="mdi-pencil" v-model="Mat.name" clearable></v-text-field>
+                        <v-text-field :rules="inputRules" label="Decription"  prepend-icon="fa-edit" v-model="Mat.Description" clearable></v-text-field>
+                        <v-text-field :rules="inputRules" label="Quantity"  prepend-icon="mdi-minus" v-model="Mat.quantity" clearable></v-text-field>
+                        <v-text-field :rules="inputRules" label="Price"  prepend-icon="mdi-plus" v-model="Mat.prize" clearable></v-text-field>
                         <v-select :items="items" label="Status" prepend-icon="mdi-widgets" v-model="Mat.status" clearable></v-select>
                         
                         <v-divider></v-divider>
@@ -214,6 +214,9 @@ export default {
             service: "",
             search:'',
             id:"",
+            inputRules:[
+                v => v.length >= 1 || 'Required'
+            ]
         }
     },
     methods:{

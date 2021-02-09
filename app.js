@@ -445,6 +445,18 @@ app.post('/subcontractors/delete',urlencodedParser,(req,res)=>{                 
 //         res.status(400).send({message:"Session Timeout"})
 //     }
 // })
+app.post('/subcontractors/addsub',urlencodedParser,(req,res)=>{                                          //ADD SUBCONTRACTORS
+    // if(req.session.loggedIn){
+        var catcher = JSON.stringify(req.body);
+        var data = JSON.parse(catcher);
+        connection.query('INSERT INTO sub_contractors(ServiceID,SubName,created) VALUES('+data.ServiceID+',"'+data.SubName+'",CURRENT_TIMESTAMP)',(err,result)=>{
+            console.log(err);
+            res.json({data:result});
+        })
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
+})
 
 app.get('/materials/:id',(req,res)=>{
     let id = req.params.id;

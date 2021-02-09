@@ -16,10 +16,10 @@
 
                 <v-card-text>
                     <!-- <v-form class="px-3" @submit="postData" method="post" href="http://localhost:3000/register"> -->
-                        <v-text-field label="FullName" prepend-icon="mdi-pencil" v-model="people.name" clearable></v-text-field>
-                        <v-text-field label="Email Address" prepend-icon="mdi-email" v-model="people.email" clearable></v-text-field>
-                        <v-text-field label="UserName"  prepend-icon="mdi-account" v-model="people.username" clearable></v-text-field>
-                        <v-text-field label="Password"  prepend-icon="mdi-lock" v-model="people.password" clearable></v-text-field>
+                        <v-text-field :rules="inputRules" label="FullName" prepend-icon="mdi-pencil" v-model="people.name" clearable></v-text-field>
+                        <v-text-field :rules="emailRules" label="Email Address" prepend-icon="mdi-email" v-model="people.email" clearable></v-text-field>
+                        <v-text-field :rules="inputRules" label="UserName"  prepend-icon="mdi-account" v-model="people.username" clearable></v-text-field>
+                        <v-text-field :rules="inputRules" label="Password"  prepend-icon="mdi-lock" v-model="people.password" clearable></v-text-field>
                         
                         <v-divider></v-divider>
 
@@ -139,6 +139,13 @@ export default {
             EmailAddress:"",
             Username:"",
             id:"",
+            inputRules:[
+                v => v.length >= 3 || '3 Characters above'
+            ],
+            emailRules: [
+        v => !!v || 'E-mail is required',
+        v => /.+@.+/.test(v) || 'E-mail must be valid',
+      ],
         }
     },
     methods:{

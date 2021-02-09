@@ -28,7 +28,7 @@
 
                 <v-card-text>
                     
-                        <v-text-field label="Name" prepend-icon="mdi-pencil" v-model="people.name" clearable></v-text-field>
+                        <v-text-field :rules="inputRules" label="Name" prepend-icon="mdi-pencil" v-model="people.name" clearable></v-text-field>
                         <v-select :items="selected" label="Category" prepend-icon="mdi-menu" v-model="category" clearable></v-select>
                         
                         
@@ -91,7 +91,10 @@ export default {
             peps:"",
             sub:[],
             search:'',
-            id:""
+            id:"",
+            inputRules: [
+                v => v.length >= 3 || '3 Characters above'
+            ]
         }
     },
     methods:{
