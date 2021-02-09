@@ -285,7 +285,7 @@ app.get('/dashboard/monthly',(req,res)=>{
 
     if(req.session.loggedIn){
         console.log(req.params.id);
-        connection.query("SELECT MatDetailsID, MatDescription, MatName, MatPrice, MatStatus, MatQuantity FROM mat_details WHERE ServiceID="+req.params.id,(err,result)=>{
+        connection.query('SELECT MatDetailsID, MatDescription, MatName, MatPrice, MatStatus, MatQuantity FROM mat_details WHERE ServiceID='+req.params.id+'AND deleted is NULL',(err,result)=>{
             console.log(err);
             res.json(res)                                                               
         })
@@ -386,7 +386,7 @@ app.post('/materials/update',urlencodedParser,(req,res)=>{                      
 //=================================================================SUBCONTRACTORS==================================================================================//
 app.get('/subcontractors',(req,res)=>{                                          //GET ALL SUBCONTRACTORS
     if(req.session.loggedIn){
-        connection.query("SELECT SC.SubName,S.ServiceName FROM sub_contractors SC JOIN services S ON  SC.ServiceID = S.ServiceID WHERE deleted IS NULL ",(err,result)=>{
+        connection.query("SELECT SC.SubName,S.ServiceName,SC.SubID FROM sub_contractors SC JOIN services S ON  SC.ServiceID = S.ServiceID WHERE deleted IS NULL ",(err,result)=>{
             console.log(err);
             res.json({data:result});
         })
