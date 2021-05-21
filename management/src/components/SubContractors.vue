@@ -8,11 +8,7 @@
                     <v-col cols="12" sm="6" md="4">
                         <v-text-field placeholder="Search" solo v-model="search"></v-text-field>
                     </v-col>
-                    <v-col>
-                        <v-btn color="grey--text" class="py-6">
-                            <v-icon>fa-search</v-icon>
-                        </v-btn>
-                    </v-col>
+                
                     <v-col>
                         <v-dialog v-model="dialog" width="500">
             <template v-slot:activator="{ on, attrs }">
@@ -55,7 +51,7 @@
        
 
         <v-divider class="mx-3"></v-divider>
-        <v-card flat class="my-3 mx-12 pa-5" style="background-color: #F8F8F8" v-for="(subcon, x) in peps" :key="x">
+        <v-card flat class="my-3 mx-12 pa-5" style="background-color: #F8F8F8" v-for="(subcon, x) in filtercon" :key="x">
             <v-layout row wrap >
             <v-flex xs12 md6>
                 <div class="caption grey--text">Sub Contarctor</div>
@@ -88,7 +84,7 @@ export default {
             people: {name: '', serviceid: null},
             category:'',
             service:'',
-            peps:"",
+            peps:[],
             sub:[],
             search:'',
             id:"",
@@ -141,13 +137,13 @@ export default {
     
     },
 
-    // computed:{
-    //     filter(){
-    //         return this.sub.filter((subcon)=>{
-    //             return subcon.name.match(this.search);
-    //         })
-    //     }
-    // },
+     computed:{
+         filtercon: function(){
+             return this.peps.filter((subcon)=>{
+                 return subcon.SubName.match(this.search);
+             });
+         }
+     },
 
     created(){
         axios({

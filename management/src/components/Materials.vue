@@ -8,11 +8,7 @@
                     <v-col cols="12" sm="6" md="4">
                         <v-text-field placeholder="Search" solo v-model="search"></v-text-field>
                     </v-col>
-                    <v-col>
-                        <v-btn color="grey--text" class="py-6">
-                            <v-icon>fa-search</v-icon>
-                        </v-btn>
-                    </v-col>
+                    
                     <v-col>
                         <v-dialog v-model="dialog" width="500">
             <template v-slot:activator="{ on, attrs }">
@@ -65,7 +61,7 @@
           </v-tabs>
        
         <v-divider class="mx-3"></v-divider>
-        <v-card v-model="tab" flat class="my-3 mx-12 pa-5" style="background-color: #F8F8F8" v-for="(materials, x) in materialzz" :key="x">
+        <v-card v-model="tab" flat class="my-3 mx-12 pa-5" style="background-color: #F8F8F8" v-for="(materials, x) in filtermat" :key="x">
             <v-tabs-slider color="yellow"></v-tabs-slider>
             <v-layout row wrap>
             <v-flex xs12 md3>
@@ -209,7 +205,7 @@ export default {
             quantityMat:"",
             prizeMat:"",
 
-            materialzz:"",
+            materialzz:[],
             maurice:[],
             service: "",
             search:'',
@@ -366,9 +362,9 @@ export default {
     
 
     computed:{
-        filter(){
-            return this.maurice.filter((materials)=>{
-                return materials.name.match(this.search);
+        filtermat: function(){
+            return this.materialzz.filter((materials)=>{
+                return materials.MatName.match(this.search);
             })
         },
 

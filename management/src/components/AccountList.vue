@@ -44,7 +44,7 @@
                     <v-card class="text-center ma-3" style="background-color: #E5E5E5;">
                         <v-responsive class="pt-4">
                             <v-avatar size="100" >
-                                
+                                <img :src="picture">
                             </v-avatar>
                         </v-responsive>
                         <v-card-text>
@@ -130,6 +130,7 @@ export default {
             //     {name: 'James Balingit Carl', contact: '09876347654', avatar:'/yaoya.png', username:'Username', password:'Password'},
             //     {name: 'Lance Tezon Maurice', contact: '09876347654', avatar:'/diona.jpg', username:'Username', password:'Password'},
             // ],
+            picture: '/qiqi.jpg',
             people:{name:'', email:'', username: '', password: ''},
             use:"",
             gwapo: false,
