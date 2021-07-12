@@ -111,7 +111,7 @@ export default {
         if(response.status == 200 && response.data.status == 200){
           this.$router.push('/dashboard');
         }
-        if(response.status == 400 && response.data.status == 200){
+        if(response.status == 200 && response.data.status == 400){
           this.$router.go();
         }
       })
