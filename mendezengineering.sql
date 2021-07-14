@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.3
+-- version 5.0.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 03, 2021 at 05:11 PM
--- Server version: 10.4.14-MariaDB
--- PHP Version: 7.2.34
+-- Generation Time: Jul 14, 2021 at 06:13 AM
+-- Server version: 10.4.11-MariaDB
+-- PHP Version: 7.4.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -40,7 +41,8 @@ CREATE TABLE `billings` (
 INSERT INTO `billings` (`BillID`, `Amount`, `Date`) VALUES
 (1, 2000, '2020-07-21 00:00:00'),
 (2, 5000, '2021-02-13 00:00:00'),
-(3, 20000, '2020-10-07 00:00:00');
+(3, 20000, '2020-10-07 00:00:00'),
+(4, 10000, '2021-07-14 04:01:52');
 
 -- --------------------------------------------------------
 
@@ -62,7 +64,11 @@ INSERT INTO `customers` (`CustID`, `CustName`) VALUES
 (2, 'Onilito'),
 (3, 'Onilito Gwapito'),
 (4, 'Oneil'),
-(5, 'ImbaOnil');
+(5, 'ImbaOnil'),
+(6, 'Yawaers'),
+(7, 'Yawaers'),
+(8, 'Yawaers'),
+(9, 'Yawaers');
 
 -- --------------------------------------------------------
 
@@ -86,7 +92,15 @@ INSERT INTO `materials` (`MatID`, `MatDetailsID`, `MatListID`, `TotalPrice`, `Ma
 (2, 2, 1, 400, 2),
 (3, 1, 1, 400, 3),
 (4, 2, 2, 400, 2),
-(5, 3, 2, 500, 3);
+(5, 3, 2, 500, 3),
+(6, 9, 3, 200, 2),
+(7, 1, 3, 100, 1),
+(8, 9, 4, 200, 2),
+(9, 1, 4, 100, 1),
+(10, 9, 5, 200, 2),
+(11, 1, 5, 100, 1),
+(12, 9, 6, 200, 2),
+(13, 1, 6, 100, 1);
 
 -- --------------------------------------------------------
 
@@ -112,11 +126,11 @@ CREATE TABLE `mat_details` (
 --
 
 INSERT INTO `mat_details` (`MatDetailsID`, `ServiceID`, `MatDescription`, `MatName`, `MatPrice`, `MatStatus`, `MatQuantity`, `created`, `updated`, `deleted`) VALUES
-(1, 2, 'Wood', 'Flooring', 100, 'IN STOCK', 100, NULL, NULL, NULL),
+(1, 2, 'Wood', 'Flooring', 100, 'IN STOCK', 96, NULL, NULL, NULL),
 (2, 3, 'Tiles', 'Flooring', 200, 'IN STOCK', 100, NULL, NULL, NULL),
 (3, 3, 'Chandelier', 'Ceiling', 300, 'IN STOCK', 100, NULL, NULL, NULL),
 (8, 2, 'onilito4', 'onilito2', 69, 'HAHAY', 233323, NULL, NULL, NULL),
-(9, 3, 'sample', 'sample', 200, 'sample', 200, NULL, NULL, NULL),
+(9, 3, 'sample', 'sample', 200, 'sample', 192, NULL, NULL, NULL),
 (10, 2, 's', 'asda', 2, 'a', 2, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
@@ -136,7 +150,11 @@ CREATE TABLE `mat_list` (
 
 INSERT INTO `mat_list` (`MatListID`, `TotalListPrice`) VALUES
 (1, 800),
-(2, 900);
+(2, 900),
+(3, 300),
+(4, 300),
+(5, 300),
+(6, 300);
 
 -- --------------------------------------------------------
 
@@ -160,7 +178,11 @@ CREATE TABLE `project` (
 INSERT INTO `project` (`ProjectID`, `MatListID`, `ProjTypeID`, `ProjSiteID`, `ProjStart`, `ProjEnd`) VALUES
 (1, 1, 3, 4, '2017-08-25 00:00:00', '2019-08-25 00:00:00'),
 (2, 2, 5, 2, '2020-10-05 00:00:00', '2022-02-02 00:00:00'),
-(3, 2, 1, 2, '0000-00-00 00:00:00', '2020-02-20 00:00:00');
+(3, 2, 1, 2, '0000-00-00 00:00:00', '2020-02-20 00:00:00'),
+(4, 3, 6, 5, '2021-08-13 23:59:59', '2021-08-15 23:59:59'),
+(5, 4, 7, 6, '2021-08-13 23:59:59', '2021-08-15 23:59:59'),
+(6, 5, 8, 7, '2021-08-13 23:59:59', '2021-08-15 23:59:59'),
+(7, 6, 9, 8, '2021-08-13 23:59:59', '2021-08-15 23:59:59');
 
 -- --------------------------------------------------------
 
@@ -184,7 +206,11 @@ INSERT INTO `project_site` (`ProjSiteID`, `City`, `Barangay`, `StreetNumber`, `P
 (1, 'Cebu City', 'Tisa', '251', '6000'),
 (2, 'Davao City', 'Somewhere in Davao', '221 jupiter', '420'),
 (3, 'Makati City', 'Makati barangay', '231', '69'),
-(4, 'Argao', 'Gutlang', '61th avenue', '7000');
+(4, 'Argao', 'Gutlang', '61th avenue', '7000'),
+(5, 'umayos', 'ka na sa', 'buhay mo', '123'),
+(6, 'umayos', 'ka na sa', 'buhay mo', '123'),
+(7, 'umayos', 'ka na sa', 'buhay mo', '123'),
+(8, 'umayos', 'ka na sa', 'buhay mo', '123');
 
 -- --------------------------------------------------------
 
@@ -207,7 +233,11 @@ INSERT INTO `project_type` (`ProjTypeID`, `ProjDesc`, `ProjType`) VALUES
 (2, 'Mason', 'Dummy'),
 (3, 'Ceiling', 'Dummy'),
 (4, 'Glass', 'Dummy'),
-(5, 'Foundation', 'Dummy');
+(5, 'Foundation', 'Dummy'),
+(6, 'iyakan session', 'Flooring'),
+(7, 'iyakan session', 'Flooring'),
+(8, 'iyakan session', 'Flooring'),
+(9, 'iyakan session', 'Flooring');
 
 -- --------------------------------------------------------
 
@@ -226,17 +256,19 @@ CREATE TABLE `quotation` (
   `LaborCharges` int(11) NOT NULL,
   `BendingCharges` int(11) DEFAULT NULL,
   `created` datetime NOT NULL,
-  `updated` datetime NOT NULL
+  `updated` datetime NOT NULL,
+  `deleted` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `quotation`
 --
 
-INSERT INTO `quotation` (`QuoID`, `CustID`, `ProjectID`, `BillID`, `UserID`, `summation`, `DeliveryCharges`, `LaborCharges`, `BendingCharges`, `created`, `updated`) VALUES
-(4, 3, 2, 1, 1, 5000, 3000, 1000, 2000, '2021-01-17 00:00:00', '2021-01-17 00:00:00'),
-(5, 1, 1, 2, 1, 6000, 3000, 1000, 2000, '2021-01-17 00:00:00', '2021-01-17 00:00:00'),
-(6, 1, 3, 3, 1, 1000, 3000, 1000, 2000, '2021-01-17 00:00:00', '0000-00-00 00:00:00');
+INSERT INTO `quotation` (`QuoID`, `CustID`, `ProjectID`, `BillID`, `UserID`, `summation`, `DeliveryCharges`, `LaborCharges`, `BendingCharges`, `created`, `updated`, `deleted`) VALUES
+(4, 3, 2, 1, 1, 5000, 3000, 1000, 2000, '2021-01-17 00:00:00', '2021-01-17 00:00:00', 0),
+(5, 1, 1, 2, 1, 6000, 3000, 1000, 2000, '2021-01-17 00:00:00', '2021-01-17 00:00:00', 0),
+(6, 1, 3, 3, 1, 1000, 3000, 1000, 2000, '2021-01-17 00:00:00', '0000-00-00 00:00:00', 0),
+(7, 9, 7, 4, 1, 16969, 6969, 69, 69, '2021-07-14 12:01:52', '0000-00-00 00:00:00', 0);
 
 -- --------------------------------------------------------
 
@@ -439,19 +471,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `billings`
 --
 ALTER TABLE `billings`
-  MODIFY `BillID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `BillID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `CustID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `CustID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `materials`
 --
 ALTER TABLE `materials`
-  MODIFY `MatID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `MatID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `mat_details`
@@ -463,31 +495,31 @@ ALTER TABLE `mat_details`
 -- AUTO_INCREMENT for table `mat_list`
 --
 ALTER TABLE `mat_list`
-  MODIFY `MatListID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `MatListID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `project`
 --
 ALTER TABLE `project`
-  MODIFY `ProjectID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `ProjectID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `project_site`
 --
 ALTER TABLE `project_site`
-  MODIFY `ProjSiteID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ProjSiteID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `project_type`
 --
 ALTER TABLE `project_type`
-  MODIFY `ProjTypeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `ProjTypeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `quotation`
 --
 ALTER TABLE `quotation`
-  MODIFY `QuoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `QuoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `services`
