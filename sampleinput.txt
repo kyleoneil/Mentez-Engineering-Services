@@ -1,0 +1,22 @@
+{
+    "project_city": "umayos",
+    "project_barangay": "ka na sa",
+    "project_street": "buhay mo",
+    "project_postal_code": "123",
+    "proj_description": "iyakan session",
+    "project_type": "Flooring",
+    "totalListPrice": 300,
+    "materials":[
+        {"material_name":"sample","material_quantity": 2,"material_price":200},
+        {"material_name":"Wood","material_quantity": 1,"material_price":100}
+    ],
+    "date_from":"2021-8-13 23:59:59",
+    "date_until":"2021-8-15 23:59:59",
+    "customer_name":"Yawaers",
+    "quotation_summation": 16969,
+    "quotation_delivery": 6969,
+    "quotation_labor": 69,
+    "quotation_bendingcharges": 69,
+    "amount": 10000,
+    "userid": 1
+}
