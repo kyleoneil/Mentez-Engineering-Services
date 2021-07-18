@@ -459,14 +459,16 @@ app.post('/subcontractors/delete',urlencodedParser,(req,res)=>{                 
 
 app.get('/materials/:id',(req,res)=>{
     let id = req.params.id;
+    console.log(id);
     if(req.session.loggedIn){
-        connection.query("SELECT * FROM materials WHERE MatID=?"),id,(err,result)=>{
+        connection.query('SELECT * FROM materials WHERE MatID='+id+'',(err,result)=>{   
             res.json({data:result});
-        }
+        })
     }else{
         res.status(400).send({message:"Session Timeout"})
     }
 })
+
 app.put('/materials/:id/edit',urlencodedParser,(req,res)=>{
     if(req.session.loggedIn){
 
@@ -515,7 +517,21 @@ app.delete('/projects/:id/delete',(req,res)=>{
         res.status(400).send({message:"Session Timeout"})
     }
 })
+//new
+app.get('/materials/getinstock/status',(req,res)=>{
+    console.log("xd");
+    if(req.session.loggedIn){
+        connection.query('SELECT * FROM mat_details WHERE MatStatus="IN STOCK"',(err,result)=>{
+            res.json({data:result});
+        })
+    }else{
+        res.status(400).send({message:"Session Timeout"})
+    }
+})
 
 app.listen(3000, () => {
     console.log('Example app listening on port 3000!')
 });
+
+
+
