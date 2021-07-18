@@ -97,14 +97,17 @@ export default {
       ],
     }
   },
+  created(){
+    this.$store.state.count = 0;
+  },
   methods:{
     submit: function(){
       axios({
         method: 'POST',
         url: 'http://localhost:3000/login',
         data: {
-          username: 'admin',
-          password: 'admin'
+          username: this.username,
+          password: this.password,
         },
       })
       .then((response) =>{

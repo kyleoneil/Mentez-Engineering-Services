@@ -1219,6 +1219,7 @@ export default {
     },
   },
   created(){
+    this.$store.state.count = 1;
     axios({
       method: 'GET',
       url: 'http://localhost:3000/quotation',

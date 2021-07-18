@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="this.$store.state.count==1">
     <v-app-bar
       dense
       fixed

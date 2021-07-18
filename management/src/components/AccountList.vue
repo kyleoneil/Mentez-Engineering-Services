@@ -235,6 +235,7 @@ export default {
                 const data = result.data;
                 this.use = data;
                 console.log(this.use)
+                this.$store.state.count = 1;
             })
     }
    

@@ -530,7 +530,7 @@ app.delete('/projects/:id/delete',(req,res)=>{
 //new
 app.get('/materials/getinstock/status',(req,res)=>{
     console.log("xd");
-    if(req.session.loggedIn){
+    if(true){
         connection.query('SELECT * FROM mat_details WHERE MatStatus="IN STOCK"',(err,result)=>{
             res.json({data:result});
         })

@@ -426,6 +426,7 @@ export default {
     }
   },
   created(){
+    this.$store.state.count = 1;
     axios({
       method: 'GET',
       url: 'http://localhost:3000/quotation',
@@ -433,7 +434,7 @@ export default {
     .then((response) =>{
       var revised = []
       for(var ctr=0; ctr<response.data.data.length; ctr++){
-        if(response.data.data[ctr].deleted == 0){
+        if(response.data.data[ctr].deleted == 1){
           var Quotation_Materials = []
           for(var ctr2=0; ctr2<response.data.materials.length; ctr2++){
             if(response.data.data[ctr].ProjectID == response.data.materials[ctr2].ProjectID){
