@@ -431,8 +431,60 @@ export default {
       url: 'http://localhost:3000/quotation',
     })
     .then((response) =>{
-      this.listed_materials = response.data.materials
-      console.log(response)
+      var revised = []
+      for(var ctr=0; ctr<response.data.data.length; ctr++){
+        if(response.data.data[ctr].deleted == 0){
+          var Quotation_Materials = []
+          for(var ctr2=0; ctr2<response.data.materials.length; ctr2++){
+            if(response.data.data[ctr].ProjectID == response.data.materials[ctr2].ProjectID){
+              Quotation_Materials.push({
+                material_name: response.data.materials[ctr2].MatName,
+                material_description: response.data.materials[ctr2].MatDescription,
+                material_quantity: response.data.materials[ctr2].MatQty,
+                material_price: response.data.materials[ctr2].MatPrice,
+              })
+            }
+          }
+
+          revised.push(
+            {
+              custID: response.data.data[ctr].CustID,
+              ProjectID: response.data.data[ctr].ProjectID,
+              BillID: response.data.data[ctr].BillID,
+              UserID: response.data.data[ctr].UserID,
+
+              quotation_id: response.data.data[ctr].QuoID,
+              quotation_summation: response.data.data[ctr].summation,
+              quotation_delivery: response.data.data[ctr].DeliveryCharges,
+              quotation_labor: response.data.data[ctr].LaborCharges,
+              quotation_bendingcharges: response.data.data[ctr].BendingCharges,
+
+              project: {
+                project_description: response.data.data[ctr].ProjDesc,
+                project_type: response.data.data[ctr].ProjType,
+                date_from: new Date().toISOString().substr(0, 10),
+                date_until: new Date().toISOString().substr(0, 10),
+
+                project_street: response.data.data[ctr].StreetNumber,
+                project_barangay: response.data.data[ctr].Barangay,
+                project_city: response.data.data[ctr].City,
+                project_postal_code: response.data.data[ctr].PostalCode,
+              },
+              customer: {
+                customer_name: response.data.data[ctr].CustName,
+              },
+              
+              materials: Quotation_Materials,
+        
+              subcontractor: {
+                subcontractor_name: response.data.data[ctr].subcontractors.split('-')[0],
+                subcontractor_service: response.data.data[ctr].subcontractors.split('-')[1],
+              },
+            },
+          )
+        }
+        this.quotations = revised
+      }
     })
 
     axios({

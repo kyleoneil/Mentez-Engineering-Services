@@ -52,6 +52,7 @@ export default {
           { title: 'Dashboard', icon: 'mdi-home-city', url: '/dashboard' },
           { title: 'Services', icon: 'mdi-account', url: '/services' },
           { title: 'Accounts', icon: 'mdi-account-group-outline', url: '/accountlist' },
+          { title: 'Archive', icon: 'mdi-account-group-outline', url: '/archive' },
         ],
     }
   },

@@ -41,38 +41,6 @@
                           v-model="customer.customer_name"
                           label="Name"
                         ></v-text-field>
-
-                        <div class=".text-md-body-1">
-                          Customer Address
-                        </div>
-                        <v-row>
-                          <v-col>
-                            <v-text-field
-                              v-model="customer.customer_street"
-                              label="Street"
-                            ></v-text-field>
-                          </v-col>
-                          <v-col>
-                            <v-text-field
-                              v-model="customer.customer_barangay"
-                              label="Barangay"
-                            ></v-text-field>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col>
-                            <v-text-field
-                              v-model="customer.customer_city"
-                              label="City"
-                            ></v-text-field>
-                          </v-col>
-                          <v-col>
-                            <v-text-field
-                              v-model="customer.customer_postal_code"
-                              label="Postal Code"
-                            ></v-text-field>
-                          </v-col>
-                        </v-row>
                       </v-card-text>
                     </v-window-item>
 
@@ -485,7 +453,7 @@
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
               <v-btn
-                v-on:click="remove(5)"
+                v-on:click="remove(quotation.quotation_id)"
                 fab
                 dark
                 x-small
@@ -521,38 +489,6 @@
                   v-model="current_quotation.customer.customer_name"
                   label="Name"
                 ></v-text-field>
-
-                <div class=".text-md-body-1">
-                  Customer Address
-                </div>
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                      v-model="current_quotation.customer.customer_street"
-                      label="Street"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field
-                      v-model="current_quotation.customer.customer_barangay"
-                      label="Barangay"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                      v-model="current_quotation.customer.customer_city"
-                      label="City"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field
-                      v-model="current_quotation.customer.customer_postal_code"
-                      label="Postal Code"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
               </v-card-text>
             </v-window-item>
 
@@ -857,7 +793,7 @@
             <v-btn v-else
               color="primary"
               depressed
-              v-on:click="submit()"
+              v-on:click="edit(current_quotation.quotation_id)"
             >
               Submit
             </v-btn>
@@ -1013,13 +949,11 @@ export default {
 
       customer: {
         customer_name: "",
-        customer_street: "",
-        customer_barangay: "",
-        customer_city: "",
-        customer_postal_code: "",
       },
 
       materials: [],
+      addMaterialTotalPrice: 0,
+      addMaterialTotalPrice2: 0,
 
       subcontractors: [],
 
@@ -1034,7 +968,7 @@ export default {
 
       subcontractorList:[],
 
-      services: ["Roofing", "Mansory", "Electrical", "Plumbing"],
+      services: ["Roofing", "Masonry", "Electrical", "Plumbing"],
       
       selectedService: "",
       selectedSubcontractor: "",
@@ -1159,10 +1093,6 @@ export default {
         },
         customer: {
           customer_name: "",
-          customer_street: "",
-          customer_barangay: "",
-          customer_city: "",
-          customer_postal_code: "",
         },
         materials: [
           {
@@ -1234,10 +1164,12 @@ export default {
           {
             subcontractor_name: this.subcontractors[ctr].SubName,
             subcontractor_service: this.subcontractors[ctr].ServiceName,
-            SubId: this.subcontractors[ctr].SubId,
+            SubId: this.subcontractors[ctr].SubId, 
           }
         )
       }
+
+      console.log(this.subcontractors)
 
 
       var subcontractors = [];
@@ -1292,8 +1224,68 @@ export default {
       url: 'http://localhost:3000/quotation',
     })
     .then((response) =>{
-      this.listed_materials = response.data.materials
-      console.log(response)
+      var revised = []
+      for(var ctr=0; ctr<response.data.data.length; ctr++){
+        if(response.data.data[ctr].deleted == 0){
+          var Quotation_Materials = []
+          for(var ctr2=0; ctr2<response.data.materials.length; ctr2++){
+            if(response.data.data[ctr].ProjectID == response.data.materials[ctr2].ProjectID){
+              Quotation_Materials.push({
+                material_name: response.data.materials[ctr2].MatName,
+                material_description: response.data.materials[ctr2].MatDescription,
+                material_quantity: response.data.materials[ctr2].MatQty,
+                material_price: response.data.materials[ctr2].MatPrice,
+              })
+            }
+          }
+
+          revised.push(
+            {
+              custID: response.data.data[ctr].CustID,
+              ProjectID: response.data.data[ctr].ProjectID,
+              BillID: response.data.data[ctr].BillID,
+              UserID: response.data.data[ctr].UserID,
+
+              quotation_id: response.data.data[ctr].QuoID,
+              quotation_summation: response.data.data[ctr].summation,
+              quotation_delivery: response.data.data[ctr].DeliveryCharges,
+              quotation_labor: response.data.data[ctr].LaborCharges,
+              quotation_bendingcharges: response.data.data[ctr].BendingCharges,
+
+              project: {
+                project_description: response.data.data[ctr].ProjDesc,
+                project_type: response.data.data[ctr].ProjType,
+                date_from: new Date().toISOString().substr(0, 10),
+                date_until: new Date().toISOString().substr(0, 10),
+
+                project_street: response.data.data[ctr].StreetNumber,
+                project_barangay: response.data.data[ctr].Barangay,
+                project_city: response.data.data[ctr].City,
+                project_postal_code: response.data.data[ctr].PostalCode,
+              },
+              customer: {
+                customer_name: response.data.data[ctr].CustName,
+              },
+              
+              materials: Quotation_Materials,
+        
+              subcontractor: {
+                subcontractor_name: response.data.data[ctr].subcontractors.split('-')[0],
+                subcontractor_service: response.data.data[ctr].subcontractors.split('-')[1],
+              },
+            },
+          )
+        }
+        this.quotations = revised
+      }
+    })
+
+    axios({
+      method: 'GET',
+      url: 'http://localhost:3000/materials/getinstock/status',
+    })
+    .then((response) =>{
+      this.listed_materials = response.data.data
     })
 
     axios({
@@ -1303,6 +1295,9 @@ export default {
     .then((response) =>{
       this.subcontractors = response.data.data
     })
+    
+    
+
   },
   methods:{
     createQuotation: function(){
@@ -1310,15 +1305,15 @@ export default {
         method: 'POST',
         url: 'http://localhost:3000/quotation/add',
         data: {
-          quotation_summation: this.quotation,
-          quotation_delivery: "",
-          quotation_labor: "",
-          quotation_bendingcharges: "",
+          quotation_summation: this.quotation.quotation_summation,
+          quotation_delivery: this.quotation.quotation_delivery,
+          quotation_labor: this.quotation.quotation_labor,
+          quotation_bendingcharges: this.quotation.quotation_bendingcharges,
           
           project_description: this.project.project_description,
           project_type: this.project.project_description,
-          date_from: new Date().toISOString().substr(0, 10),
-          date_until: new Date().toISOString().substr(0, 10),
+          date_from: new Date(this.project.date_from),
+          date_until: new Date(this.project.date_until),
 
           project_street: this.project.project_street,
           project_barangay: this.project.project_barangay,
@@ -1326,27 +1321,15 @@ export default {
           project_postal_code: this.project.project_postal_code,
 
           customer_name: this.customer.customer_name,
-          customer_street: this.customer.customer_street,
-          customer_barangay: this.customer.customer_barangay,
-          customer_city: this.customer.customer_city,
-          customer_postal_code: this.customer.customer_postal_code,
 
           material: this.materials,
+          totalListPrice: this.addMaterialTotalPrice,
           
           subcontractor_name: this.selectedSubcontractor,
           subcontractor_service: this.selectedService,
-
-          
         }
       })
-      // .then()
-      // this.summation();
-      // console.log(this.quotation)
-      // console.log(this.customer)
-      // console.log(this.project)
-      // console.log(this.selectedSubcontractor)
-      // console.log(this.selectedService)
-      // console.log(this.materials)
+      .then()
     },
     editmodal: function(id) {
       this.dialog2 = true;
@@ -1354,20 +1337,51 @@ export default {
       this.current_quotation = this.quotations[id];
       this.selectedService = this.current_quotation.subcontractor.subcontractor_service
       this.selectedSubcontractor = this.current_quotation.subcontractor.subcontractor_name
+
+      var totalPrice = 0;
+      for(var ctr=0; ctr < this.current_quotation.materials.length; ctr++){
+        totalPrice += parseInt(this.current_quotation.materials[ctr].material_price)
+      }
+
+      this.addMaterialTotalPrice2 = totalPrice
     },
     edit: function(id){
       axios({
         method: 'PUT',
         url: 'http://localhost:3000/quotation/:'+id+'/edit',
         data: {
-          quotation: this.current_quotation
+          quotation_summation: this.current_quotation.quotation_summation,
+          quotation_delivery: this.current_quotation.quotation_delivery,
+          quotation_labor: this.current_quotation.quotation_labor,
+          quotation_bendingcharges: this.current_quotation.quotation_bendingcharges,
+          
+          project_description: this.current_quotation.project.project_description,
+          project_type: this.current_quotation.project.project_description,
+          date_from: new Date(this.current_quotation.project.date_from),
+          date_until: new Date(this.current_quotation.project.date_until),
+
+          project_street: this.current_quotation.project.project_street,
+          project_barangay: this.current_quotation.project.project_barangay,
+          project_city: this.current_quotation.project.project_city,
+          project_postal_code: this.current_quotation.project.project_postal_code,
+
+          customer_name: this.current_quotation.customer.customer_name,
+
+          material: this.current_quotation.materials,
+          totalListPrice: this.addMaterialTotalPrice2,
+          
+          subcontractor_name: this.current_quotation.selectedSubcontractor,
+          subcontractor_service: this.current_quotation.selectedService,
         }
       })
     },
     remove: function(id){
       axios({
-        method: 'delete',
-        url: 'http://localhost:3000/quotation/:' + id,
+        method: 'GET',
+        url: 'http://localhost:3000/quotation/' + id + '/delete',
+      })
+      .then(()=>{
+        this.$router.go()
       })
     },
     showdocument: function(id){
@@ -1399,7 +1413,11 @@ export default {
         material_quantity: this.affixMaterial.material_quantity,
         material_price: parseInt(filtered[0].MatPrice *  this.affixMaterial.material_quantity)
       }
+
+      this.addMaterialTotalPrice += mat.material_price
+
       this.materials.push(mat);
+      console.log(this.addMaterialTotalPrice)
     },
     addMaterial2: function(){
       var mat = {
