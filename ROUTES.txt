@@ -11,7 +11,7 @@ DeleteQuo="/quotation/:id" method=delete;
 GetMaterial = /materials
 AddMaterial = /materials/add
 DeleteMaterial = /materials/delete?id=?
-UpdateMaterial = /materials/update?id=?
+UpdateMaterial = /materials/update
 GetMatPerCategories= "/material/categories/:id"
 
 /----------SUB CONTRACTORS----------/

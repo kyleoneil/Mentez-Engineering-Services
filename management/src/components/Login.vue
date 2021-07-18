@@ -103,19 +103,19 @@ export default {
         method: 'POST',
         url: 'http://localhost:3000/login',
         data: {
-          username: this.username,
-          password: this.password
+          username: 'admin',
+          password: 'admin'
         },
       })
       .then((response) =>{
         if(response.status == 200 && response.data.status == 200){
           this.$router.push('/dashboard');
         }
-        if(response.status == 400 && response.data.status == 200){
+        if(response.status == 200 && response.data.status == 400){
           this.$router.go();
         }
       })
     }
-  }
+  },
 }
 </script>
