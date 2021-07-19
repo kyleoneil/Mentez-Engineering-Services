@@ -13,7 +13,25 @@
           src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
         ></v-img>
       </v-list-item-avatar>
-      <h3>Mentez Engineering Services</h3>
+      <h3
+        style="margin-right:0px; width:380px"
+      >Mendez Engineering Services</h3>
+      
+        <v-list-item
+          v-for="item in logout"
+          :key="item.title"
+          :to="item.url"
+          link
+        >
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+          
     </v-app-bar>
     
     <v-navigation-drawer
@@ -46,6 +64,7 @@
 </template>
 <script>
 export default {
+  
   data () {
     return {
         items: [
@@ -54,7 +73,12 @@ export default {
           { title: 'Accounts', icon: 'mdi-account-group-outline', url: '/accountlist' },
           { title: 'Archive', icon: 'mdi-account-group-outline', url: '/archive' },
         ],
+        logout:[
+          { title: 'Logout', icon: 'mdi-logout', url: '/login' },
+        ]
     }
+  },
+  methods:{
   },
 }
 </script>

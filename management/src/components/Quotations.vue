@@ -367,7 +367,7 @@
       >
         <v-layout>
           <v-flex xs12 md1>
-            <div class="caption grey--text">ID:</div>
+            <div class="caption grey--text">No:</div>
           </v-flex>
           <v-flex xs12 md3>
             <div class="caption grey--text">Project</div>
@@ -394,7 +394,7 @@
 
         <v-layout>
           <v-flex xs12 md1>
-            <div class="subtitle-2">{{quotation.quotation_id}}</div>
+            <div class="subtitle-2">{{index}}</div>
           </v-flex>
           <v-flex xs12 md3 pr-1>
             <div class="subtitle-2">{{quotation.project.project_description}}</div>
@@ -1345,6 +1345,9 @@ export default {
           SublistID: parseInt(this.subcontractors[ctr].SublistID),
         }
       })
+      .then(
+        this.$router.go()
+      )
 
     },
     editmodal: function(id) {
@@ -1371,28 +1374,6 @@ export default {
         method: 'PUT',
         url: 'http://localhost:3000/quotation/'+id+'/edit',
         data: {
-          // quotation_summation: this.current_quotation.quotation_summation,
-          // quotation_delivery: this.current_quotation.quotation_delivery,
-          // quotation_labor: this.current_quotation.quotation_labor,
-          // quotation_bendingcharges: this.current_quotation.quotation_bendingcharges,
-          
-          // project_description: this.current_quotation.project.project_description,
-          // project_type: this.current_quotation.project.project_description,
-          // date_from: new Date(this.current_quotation.project.date_from),
-          // date_until: new Date(this.current_quotation.project.date_until),
-
-          // project_street: this.current_quotation.project.project_street,
-          // project_barangay: this.current_quotation.project.project_barangay,
-          // project_city: this.current_quotation.project.project_city,
-          // project_postal_code: this.current_quotation.project.project_postal_code,
-
-          // customer_name: this.current_quotation.customer.customer_name,
-
-          // materials: this.current_quotation.materials,
-          // totalListPrice: this.addMaterialTotalPrice2,
-          
-          // subcontractor_name: this.current_quotation.selectedSubcontractor,
-          // subcontractor_service: this.current_quotation.selectedService,
 
           quotation_summation: this.current_quotation.quotation_summation,
           quotation_delivery: this.current_quotation.quotation_delivery,
@@ -1423,6 +1404,10 @@ export default {
           SublistID: parseInt(this.subcontractors[ctr].SublistID),
         }
       })
+      .then(
+        console.log(this.current_quotation)
+        // this.$router.go()
+      )
     },
     remove: function(id){
       axios({
