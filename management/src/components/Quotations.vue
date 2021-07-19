@@ -394,7 +394,7 @@
 
         <v-layout>
           <v-flex xs12 md1>
-            <div class="subtitle-2">{{index}}</div>
+            <div class="subtitle-2">{{quotation.quotation_id}}</div>
           </v-flex>
           <v-flex xs12 md3 pr-1>
             <div class="subtitle-2">{{quotation.project.project_description}}</div>
@@ -972,6 +972,8 @@ export default {
       
       selectedService: "",
       selectedSubcontractor: "",
+      selectedSubID: "",
+      selectedServiceID: "",
       sub:"",
 
 
@@ -1113,6 +1115,8 @@ export default {
         },
       },
 
+      amount: 0,
+
       listed_materials:{},
 
       direction: 'top',
@@ -1164,12 +1168,12 @@ export default {
           {
             subcontractor_name: this.subcontractors[ctr].SubName,
             subcontractor_service: this.subcontractors[ctr].ServiceName,
-            SubId: this.subcontractors[ctr].SubId, 
+            SubId: this.subcontractors[ctr].SubId,
+            SublistID: this.subcontractors[ctr].SublistID,
+            ServiceID: this.subcontractors[ctr].SerivceID
           }
         )
       }
-
-      console.log(this.subcontractors)
 
 
       var subcontractors = [];
@@ -1279,6 +1283,7 @@ export default {
         }
         this.quotations = revised
       }
+      console.log(response)
     })
 
     axios({
@@ -1295,6 +1300,7 @@ export default {
     })
     .then((response) =>{
       this.subcontractors = response.data.data
+      console.log(response)
     })
     
     
@@ -1302,16 +1308,21 @@ export default {
   },
   methods:{
     createQuotation: function(){
+      this.summation()
+      for(var ctr=0; ctr<this.subcontractors.length && (this.subcontractors[ctr].subcontractor_name == this.selectedSubcontractor && this.subcontractors[ctr].subcontractor_service == this.selectedService); ctr++)
+      this.selectedServiceID = this.subcontractors[ctr].ServiceID
+      console.log("IM HERE")
       axios({
         method: 'POST',
         url: 'http://localhost:3000/quotation/add',
         data: {
-          quotation_summation: this.quotation.quotation_summation,
-          quotation_delivery: this.quotation.quotation_delivery,
-          quotation_labor: this.quotation.quotation_labor,
-          quotation_bendingcharges: this.quotation.quotation_bendingcharges,
+          quotation_summation: parseInt(this.quotation.quotation_summation),
+          quotation_delivery: parseInt(this.quotation.quotation_delivery),
+          quotation_labor: parseInt(this.quotation.quotation_labor),
+          quotation_bendingcharges: parseInt(this.quotation.quotation_bendingcharges),
           
-          project_description: this.project.project_description,
+          ProjectID: this.quotation.ProjectID,
+          proj_description: this.project.project_description,
           project_type: this.project.project_description,
           date_from: new Date(this.project.date_from),
           date_until: new Date(this.project.date_until),
@@ -1323,14 +1334,18 @@ export default {
 
           customer_name: this.customer.customer_name,
 
-          material: this.materials,
-          totalListPrice: this.addMaterialTotalPrice,
-          
+          materials: this.materials,
+          totalListPrice: parseInt(this.addMaterialTotalPrice),
+
+          amount: parseInt(this.amount),
+          userid: 1,
+
           subcontractor_name: this.selectedSubcontractor,
-          subcontractor_service: this.selectedService,
+          ServiceID: parseInt(this.subcontractors[ctr].ServiceID),
+          SublistID: parseInt(this.subcontractors[ctr].SublistID),
         }
       })
-      .then()
+
     },
     editmodal: function(id) {
       this.dialog2 = true;
@@ -1338,6 +1353,7 @@ export default {
       this.current_quotation = this.quotations[id];
       this.selectedService = this.current_quotation.subcontractor.subcontractor_service
       this.selectedSubcontractor = this.current_quotation.subcontractor.subcontractor_name
+      console.log(this.current_quotation)
 
       var totalPrice = 0;
       for(var ctr=0; ctr < this.current_quotation.materials.length; ctr++){
@@ -1347,15 +1363,43 @@ export default {
       this.addMaterialTotalPrice2 = totalPrice
     },
     edit: function(id){
+      this.summation2()
+      for(var ctr=0; ctr<this.subcontractors.length && (this.subcontractors[ctr].subcontractor_name == this.selectedSubcontractor && this.subcontractors[ctr].subcontractor_service == this.selectedService); ctr++)
+      this.selectedServiceID = this.subcontractors[ctr].ServiceID
+      console.log("IM HERE 222")
       axios({
         method: 'PUT',
-        url: 'http://localhost:3000/quotation/:'+id+'/edit',
+        url: 'http://localhost:3000/quotation/'+id+'/edit',
         data: {
+          // quotation_summation: this.current_quotation.quotation_summation,
+          // quotation_delivery: this.current_quotation.quotation_delivery,
+          // quotation_labor: this.current_quotation.quotation_labor,
+          // quotation_bendingcharges: this.current_quotation.quotation_bendingcharges,
+          
+          // project_description: this.current_quotation.project.project_description,
+          // project_type: this.current_quotation.project.project_description,
+          // date_from: new Date(this.current_quotation.project.date_from),
+          // date_until: new Date(this.current_quotation.project.date_until),
+
+          // project_street: this.current_quotation.project.project_street,
+          // project_barangay: this.current_quotation.project.project_barangay,
+          // project_city: this.current_quotation.project.project_city,
+          // project_postal_code: this.current_quotation.project.project_postal_code,
+
+          // customer_name: this.current_quotation.customer.customer_name,
+
+          // materials: this.current_quotation.materials,
+          // totalListPrice: this.addMaterialTotalPrice2,
+          
+          // subcontractor_name: this.current_quotation.selectedSubcontractor,
+          // subcontractor_service: this.current_quotation.selectedService,
+
           quotation_summation: this.current_quotation.quotation_summation,
           quotation_delivery: this.current_quotation.quotation_delivery,
           quotation_labor: this.current_quotation.quotation_labor,
           quotation_bendingcharges: this.current_quotation.quotation_bendingcharges,
           
+          ProjectID: this.current_quotation.ProjectID,
           project_description: this.current_quotation.project.project_description,
           project_type: this.current_quotation.project.project_description,
           date_from: new Date(this.current_quotation.project.date_from),
@@ -1368,17 +1412,21 @@ export default {
 
           customer_name: this.current_quotation.customer.customer_name,
 
-          material: this.current_quotation.materials,
+          materials: this.current_quotation.materials,
           totalListPrice: this.addMaterialTotalPrice2,
-          
+
+          amount: parseInt(this.amount),
+          userid: 1,
+
           subcontractor_name: this.current_quotation.selectedSubcontractor,
-          subcontractor_service: this.current_quotation.selectedService,
+          ServiceID: parseInt(this.subcontractors[ctr].ServiceID),
+          SublistID: parseInt(this.subcontractors[ctr].SublistID),
         }
       })
     },
     remove: function(id){
       axios({
-        method: 'GET',
+        method: 'PUT',
         url: 'http://localhost:3000/quotation/' + id + '/delete',
       })
       .then(()=>{
@@ -1388,7 +1436,6 @@ export default {
     showdocument: function(id){
       this.document = true;
       this.current_quotation = this.quotations[id];
-      console.log(this.current_quotation)
     },
     addMaterial: function(data){
       var revised = []
@@ -1418,7 +1465,6 @@ export default {
       this.addMaterialTotalPrice += mat.material_price
 
       this.materials.push(mat);
-      console.log(this.addMaterialTotalPrice)
     },
     addMaterial2: function(){
       var mat = {
@@ -1441,12 +1487,27 @@ export default {
     summation: function() {
       var total = 0;
       for(var ctr=0; ctr<this.materials.length; ctr++){
-        total += this.materials[ctr].material_quantity * this.materials[ctr].material_price
+        total += parseInt(this.materials[ctr].material_price)
       }
-      total += this.quotation.quotation_delivery
-      total += this.quotation.quotation_labor
-      total += this.quotation.quotation_bendingcharges
+      total += parseInt(this.quotation.quotation_delivery)
+      total += parseInt(this.quotation.quotation_labor)
+      total += parseInt(this.quotation.quotation_bendingcharges)
       this.quotation.quotation_summation = total;
+      this.amount = total * 1.2
+    },
+    summation2: function() {
+      var total = 0;
+      for(var ctr=0; ctr<this.current_quotation.materials.length; ctr++){
+        total += parseInt(this.current_quotation.materials[ctr].material_price)
+      }
+      console.log("TOTAL2:"+total)
+      total += parseInt(this.current_quotation.quotation_delivery)
+      total += parseInt(this.current_quotation.quotation_labor)
+      total += parseInt(this.current_quotation.quotation_bendingcharges)
+      this.current_quotation.quotation_summation = total;
+      console.log("TOTAL2:"+total)
+      this.amount = total * 1.2
+      console.log("AMOUNT2:"+this.amount)
     },
   },
 }
