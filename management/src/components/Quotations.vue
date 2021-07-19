@@ -693,7 +693,7 @@
                   <v-flex xs6 xs4 md1 style="margin: 4px 0px 0px 0px">
                     <v-btn 
                       text
-                      v-on:click="addMaterial2()"
+                      v-on:click="addMaterial2([affixMaterial.material_name,affixMaterial.material_description])"
                     >
                       <v-icon small color="black">mdi-plus</v-icon>
                     </v-btn>
@@ -1369,7 +1369,7 @@ export default {
       this.summation2()
       for(var ctr=0; ctr<this.subcontractors.length && (this.subcontractors[ctr].subcontractor_name == this.selectedSubcontractor && this.subcontractors[ctr].subcontractor_service == this.selectedService); ctr++)
       this.selectedServiceID = this.subcontractors[ctr].ServiceID
-      console.log("IM HERE 222")
+      console.log(this.selectedSubcontractor)
       axios({
         method: 'PUT',
         url: 'http://localhost:3000/quotation/'+id+'/edit',
@@ -1382,7 +1382,7 @@ export default {
           
           ProjectID: this.current_quotation.ProjectID,
           project_description: this.current_quotation.project.project_description,
-          project_type: this.current_quotation.project.project_description,
+          project_type: this.current_quotation.project.project_type,
           date_from: new Date(this.current_quotation.project.date_from),
           date_until: new Date(this.current_quotation.project.date_until),
 
@@ -1399,14 +1399,13 @@ export default {
           amount: parseInt(this.amount),
           userid: 1,
 
-          subcontractor_name: this.current_quotation.selectedSubcontractor,
+          subcontractor_name: this.selectedSubcontractor,
           ServiceID: parseInt(this.subcontractors[ctr].ServiceID),
           SublistID: parseInt(this.subcontractors[ctr].SublistID),
         }
       })
       .then(
-        console.log(this.current_quotation)
-        // this.$router.go()
+        this.$router.go()
       )
     },
     remove: function(id){
@@ -1451,14 +1450,33 @@ export default {
 
       this.materials.push(mat);
     },
-    addMaterial2: function(){
+    addMaterial2: function(data){
+      var revised = []
+      for(var ctr=0; ctr<this.listed_materials.length; ctr++){
+        revised.push(
+          {
+            MatDescription: this.listed_materials[ctr].MatDescription,
+            MatName: this.listed_materials[ctr].MatName,
+            MatPrice: this.listed_materials[ctr].MatPrice,
+            MatQty: this.listed_materials[ctr].MatQty, 
+            ProjectId: this.listed_materials[ctr].ProjectId
+          }
+        )
+      }
+
+      var filtered =  revised.filter(function(entry){
+        return entry.MatName == data[0] && entry.MatDescription == data[1];
+      });
+
       var mat = {
         material_name: this.affixMaterial.material_name,
         material_description: this.affixMaterial.material_description,
         material_quantity: this.affixMaterial.material_quantity,
-        material_price: this.affixMaterial.material_price
+        material_price:  parseInt(filtered[0].MatPrice *  this.affixMaterial.material_quantity)
       }
+      console.log(mat)
       this.current_quotation.materials.push(mat);
+      
     },
     removeMaterial: function(index){
       this.materials.splice(index,1)
