@@ -248,11 +248,11 @@ app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
         let id = req.params.id;
         var catcher = JSON.stringify(req.body);
         var data = JSON.parse(catcher);
+        var sub=7
         console.log(data)
         var wew= new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') 
         connection.query('SELECT * FROM quotation WHERE QuoID=?',id,(err,quots)=>{
-            connection.query('SELECT * FROM project WHERE ProjectID=?',data.ProjectID,(err2,proj)=>{
-                console.log(proj)
+            connection.query('SELECT * FROM project WHERE ProjectID=?',quots[0].ProjectID,(err2,proj)=>{
                 connection.query('UPDATE quotation SET summation=?,DeliveryCharges=?,LaborCharges=?,Bendingcharges=?,updated=CURRENT_TIMESTAMP WHERE QuoID=?',[data.quotation_summation,data.quotation_delivery,data.quotation_labor,data.quotation_bendingcharges,id])
             connection.query('UPDATE project_site SET City=?,Barangay=?,StreetNumber=?,PostalCode=? WHERE ProjSiteID=?',[data.project_city,data.project_barangay,data.project_street,data.project_postal_code,proj[0].ProjSiteID],(err,result)=>{
         connection.query('UPDATE project_type SET ProjDesc=?,ProjType=? WHERE ProjTypeID=?',[data.proj_description,data.project_type,proj.ProjTypeID],(err,type)=>{
@@ -271,10 +271,21 @@ app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
                         
                     })
                 })
-                connection.query('UPDATE sub_contractors_labor SET LaborFee=? WHERE QuoID=?',[data.quotation_labor,id],(err3,res)=>{})
-                connection.query('UPDATE sub_contractors SET SubName=?, ServiceID=?, updated=CURRENT_TIMESTAMP WHERE SubListID=? '[data.subcontractor_name, data.ServiceID, quots[0].SubListID],(err,result)=>{
-                                console.log(err);
+                connection.query('UPDATE sub_contractors_labor SET LaborFee=? WHERE QuoID=?',[data.quotation_labor,id],(err3,res)=>{
+                    console.log(res)
                 })
+                connection.query('SELECT * FROM sub_contractors_labor WHERE QuoID=?',id,(errrr,subdis)=>{
+                    connection.query('SELECT * FROM sub_contractors WHERE SubListID = ?',subdis[0].SubListID,(erry,dsub)=>{
+                        connection.query('DELETE FROM sub_contractors WHERE SubID = ?',dsub[0].SubID,(erru,dsubs)=>{
+                            console.log(dsubs)
+                        })
+                    })
+                    
+                    connection.query('INSERT INTO sub_contractors SET ServiceID=?,SubListID=?,SubName=?, updated=CURRENT_TIMESTAMP',[data.ServiceID,subdis[0].SubListID,data.subcontractor_name],(errt,result)=>{
+                        console.log(errt);
+                    })
+                })
+                
             })
         })
     })
