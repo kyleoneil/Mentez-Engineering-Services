@@ -255,7 +255,7 @@ app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
             connection.query('SELECT * FROM project WHERE ProjectID=?',quots[0].ProjectID,(err2,proj)=>{
                 connection.query('UPDATE quotation SET summation=?,DeliveryCharges=?,LaborCharges=?,Bendingcharges=?,updated=CURRENT_TIMESTAMP WHERE QuoID=?',[data.quotation_summation,data.quotation_delivery,data.quotation_labor,data.quotation_bendingcharges,id])
             connection.query('UPDATE project_site SET City=?,Barangay=?,StreetNumber=?,PostalCode=? WHERE ProjSiteID=?',[data.project_city,data.project_barangay,data.project_street,data.project_postal_code,proj[0].ProjSiteID],(err,result)=>{
-        connection.query('UPDATE project_type SET ProjDesc=?,ProjType=? WHERE ProjTypeID=?',[data.proj_description,data.project_type,proj.ProjTypeID],(err,type)=>{
+        connection.query('UPDATE project_type SET ProjDesc=?,ProjType=? WHERE ProjTypeID=?',[data.proj_description,data.project_type,proj[0].ProjTypeID],(err,type)=>{
             connection.query('UPDATE mat_list SET TotalListPrice=? WHERE MatListID=?',[data.totalListPrice],(err,mat)=>{
                 for(var index=0;index<data.materials.length;index++){
                     connection.query('SELECT * FROM materials M JOIN mat_details MD ON M.MatDetailsID=MD.MatDetailsID AND MD.MatDescription=? ',[data.materials[index].material_description],(err,dets)=>{
@@ -266,7 +266,7 @@ app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
                         }
                     })
                 }
-                connection.query('UPDATE project SET ProjStart=?,ProjEnd=? WHERE ProjectID=?',[data.date_from,data.date_until,data.ProjectID],(err,project)=>{
+                connection.query('UPDATE project SET ProjStart=?,ProjEnd=? WHERE ProjectID=?',[data.date_from,data.date_until,quots[0].ProjectID],(err,project)=>{
                     connection.query('UPDATE customers SET CustName=? WHERE CustID=?',[data.customer_name,quots[0].CustID],(err,cust)=>{
                         
                     })
