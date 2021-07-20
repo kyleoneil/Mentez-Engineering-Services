@@ -6,7 +6,7 @@
         <v-container>
           <v-row class="mt-1">
             <v-col cols="12" sm="6" md="4">
-              <v-text-field placeholder="Search" solo ></v-text-field>
+              <v-text-field placeholder="Search" solo v-model="search"></v-text-field>
             </v-col>
             <v-col>
               <v-btn color="grey--text" class="py-6">
@@ -20,7 +20,7 @@
       <v-divider class="mx-3"></v-divider>
 
       <v-card flat class="my-3 mx-12 pa-5" style="background-color: #F8F8F8"
-        v-for="(quotation, index) in quotations" :key="index"
+        v-for="(quotation, index) in filtermat" :key="index"
       >
         <v-layout>
           <v-flex xs12 md1>
@@ -117,15 +117,15 @@
               <div class="pl-8 pt-6 pr-8">
                 <v-row>
                   <v-col><div class="text-overline"><b>{{current_quotation.customer.customer_name}}</b></div></v-col>
-                  <v-col><div class="text-overline text-right"><b>March 01, 2020</b></div></v-col>
+                  <v-col><div class="text-overline text-right"><b>July 20, 2020</b></div></v-col>
                 </v-row>
                 <div class="text-caption">Casuntingan, Mandaue City</div>
 
                 <div class="pt-6">
                   <div class="text-caption">Project:</div>
                   <div class="text-overline"><b>Villa Almira - 5 units Natalia Model</b></div>
-                  <div class="text-caption">Block - Lot</div>
-                  <div class="text-caption">Balamban, Cebu</div>
+                  <div class="text-caption">{{current_quotation.project.project_street}}, {{current_quotation.project.project_barangay}} </div>
+                  <div class="text-caption">{{current_quotation.project.project_city}}, {{current_quotation.project.project_postal_code}} </div>
                 </div>
                 
                 <div class="pt-10">
@@ -411,6 +411,8 @@ export default {
 
       listed_materials:{},
 
+      search: "",
+
       direction: 'top',
       fab: false,
       hover: false,
@@ -500,11 +502,18 @@ export default {
     showdocument: function(id){
       this.document = true;
       this.current_quotation = this.quotations[id];
-      console.log(this.current_quotation)
     },
     computeAmount(index){
       return this.current_quotation.materials[index].material_quantity * this.current_quotation.materials[index].material_price
     },
+    
   },
+  computed:{
+    filtermat: function(){
+      return this.quotations.filter((quotation)=>{
+        return quotation.project.project_description.match(this.search);
+      })
+    },
+  }
 }
 </script>

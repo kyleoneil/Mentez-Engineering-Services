@@ -271,7 +271,7 @@ app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
                 })
                 connection.query('UPDATE project SET ProjStart=?,ProjEnd=?,MatListID=? WHERE ProjectID=?',[data.date_from,data.date_until,mat.insertId,quots[0].ProjectID],(err,project)=>{
                     connection.query('UPDATE customers SET CustName=? WHERE CustID=?',[data.customer_name,quots[0].CustID],(err,cust)=>{
-                        
+                        console.log(cust)
                     })
                 })
                 connection.query('UPDATE sub_contractors_labor SET LaborFee=? WHERE QuoID=?',[data.quotation_labor,id],(err3,res)=>{

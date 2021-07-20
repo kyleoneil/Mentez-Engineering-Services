@@ -186,30 +186,33 @@ export default {
         
           var revised = []
           for(var ctr=0; ctr<response.data.data.length; ctr++){
-            revised.push(
-              {
-                custID: response.data.data[ctr].CustID,
-                ProjectID: response.data.data[ctr].ProjectID,
-                BillID: response.data.data[ctr].BillID,
-                UserID: response.data.data[ctr].UserID,
+            if(response.data.data[ctr].deleted != 1){
+              revised.push(
+                {
+                  custID: response.data.data[ctr].CustID,
+                  ProjectID: response.data.data[ctr].ProjectID,
+                  BillID: response.data.data[ctr].BillID,
+                  UserID: response.data.data[ctr].UserID,
 
-                quotation_id: response.data.data[ctr].QuoID,
-                quotation_summation: response.data.data[ctr].summation,
-                quotation_delivery: response.data.data[ctr].DeliveryCharges,
-                quotation_labor: response.data.data[ctr].LaborCharges,
-                quotation_bendingcharges: response.data.data[ctr].BendingCharges,
+                  quotation_id: response.data.data[ctr].QuoID,
+                  quotation_summation: response.data.data[ctr].summation,
+                  quotation_delivery: response.data.data[ctr].DeliveryCharges,
+                  quotation_labor: response.data.data[ctr].LaborCharges,
+                  quotation_bendingcharges: response.data.data[ctr].BendingCharges,
 
-                month: new Date(response.data.data[ctr].created).getMonth(),
-                day: new Date(response.data.data[ctr].created).getDate(),
-              },
-            )
+                  month: new Date(response.data.data[ctr].created).getMonth(),
+                  day: new Date(response.data.data[ctr].created).getDate(),
+                },
+              )
+            }
+            
           }
           this.quotations = revised
 
           // SALES THIS MONTH
-          var data0 = []
+          var data0 = [0]
           var check = false
-          for(ctr=0; ctr<this.quotations.length && this.quotations[ctr].month == this.month; ctr++){
+          for(ctr=0; ctr<this.quotations.length && this.quotations[ctr] && this.quotations[ctr].month == this.month; ctr++){
             data0.push(parseInt(this.quotations[ctr].quotation_summation))
             check = true
           }
@@ -219,7 +222,7 @@ export default {
           // --
 
           // SALES THIS DAY
-          var data1 = []
+          var data1 = [0]
           var check2 = false
           for(ctr=0; ctr<this.quotations.length && this.quotations[ctr].day == this.day; ctr++){
             data1.push(parseInt(this.quotations[ctr].quotation_summation))
@@ -229,9 +232,6 @@ export default {
             this.value2 = data1
           }
           // --
-
-          console.log(this.quotations)
-          console.log(response)
         }
       })
     }else{

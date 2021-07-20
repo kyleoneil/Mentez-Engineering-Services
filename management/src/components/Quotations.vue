@@ -6,7 +6,7 @@
         <v-container>
           <v-row class="mt-1">
             <v-col cols="12" sm="6" md="4">
-              <v-text-field placeholder="Search" solo ></v-text-field>
+              <v-text-field placeholder="Search" solo v-model="search"></v-text-field>
             </v-col>
             <v-col>
               <v-btn color="grey--text" class="py-6">
@@ -363,7 +363,7 @@
       <v-divider class="mx-3"></v-divider>
 
       <v-card flat class="my-3 mx-12 pa-5" style="background-color: #F8F8F8"
-        v-for="(quotation, index) in quotations" :key="index"
+        v-for="(quotation, index) in filtermat" :key="index"
       >
         <v-layout>
           <v-flex xs12 md1>
@@ -814,15 +814,15 @@
               <div class="pl-8 pt-6 pr-8">
                 <v-row>
                   <v-col><div class="text-overline"><b>{{current_quotation.customer.customer_name}}</b></div></v-col>
-                  <v-col><div class="text-overline text-right"><b>March 01, 2020</b></div></v-col>
+                  <v-col><div class="text-overline text-right"><b>July 20, 2020</b></div></v-col>
                 </v-row>
                 <div class="text-caption">Casuntingan, Mandaue City</div>
 
                 <div class="pt-6">
                   <div class="text-caption">Project:</div>
                   <div class="text-overline"><b>Villa Almira - 5 units Natalia Model</b></div>
-                  <div class="text-caption">Block - Lot</div>
-                  <div class="text-caption">Balamban, Cebu</div>
+                  <div class="text-caption">{{current_quotation.project.project_street}}, {{current_quotation.project.project_barangay}} </div>
+                  <div class="text-caption">{{current_quotation.project.project_city}}, {{current_quotation.project.project_postal_code}} </div>
                 </div>
                 
                 <div class="pt-10">
@@ -1119,6 +1119,8 @@ export default {
 
       listed_materials:{},
 
+      search: "",
+
       direction: 'top',
       fab: false,
       hover: false,
@@ -1142,6 +1144,11 @@ export default {
     }
   },
   computed: {
+    filtermat: function(){
+      return this.quotations.filter((quotation)=>{
+        return quotation.project.project_description.match(this.search);
+      })
+    },
     currentTitle () {
       switch (this.step) {
         case 1: return 'Customer Profile'
@@ -1283,7 +1290,6 @@ export default {
         }
         this.quotations = revised
       }
-      console.log(response)
     })
 
     axios({
@@ -1300,7 +1306,6 @@ export default {
     })
     .then((response) =>{
       this.subcontractors = response.data.data
-      console.log(response)
     })
     
     
@@ -1311,7 +1316,6 @@ export default {
       this.summation()
       for(var ctr=0; ctr<this.subcontractors.length && (this.subcontractors[ctr].subcontractor_name == this.selectedSubcontractor && this.subcontractors[ctr].subcontractor_service == this.selectedService); ctr++)
       this.selectedServiceID = this.subcontractors[ctr].ServiceID
-      console.log("IM HERE")
       axios({
         method: 'POST',
         url: 'http://localhost:3000/quotation/add',
@@ -1356,7 +1360,6 @@ export default {
       this.current_quotation = this.quotations[id];
       this.selectedService = this.current_quotation.subcontractor.subcontractor_service
       this.selectedSubcontractor = this.current_quotation.subcontractor.subcontractor_name
-      console.log(this.current_quotation)
 
       var totalPrice = 0;
       for(var ctr=0; ctr < this.current_quotation.materials.length; ctr++){
@@ -1369,7 +1372,6 @@ export default {
       this.summation2()
       for(var ctr=0; ctr<this.subcontractors.length && (this.subcontractors[ctr].subcontractor_name == this.selectedSubcontractor && this.subcontractors[ctr].subcontractor_service == this.selectedService); ctr++)
       this.selectedServiceID = this.subcontractors[ctr].ServiceID
-      console.log(this.selectedSubcontractor)
       axios({
         method: 'PUT',
         url: 'http://localhost:3000/quotation/'+id+'/edit',
@@ -1405,7 +1407,7 @@ export default {
         }
       })
       .then(
-        // this.$router.go()
+        this.$router.go()
       )
     },
     remove: function(id){
@@ -1502,14 +1504,11 @@ export default {
       for(var ctr=0; ctr<this.current_quotation.materials.length; ctr++){
         total += parseInt(this.current_quotation.materials[ctr].material_price)
       }
-      console.log("TOTAL2:"+total)
       total += parseInt(this.current_quotation.quotation_delivery)
       total += parseInt(this.current_quotation.quotation_labor)
       total += parseInt(this.current_quotation.quotation_bendingcharges)
       this.current_quotation.quotation_summation = total;
-      console.log("TOTAL2:"+total)
       this.amount = total * 1.2
-      console.log("AMOUNT2:"+this.amount)
     },
   },
 }
