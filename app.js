@@ -259,10 +259,11 @@ app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
             connection.query('UPDATE mat_list SET TotalListPrice=? WHERE MatListID=?',[data.totalListPrice],(err,mat)=>{
                 for(var index=0;index<data.materials.length;index++){
                     connection.query('SELECT * FROM materials M JOIN mat_details MD ON M.MatDetailsID=MD.MatDetailsID AND MD.MatDescription=? ',[data.materials[index].material_description],(err,dets)=>{
+                        if(dets!=null){
                             connection.query('INSERT INTO materials SET MatListID=?,MatDetailsID=?,MatQty=?,TotalPrice=?',[mat.MatListID,dets[0].MatDetailsID,data.materials[index].material_quantity,data.materials[index].material_price])
                             var ham = parseInt(dets[0].MatQuantity)-parseInt(data.materials[index].material_quantity)
                             connection.query('UPDATE mat_details SET MatQuantity=? WHERE MatDetailsID=?',[ham,dets[0].MatDetailsID])
-
+                        }
                     })
                 }
                 connection.query('UPDATE project SET ProjStart=?,ProjEnd=? WHERE ProjectID=?',[data.date_from,data.date_until,quots[0].ProjectID],(err,project)=>{
