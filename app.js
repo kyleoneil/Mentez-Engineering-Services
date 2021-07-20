@@ -157,7 +157,7 @@ app.get('/dashboard/quotation',(req,res)=>{
     if(req.session.loggedIn){
         console.log("xd")
         connection.query('SELECT Q.QuoID,Q.summation,Q.created,PT.ProjDesc,U.Username FROM quotation Q JOIN users U ON Q.UserID = U.UserID JOIN project P ON Q.ProjectID = P.ProjectID JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID',(err,result)=>{
-        console.log(result);
+        // console.log(result);
         res.json(result);
     })
     }else{

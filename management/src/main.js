@@ -15,6 +15,7 @@ const store = new Vuex.Store({
   })],
   state:{
     count:0,
+    logged:0,
   },
   mutations: {
     increment (state){

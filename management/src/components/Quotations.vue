@@ -1405,7 +1405,7 @@ export default {
         }
       })
       .then(
-        this.$router.go()
+        // this.$router.go()
       )
     },
     remove: function(id){
@@ -1474,7 +1474,6 @@ export default {
         material_quantity: this.affixMaterial.material_quantity,
         material_price:  parseInt(filtered[0].MatPrice *  this.affixMaterial.material_quantity)
       }
-      console.log(mat)
       this.current_quotation.materials.push(mat);
       
     },

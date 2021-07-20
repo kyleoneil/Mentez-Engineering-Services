@@ -112,6 +112,7 @@ export default {
       })
       .then((response) =>{
         if(response.status == 200 && response.data.status == 200){
+          this.$store.state.count = 1;
           this.$router.push('/dashboard');
         }
         if(response.status == 200 && response.data.status == 400){
