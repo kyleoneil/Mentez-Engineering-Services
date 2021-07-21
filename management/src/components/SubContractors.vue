@@ -110,8 +110,8 @@ export default {
                             
                         },
                     })
-                    .then((result)=>{
-                        console.log(result)
+                    .then(()=>{
+                        this.$router.go()
                     })
 
                     break;
@@ -128,8 +128,8 @@ export default {
                 method: 'POST',
                 url: 'http://localhost:3000/subcontractors/delete?id=' + this.id,
             })
-            .then((response)=>{
-                console.log(response)
+            .then(()=>{
+                this.$router.go()
             })
         }
 
@@ -165,7 +165,7 @@ export default {
             .then((result)=>{
                 const data = result.data;
                 this.service = data;
-                // console.log(result)
+                console.log(result)
             });
     }
     

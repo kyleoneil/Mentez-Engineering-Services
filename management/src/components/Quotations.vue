@@ -15,7 +15,7 @@
             </v-col>
             <v-col>
               <!------------------ CREATE MODAL ------------------>
-              <v-dialog v-model="dialog" width="500">
+              <v-dialog v-model="dialog" width="700">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn style="display: inline; float: right;" color="#32CD32" class="mt-1 white--text" v-bind="attrs" v-on="on">
                     Add Quotation
@@ -23,7 +23,7 @@
                 </template>
                 <v-card
                   class="mx-auto"
-                  max-width="500"
+                  max-width="700"
                 >
                   <v-card-title class="title font-weight-regular justify-space-between">
                     <span>{{ currentTitle }}</span>
@@ -38,8 +38,16 @@
                     <v-window-item :value="1">
                       <v-card-text>
                         <v-text-field
-                          v-model="customer.customer_name"
-                          label="Name"
+                          v-model="customer.customer_Fname"
+                          label="First Name"
+                        ></v-text-field>
+                        <v-text-field
+                          v-model="customer.customer_Mname"
+                          label="Middle Name"
+                        ></v-text-field>
+                        <v-text-field
+                          v-model="customer.customer_Lname"
+                          label="Last Name"
                         ></v-text-field>
                       </v-card-text>
                     </v-window-item>
@@ -88,6 +96,7 @@
                               <v-date-picker
                                 v-model="project.date_from"
                                 no-title
+                                :min="mindate_from"
                                 scrollable
                               >
                                 <v-spacer></v-spacer>
@@ -131,6 +140,7 @@
                               <v-date-picker
                                 v-model="project.date_until"
                                 no-title
+                                :min="mindate_from"
                                 scrollable
                               >
                                 <v-spacer></v-spacer>
@@ -180,6 +190,8 @@
                           <v-col>
                             <v-text-field
                               v-model="project.project_postal_code"
+                              type="number"
+                              min="0"
                               label="Postal Code"
                             ></v-text-field>
                           </v-col>
@@ -239,6 +251,8 @@
                             <v-text-field
                               label="Qty"
                               v-model="affixMaterial.material_quantity"
+                              type="number"
+                              min="0"
                               dense
                             ></v-text-field>
                           </v-flex>
@@ -283,7 +297,7 @@
                             <div class="text-caption">{{material.material_quantity}}</div>
                           </v-flex>
                           <v-flex xs12 md2 pr-1 style="margin: 10px 0px">
-                            <div class="text-caption">{{material.material_price}}</div>
+                            <div class="text-caption">₱{{material.material_price}}</div>
                           </v-flex>
                           <v-flex xs6 xs4 md1 style="margin: 10px 0px">
                             <v-btn text height="20px">
@@ -305,18 +319,24 @@
                           <v-col>
                             <v-text-field
                               v-model="quotation.quotation_delivery"
+                              prefix="₱"
+                              min="0"
                               label="Delivery"
                             ></v-text-field>
                           </v-col>
                           <v-col>
                             <v-text-field
                               v-model="quotation.quotation_labor"
+                              prefix="₱"
+                              min="0"
                               label="Labor"
                             ></v-text-field>
                           </v-col>
                           <v-col>
                             <v-text-field
                               v-model="quotation.quotation_bendingcharges"
+                              prefix="₱"
+                              min="0"
                               label="Bending Charges"
                             ></v-text-field>
                           </v-col>
@@ -467,10 +487,10 @@
       </v-card>
 
       <!-- ------------------------- Edit Modal -------------------------->
-      <v-dialog v-model="dialog2" width="500">
+      <v-dialog v-model="dialog2" width="700">
         <v-card
           class="mx-auto"
-          max-width="500"
+          max-width="700"
         >
           <v-card-title class="title font-weight-regular justify-space-between">
             <span>{{ currentTitle2 }}</span>
@@ -486,8 +506,19 @@
             <v-window-item :value="1">
               <v-card-text>
                 <v-text-field
-                  v-model="current_quotation.customer.customer_name"
-                  label="Name"
+                  v-model="current_quotation.customer.customer_Fname"
+                  type="text"
+                  label="First Name"
+                ></v-text-field>
+                <v-text-field
+                  v-model="current_quotation.customer.customer_Mname"
+                  type="text"
+                  label="Middle Name"
+                ></v-text-field>
+                <v-text-field
+                  v-model="current_quotation.customer.customer_Lname"
+                  type="text"
+                  label="Last Name"
                 ></v-text-field>
               </v-card-text>
             </v-window-item>
@@ -536,6 +567,7 @@
                       <v-date-picker
                         v-model="current_quotation.project.date_from"
                         no-title
+                        :min="mindate_from"
                         scrollable
                       >
                         <v-spacer></v-spacer>
@@ -579,6 +611,7 @@
                       <v-date-picker
                         v-model="current_quotation.project.date_until"
                         no-title
+                        :min="mindate_from"
                         scrollable
                       >
                         <v-spacer></v-spacer>
@@ -628,6 +661,8 @@
                   <v-col>
                     <v-text-field
                       v-model="current_quotation.project.project_postal_code"
+                      type="number"
+                      min="0"
                       label="Postal Code"
                     ></v-text-field>
                   </v-col>
@@ -687,6 +722,8 @@
                     <v-text-field
                       label="Qty"
                       v-model="affixMaterial.material_quantity"
+                      type="number"
+                      min="0"
                       dense
                     ></v-text-field>
                   </v-flex>
@@ -731,7 +768,7 @@
                     <div class="text-caption">{{material.material_quantity}}</div>
                   </v-flex>
                   <v-flex xs12 md2 pr-1 style="margin: 10px 0px">
-                    <div class="text-caption">{{material.material_price}}</div>
+                    <div class="text-caption">₱{{material.material_price}}.00</div>
                   </v-flex>
                   <v-flex xs6 xs4 md1 style="margin: 10px 0px">
                     <v-btn text height="20px">
@@ -751,18 +788,24 @@
                   <v-col>
                     <v-text-field
                       v-model="current_quotation.quotation_delivery"
+                      type="number"
+                      prefix="₱"
                       label="Delivery"
                     ></v-text-field>
                   </v-col>
                   <v-col>
                     <v-text-field
                       v-model="current_quotation.quotation_labor"
+                      type="number"
+                      prefix="₱"
                       label="Labor"
                     ></v-text-field>
                   </v-col>
                   <v-col>
                     <v-text-field
                       v-model="current_quotation.quotation_bendingcharges"
+                      type="number"
+                      prefix="₱"
                       label="Bending Charges"
                     ></v-text-field>
                   </v-col>
@@ -820,7 +863,7 @@
 
                 <div class="pt-6">
                   <div class="text-caption">Project:</div>
-                  <div class="text-overline"><b>Villa Almira - 5 units Natalia Model</b></div>
+                  <div class="text-overline"><b>{{current_quotation.project.project_type}} - {{current_quotation.project.project_description}}</b></div>
                   <div class="text-caption">{{current_quotation.project.project_street}}, {{current_quotation.project.project_barangay}} </div>
                   <div class="text-caption">{{current_quotation.project.project_city}}, {{current_quotation.project.project_postal_code}} </div>
                 </div>
@@ -852,10 +895,10 @@
                       <div class="text-caption pt-2 pb-4" ><b>{{material.material_name}}</b></div>
                     </v-flex>
                     <v-flex sm-12 md2>
-                      <div class="text-overline pr-4" >- {{material.material_price}}</div>
+                      <div class="text-overline pr-4" >₱ {{material.material_price}}</div>
                     </v-flex>
                     <v-flex sm-12 md2>
-                      <div class="text-overline pr-4" >- {{computeAmount(index)}}</div>
+                      <div class="text-overline pr-4" >₱ {{computeAmount(index)}}</div>
                     </v-flex>
                   </v-row>
                   <v-row class="mt-10">
@@ -865,7 +908,7 @@
                       <div class="text-caption pt-2 pb-2">Delivery</div>
                     </v-flex>
                     <v-flex sm-12 md2>
-                      <div class="text-overline pr-4" >- {{current_quotation.quotation_delivery}}</div>
+                      <div class="text-overline pr-4" >₱ {{current_quotation.quotation_delivery}}</div>
                     </v-flex>
                   </v-row>
                   <v-row>
@@ -875,7 +918,7 @@
                       <div class="text-caption pt-2 pb-2">Labor</div>
                     </v-flex>
                     <v-flex sm-12 md2>
-                      <div class="text-overline pr-4">- {{current_quotation.quotation_labor}}</div>
+                      <div class="text-overline pr-4">₱ {{current_quotation.quotation_labor}}</div>
                     </v-flex>
                   </v-row>
                   <v-row>
@@ -885,7 +928,7 @@
                       <div class="text-caption pt-2 pb-2">Bending charges</div>
                     </v-flex>
                     <v-flex sm-12 md2>
-                      <div class="text-overline pr-4">- {{current_quotation.quotation_bendingcharges}} </div>
+                      <div class="text-overline pr-4">₱ {{current_quotation.quotation_bendingcharges}} </div>
                     </v-flex>
                   </v-row>
                   <v-row>
@@ -900,7 +943,7 @@
                       <div class="text-overline">TOTAL</div>
                     </v-flex>
                     <v-flex sm-12 md2>
-                      <div class="text-overline pr-4">- {{current_quotation.quotation_summation}}</div>
+                      <div class="text-overline pr-4">₱ {{current_quotation.quotation_summation}}</div>
                     </v-flex>
                   </v-row>
                 </div>
@@ -1116,6 +1159,7 @@ export default {
       },
 
       amount: 0,
+      mindate_from: '2021-07-21',
 
       listed_materials:{},
 

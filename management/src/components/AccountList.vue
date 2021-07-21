@@ -166,6 +166,7 @@ export default {
             })
             .then((result)=>{
                 console.log(result)
+                this.$router.go()
             })
         },
 
@@ -205,6 +206,7 @@ export default {
             })
             .then((response)=>{
                 console.log(response)
+                this.$router.go()
             })
         },
 
@@ -220,6 +222,7 @@ export default {
             })
             .then((response)=> {
                 console.log(response)
+                this.$router.go()
             })
 
         }

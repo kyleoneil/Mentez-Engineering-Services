@@ -123,7 +123,7 @@
 
                 <div class="pt-6">
                   <div class="text-caption">Project:</div>
-                  <div class="text-overline"><b>Villa Almira - 5 units Natalia Model</b></div>
+                  <div class="text-overline"><b>{{current_quotation.project.project_type}} - {{current_quotation.project.project_description}}</b></div>
                   <div class="text-caption">{{current_quotation.project.project_street}}, {{current_quotation.project.project_barangay}} </div>
                   <div class="text-caption">{{current_quotation.project.project_city}}, {{current_quotation.project.project_postal_code}} </div>
                 </div>
