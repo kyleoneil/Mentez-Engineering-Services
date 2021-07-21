@@ -54,6 +54,13 @@
                   Sign In
                   </v-btn>
                 </v-container>
+                <v-alert v-if="this.status_logged == false"
+                  dense
+                  outlined
+                  type="error"
+                >
+                  Invalid Username or Password
+                </v-alert>
               </v-container>
               </v-card>
             </v-col>
@@ -95,6 +102,8 @@ export default {
       rules: [
         value => !!value || 'Required.',
       ],
+
+      status_logged: true
     }
   },
   created(){
@@ -111,13 +120,14 @@ export default {
         },
       })
       .then((response) =>{
-        if(response.status == 200 && response.data.status == 200){
+        if(response.status == 200 && response.data.status == "Logged in"){
           this.$store.state.count = 1;
           this.$router.push('/dashboard');
         }
-        if(response.status == 200 && response.data.status == 400){
-          this.$router.go();
+        if(response.status == 200 && response.data.message == "Account does not exist"){
+          this.status_logged = false
         }
+        console.log(response)
       })
     }
   },

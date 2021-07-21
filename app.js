@@ -411,7 +411,8 @@ app.delete("/material/categories/delete",urlencodedParser,(req,res)=>{
 
 app.get('/materials',(req,res)=>{                                               //GET MATERIAL
     // if(req.session.loggedIn){
-        connection.query("SELECT * FROM materials WHERE deleted IS NULL",(err,result)=>{
+        connection.query("SELECT * FROM mat_details WHERE deleted IS NULL",(err,result)=>{
+            console.log(err)
             res.json({data:result});
         })
     // }else{

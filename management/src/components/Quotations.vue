@@ -202,6 +202,9 @@
                     <v-window-item :value="3">
                       <v-card-text>
                         <v-row>
+                          <div class=".text-md-body-1" style="width:100px">
+                            Service:
+                          </div>
                           <v-col>
                             <v-select 
                               :items="services"
@@ -211,11 +214,22 @@
                               dense
                             ></v-select>
                           </v-col>
+                        </v-row>
+                        <v-row>
+                          <div class=".text-md-body-1" style="width:100px">
+                            SubContractor:
+                          </div>
                           <v-col>
                             <v-select
                               :items="filteredsubcontractors"
                               v-model="selectedSubcontractor"
-                              label="SubContractor"
+                              label="First Name"
+                              dense
+                            ></v-select>
+                            <v-select
+                              :items="filteredsubcontractors"
+                              v-model="selectedSubcontractor"
+                              label="Last Name"
                               dense
                             ></v-select>
                           </v-col>
@@ -423,7 +437,7 @@
             <div class="subtitle-2">{{quotation.project.project_type}}</div>
           </v-flex>
           <v-flex xs12 md3 pr-1>
-            <div class="subtitle-2">{{quotation.customer.customer_name}}</div>
+            <div class="subtitle-2">{{quotation.customer.customer_Fname}}</div>
           </v-flex>
           <v-flex xs12 md4 pr-1>
             <div class="subtitle-2">{{quotation.project.date_from}} - {{quotation.project.date_until}}</div>
@@ -991,7 +1005,9 @@ export default {
       },
 
       customer: {
-        customer_name: "",
+        customer_Fname: "",
+        customer_Mname: "",
+        customer_Lname: "",
       },
 
       materials: [],
@@ -1217,7 +1233,9 @@ export default {
       for(var ctr=0; ctr<this.subcontractors.length; ctr++){
         test.push(
           {
-            subcontractor_name: this.subcontractors[ctr].SubName,
+            subcontractor_Fname: this.subcontractors[ctr].FirstName,
+            subcontractor_Mname: this.subcontractors[ctr].MiddleName,
+            subcontractor_Lname: this.subcontractors[ctr].LastName,
             subcontractor_service: this.subcontractors[ctr].ServiceName,
             SubId: this.subcontractors[ctr].SubId,
             SublistID: this.subcontractors[ctr].SublistID,
@@ -1225,6 +1243,7 @@ export default {
           }
         )
       }
+      console.log(test)
 
 
       var subcontractors = [];
@@ -1320,7 +1339,9 @@ export default {
                 project_postal_code: response.data.data[ctr].PostalCode,
               },
               customer: {
-                customer_name: response.data.data[ctr].CustName,
+                customer_Fname: response.data.data[ctr].FirstName,
+                customer_Mname: response.data.data[ctr].MiddleName,
+                customer_Lname: response.data.data[ctr].LastName,
               },
               
               materials: Quotation_Materials,
@@ -1334,14 +1355,17 @@ export default {
         }
         this.quotations = revised
       }
+      console.log(response)
+      console.log(this.quotations)
     })
 
     axios({
       method: 'GET',
-      url: 'http://localhost:3000/materials/getinstock/status',
+      url: 'http://localhost:3000/materials',
     })
     .then((response) =>{
       this.listed_materials = response.data.data
+      console.log(response)
     })
 
     axios({
@@ -1380,7 +1404,9 @@ export default {
           project_city: this.project.project_city,
           project_postal_code: this.project.project_postal_code,
 
-          customer_name: this.customer.customer_name,
+          customer_firstname: this.customer.customer_Fname,
+          customer_middlename: this.customer.customer_Mname,
+          customer_lastname: this.customer.customer_Lname,
 
           materials: this.materials,
           totalListPrice: parseInt(this.addMaterialTotalPrice),
@@ -1437,7 +1463,9 @@ export default {
           project_city: this.current_quotation.project.project_city,
           project_postal_code: this.current_quotation.project.project_postal_code,
 
-          customer_name: this.current_quotation.customer.customer_name,
+          customer_firstname: this.customer.customer_Fname,
+          customer_middlename: this.customer.customer_Mname,
+          customer_lastname: this.customer.customer_Lname,
 
           materials: this.current_quotation.materials,
           totalListPrice: this.addMaterialTotalPrice2,
