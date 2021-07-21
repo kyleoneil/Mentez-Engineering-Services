@@ -55,10 +55,10 @@ app.post('/login',urlencodedParser,(req,res)=>{
                 let check = bcrypt.compareSync(pass,result[0]['Password']);      
                 if(check){
                     req.session.loggedIn = true;
-                    res.json({userid:result[0]['UserID'],status:200});
+                    res.json({userid:result[0]['UserID'],status:"Logged in"});
                 }else if(pass==result[0]['Password']){
                     req.session.loggedIn = true;
-                    res.json({userid:result[0]['UserID'],status:200});
+                    res.json({userid:result[0]['UserID'],status:"Logged in"});
                 }else{ 
                     res.status(400).json({message:"Incorrect Password"});
                 }
@@ -84,12 +84,14 @@ app.post('/register',urlencodedParser,(req,res)=>{
     var user = req.body.data.username;
     var pass = req.body.data.password;
     let name = req.body.data.name;
-    let email= req.body.data.email
-   
+    let email= req.body.data.email;
+    let FirstName= req.body.data.FirstName;
+    let MiddleName= req.body.data.MiddleName;
+    let LastName= req.body.data.LastName;
  
     let salt = bcrypt.genSaltSync(saltR);
     let hash = bcrypt.hashSync(pass,salt);
-    connection.query('INSERT INTO users(Username, Password, Name, Email,created) SELECT "'+user+'","'+hash+'","'+name+'","'+email+'",CURRENT_TIMESTAMP WHERE NOT EXISTS (SELECT Username FROM users WHERE Username="'+user+'")',(err,result)=>{
+    connection.query('INSERT INTO users(Username, Password, FirstName, MiddleName, LastName, Email,created) SELECT "'+user+'","'+hash+'","'+FirstName+'","'+MiddleName+'","'+LastName+'","'+email+'",CURRENT_TIMESTAMP WHERE NOT EXISTS (SELECT Username FROM users WHERE Username="'+user+'")',(err,result)=>{
         if(result.affectedRows == 0){
            res.status(400).json({status:0,message:"Account Exists"});
         }else{
@@ -123,12 +125,15 @@ app.get('/users/get',(req,res)=>{
 
 app.post('/users/update',urlencodedParser,(req,res)=>{
     // if(req.session.loggedIn){
-        let name = req.body.data.Name;
+      
         let email= req.body.data.Email;
         let username= req.body.data.Username;
         let id = req.query.id
-        console.log(username)
-        connection.query('UPDATE users SET Username="'+username+'", Name="'+name+'",Email="'+email+'" WHERE UserID='+id+'',(err,result)=>{
+        let FirstName= req.body.data.FirstName;
+        let MiddleName= req.body.data.MiddleName;
+        let LastName= req.body.data.LastName;
+        console.log(id + " HAH");
+        connection.query('UPDATE users SET Username="'+username+'", Email="'+email+'",FirstName="'+FirstName+'",MiddleName="'+MiddleName+'",LastName="'+LastName+'" WHERE UserID='+id+'',(err,result)=>{
         console.log(result);
         res.json({message:"Account Updated Successfull"});
     })
@@ -441,7 +446,7 @@ app.post('/materials/update',urlencodedParser,(req,res)=>{                      
 //=================================================================SUBCONTRACTORS==================================================================================//
 app.get('/subcontractors',(req,res)=>{                                          //GET ALL SUBCONTRACTORS
     // if(req.session.loggedIn){
-        connection.query("SELECT SC.SubName,S.ServiceName,SC.SubID,SC.ServiceID,SC.SublistID FROM sub_contractors SC JOIN services S ON  SC.ServiceID = S.ServiceID WHERE deleted IS NULL ",(err,result)=>{
+        connection.query("SELECT SC.FirstName, SC.MiddleName, SC.LastName, S.ServiceName,SC.SubID,SC.ServiceID,SC.SublistID FROM sub_contractors SC JOIN services S ON  SC.ServiceID = S.ServiceID WHERE deleted IS NULL ",(err,result)=>{
             console.log(err);
             res.json({data:result});
         })
@@ -455,7 +460,7 @@ app.post('/subcontractors/add',urlencodedParser,(req,res)=>{                    
         var catcher = JSON.stringify(req.body);
         var data = JSON.parse(catcher);
         console.log(data)
-        connection.query('INSERT INTO sub_contractors(ServiceID,SubListID,SubName,created) VALUES('+data.ServiceID+','+data.SubListID+',"'+data.SubName+'",CURRENT_TIMESTAMP)',(err,result)=>{
+        connection.query('INSERT INTO sub_contractors(ServiceID,SubListID,FirstName,MiddleName,LastName,created) VALUES('+data.ServiceID+','+data.SubListID+',"'+data.FirstName+'","'+data.MiddleName+'","'+data.LastName+'",CURRENT_TIMESTAMP)',(err,result)=>{
             console.log(err);
             res.json({data:result});
         })
@@ -468,7 +473,7 @@ app.post('/subcontractors/update',urlencodedParser,(req,res)=>{                 
     if(req.session.loggedIn){
         var catcher = JSON.stringify(req.body);
         var data = JSON.parse(catcher)
-        connection.query('UPDATE sub_contractors SET ServiceID='+data.ServiceID+',SubName="'+data.SubName+'",updated=CURRENT_TIMESTAMP WHERE SubID ='+req.query.id+'',(err,result)=>{
+        connection.query('UPDATE sub_contractors SET ServiceID='+data.ServiceID+',FirstName="'+data.FirstName+'",MiddleName="'+data.MiddleName+'",LastName="'+data.LastName+'",updated=CURRENT_TIMESTAMP WHERE SubID ='+req.query.id+'',(err,result)=>{
             console.log(err);
             res.json({data:result});
         })
@@ -504,7 +509,7 @@ app.post('/subcontractors/addsub',urlencodedParser,(req,res)=>{                 
     // if(req.session.loggedIn){
         var catcher = JSON.stringify(req.body);
         var data = JSON.parse(catcher);
-        connection.query('INSERT INTO sub_contractors(ServiceID,SubName,created) VALUES('+data.ServiceID+',"'+data.SubName+'",CURRENT_TIMESTAMP)',(err,result)=>{
+        connection.query('INSERT INTO sub_contractors(ServiceID,SubListID,FirstName,MiddleName,LastName,created) VALUES('+data.ServiceID+','+data.SubListID+',"'+data.FirstName+'","'+data.MiddleName+'","'+data.LastName+'",CURRENT_TIMESTAMP)',(err,result)=>{
             console.log(err);
             res.json({data:result});
         })
