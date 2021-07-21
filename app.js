@@ -443,6 +443,19 @@ app.post('/materials/update',urlencodedParser,(req,res)=>{                      
     // }
 })
 
+app.post('/materials/updatestatus',urlencodedParser,(req,res)=>{                      //UPDATE MATERIAL STATUS
+   
+    // if(req.session.loggedIn){
+        var catcher = JSON.stringify(req.body);
+        var data = JSON.parse(catcher);
+        connection.query('UPDATE mat_details SET updated = CURRENT_TIMESTAMP, MatStatus="'+data.MatStatus+'" WHERE MatDetailsID='+data.MatDetailsID,(err,result)=>{
+            console.log(err);
+            res.json({message:"Material Successfully Updated"});
+        })
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
+})
 //=================================================================SUBCONTRACTORS==================================================================================//
 app.get('/subcontractors',(req,res)=>{                                          //GET ALL SUBCONTRACTORS
     // if(req.session.loggedIn){
@@ -529,6 +542,7 @@ app.get('/materials/:id',(req,res)=>{
         res.status(400).send({message:"Session Timeout"})
     }
 })
+
 
 app.put('/materials/:id/edit',urlencodedParser,(req,res)=>{
     if(req.session.loggedIn){
