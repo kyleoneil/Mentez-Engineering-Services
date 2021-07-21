@@ -221,14 +221,14 @@
                           </div>
                           <v-col>
                             <v-select
-                              :items="filteredsubcontractors"
-                              v-model="selectedSubcontractor"
+                              :items="filteredsubcontractorsFname"
+                              v-model="selectedSubcontractorFname"
                               label="First Name"
                               dense
                             ></v-select>
                             <v-select
-                              :items="filteredsubcontractors"
-                              v-model="selectedSubcontractor"
+                              :items="filteredsubcontractorsLname"
+                              v-model="selectedSubcontractorLname"
                               label="Last Name"
                               dense
                             ></v-select>
@@ -687,24 +687,38 @@
             <v-window-item :value="3">
               <v-card-text>
                 <v-row>
-                  <v-col>
-                    <v-select 
-                      :items="services"
-                      v-model="selectedService"
-                      label="Service"
-                      outlined
-                      dense
-                    ></v-select>
-                  </v-col>
-                  <v-col>
-                    <v-select
-                      :items="filteredsubcontractors"
-                      v-model="selectedSubcontractor"
-                      label="SubContractor"
-                      dense
-                    ></v-select>
-                  </v-col>
-                </v-row>
+                          <div class=".text-md-body-1" style="width:100px">
+                            Service:
+                          </div>
+                          <v-col>
+                            <v-select 
+                              :items="services"
+                              v-model="selectedService"
+                              label="Service"
+                              outlined
+                              dense
+                            ></v-select>
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <div class=".text-md-body-1" style="width:100px">
+                            SubContractor:
+                          </div>
+                          <v-col>
+                            <v-select
+                              :items="filteredsubcontractorsFname"
+                              v-model="selectedSubcontractorFname"
+                              label="First Name"
+                              dense
+                            ></v-select>
+                            <v-select
+                              :items="filteredsubcontractorsLname"
+                              v-model="selectedSubcontractorLname"
+                              label="Last Name"
+                              dense
+                            ></v-select>
+                          </v-col>
+                        </v-row>
               </v-card-text>
             </v-window-item>
 
@@ -1030,7 +1044,8 @@ export default {
       services: ["Roofing", "Masonry", "Electrical", "Plumbing"],
       
       selectedService: "",
-      selectedSubcontractor: "",
+      selectedSubcontractorFname: "",
+      selectedSubcontractorLname: "",
       selectedSubID: "",
       selectedServiceID: "",
       sub:"",
@@ -1205,9 +1220,15 @@ export default {
   },
   computed: {
     filtermat: function(){
-      return this.quotations.filter((quotation)=>{
+      var all = []
+      all = this.quotations.filter((quotation)=>{
         return quotation.project.project_description.match(this.search);
       })
+      all.concat(this.quotations.filter((quotation)=>{
+        return quotation.project.project_type.match(this.search);
+      }))
+      return all
+      
     },
     currentTitle () {
       switch (this.step) {
@@ -1227,7 +1248,7 @@ export default {
         default: return 'Additional Charges'
       }
     },
-    filteredsubcontractors() {
+    filteredsubcontractorsFname() {
       // DATA STATIC
       var test = [];
       for(var ctr=0; ctr<this.subcontractors.length; ctr++){
@@ -1243,7 +1264,6 @@ export default {
           }
         )
       }
-      console.log(test)
 
 
       var subcontractors = [];
@@ -1253,7 +1273,36 @@ export default {
       });
       
       for( ctr=0; ctr<filtered.length; ctr++){
-        subcontractors.push(filtered[ctr].subcontractor_name)
+        subcontractors.push(filtered[ctr].subcontractor_Fname)
+      }
+      return subcontractors;
+    },
+    filteredsubcontractorsLname() {
+      // DATA STATIC
+      var test = [];
+      for(var ctr=0; ctr<this.subcontractors.length; ctr++){
+        test.push(
+          {
+            subcontractor_Fname: this.subcontractors[ctr].FirstName,
+            subcontractor_Mname: this.subcontractors[ctr].MiddleName,
+            subcontractor_Lname: this.subcontractors[ctr].LastName,
+            subcontractor_service: this.subcontractors[ctr].ServiceName,
+            SubId: this.subcontractors[ctr].SubId,
+            SublistID: this.subcontractors[ctr].SublistID,
+            ServiceID: this.subcontractors[ctr].SerivceID
+          }
+        )
+      }
+
+
+      var subcontractors = [];
+      var service = this.selectedService;
+      var filtered =  test.filter(function(entry){
+        return entry.subcontractor_service == service;
+      });
+      
+      for( ctr=0; ctr<filtered.length; ctr++){
+        subcontractors.push(filtered[ctr].subcontractor_Lname)
       }
       return subcontractors;
     },
@@ -1356,7 +1405,6 @@ export default {
         this.quotations = revised
       }
       console.log(response)
-      console.log(this.quotations)
     })
 
     axios({
@@ -1382,7 +1430,7 @@ export default {
   methods:{
     createQuotation: function(){
       this.summation()
-      for(var ctr=0; ctr<this.subcontractors.length && (this.subcontractors[ctr].subcontractor_name == this.selectedSubcontractor && this.subcontractors[ctr].subcontractor_service == this.selectedService); ctr++)
+      for(var ctr=0; ctr<this.subcontractors.length && (this.subcontractors[ctr].subcontractor_Fname == this.selectedSubcontractor && this.subcontractors[ctr].subcontractor_service == this.selectedService); ctr++)
       this.selectedServiceID = this.subcontractors[ctr].ServiceID
       axios({
         method: 'POST',
@@ -1503,6 +1551,7 @@ export default {
             MatDescription: this.listed_materials[ctr].MatDescription,
             MatName: this.listed_materials[ctr].MatName,
             MatPrice: this.listed_materials[ctr].MatPrice,
+            MatStatus: this.listed_materials[ctr].MatStatus,
             MatQty: this.listed_materials[ctr].MatQty, 
             ProjectId: this.listed_materials[ctr].ProjectId
           }
@@ -1513,9 +1562,13 @@ export default {
         return entry.MatName == data[0] && entry.MatDescription == data[1];
       });
 
+      var material_status = ((filtered[0].MatQty - this.affixMaterial.material_quantity) > 0)?"IN STOCK":"FOR ORDER";
+
+
       var mat = {
         material_name: this.affixMaterial.material_name,
         material_description: this.affixMaterial.material_description,
+        MatStatus: material_status,
         material_quantity: this.affixMaterial.material_quantity,
         material_price: parseInt(filtered[0].MatPrice *  this.affixMaterial.material_quantity)
       }
