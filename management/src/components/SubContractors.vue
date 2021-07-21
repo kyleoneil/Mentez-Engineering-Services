@@ -23,10 +23,23 @@
                 </v-card-title>
 
                 <v-card-text>
-                    
-                        <v-text-field :rules="inputRules" label="Name" prepend-icon="mdi-pencil" v-model="people.name" clearable></v-text-field>
-                        <v-select :items="selected" label="Category" prepend-icon="mdi-menu" v-model="category" clearable></v-select>
-                        
+                     <validation-observer ref="observer" v-slot="{ invalid }">
+                       <v-form @submit.prevent="submit">
+                        <validation-provider v-slot="{ errors }" name="Name" rules="required|max:10">
+                        <v-text-field prepend-icon="mdi-pencil" v-model="people.firstname" :counter="15" :error-messages="errors" label="First Name" required clearable></v-text-field>
+                        </validation-provider>
+
+                        <validation-provider v-slot="{ errors }" name="Name" rules="required|max:10">
+                        <v-text-field prepend-icon="mdi-pencil" v-model="people.middlename" :counter="10" :error-messages="errors" label="Middle Name" required clearable></v-text-field>
+                        </validation-provider>
+
+                        <validation-provider v-slot="{ errors }" name="Name" rules="required|max:10">
+                        <v-text-field prepend-icon="mdi-pencil" v-model="people.lastname" :counter="10" :error-messages="errors" label="Last Name" required clearable></v-text-field>
+                        </validation-provider>
+
+                        <validation-provider v-slot="{ errors }" name="select" rules="required">
+                        <v-select :items="selected" label="Category" prepend-icon="mdi-menu" v-model="category" :error-messages="errors" data-vv-name="select" required clearable></v-select>
+                        </validation-provider>
                         
                         <v-divider></v-divider>
 
@@ -36,11 +49,12 @@
                                 Cancel
                             </v-btn>
                     
-                            <v-btn color="primary" text @click="dialog = false" v-on:click="postData(service)">
+                            <v-btn color="primary" text @click="dialog = false" v-on:click="postData(service)" type="submit" :disabled="invalid">
                                 Submit
                             </v-btn>
                         </v-card-actions>
-                    
+                    </v-form>
+                    </validation-observer>
                 </v-card-text>
             </v-card>
         </v-dialog>
@@ -51,11 +65,15 @@
        
 
         <v-divider class="mx-3"></v-divider>
-        <v-card flat class="my-3 mx-12 pa-5" style="background-color: #F8F8F8" v-for="(subcon, x) in filtercon" :key="x">
+        <v-card flat class="my-3 mx-12 pa-5" style="background-color: #F8F8F8" v-for="(subcon, x) in peps" :key="x">
             <v-layout row wrap >
             <v-flex xs12 md6>
                 <div class="caption grey--text">Sub Contarctor</div>
-                <div>{{subcon.SubName}}</div>
+                <div>
+                    {{subcon.FirstName}}
+                    {{subcon.MiddleName}}
+                    {{subcon.LastName}}
+                </div>
             </v-flex>
             <v-flex xs12 sm4 md5>
                 <div class="caption grey--text">Service</div>
@@ -76,12 +94,49 @@
 
 <script>
 import axios from 'axios';
+
+import { required, digits, email, max, regex } from 'vee-validate/dist/rules'
+import {extend, ValidationObserver, ValidationProvider, setInteractionMode} from 'vee-validate'
+
+setInteractionMode('eager')
+
+extend('digits', {
+    ...digits,
+    message: '{_field_} needs to be {length} digits. ({_value_})',
+  })
+
+  extend('required', {
+    ...required,
+    message: '{_field_} can not be empty',
+  })
+
+  extend('max', {
+    ...max,
+    message: '{_field_} may not be greater than {length} characters',
+  })
+
+  extend('regex', {
+    ...regex,
+    message: '{_field_} {_value_} does not match {regex}',
+  })
+
+  extend('email', {
+    ...email,
+    message: 'Email must be valid',
+  })
+
 export default {
+
+    components: {
+      ValidationProvider,
+      ValidationObserver,
+    },
+
     data() {
         return {
             selected:['Roofing','Masonry','Electrical','Plumbing'],
             dialog: false,
-            people: {name: '', serviceid: null},
+            people: {firstname: '', middlename: '', lastname: '', serviceid: null},
             category:'',
             service:'',
             peps:[],
@@ -101,17 +156,21 @@ export default {
                     // console.log(hello[0].ServiceID)
                     // console.log("hello")
                     axios({
+                        
+
                         method: 'POST',
-                        url: 'http://localhost:3000/subcontractors/addsub',
+                        url: 'http://localhost:3000/subcontractors/add',
                         data: {
                             
-                                SubName: this.people.name,
+                                FirstName: this.people.firstname,
+                                MiddleName: this.people.middlename,
+                                LastName: this.people.lastname,
                                 ServiceID: hello[index].ServiceID
                             
                         },
                     })
                     .then(()=>{
-                        this.$router.go()
+                        // this.$router.go()
                     })
 
                     break;
@@ -131,19 +190,23 @@ export default {
             .then(()=>{
                 this.$router.go()
             })
-        }
+        },
+
+        submit: function() {
+            this.$refs.observer.validate()
+        },
 
         
     
     },
 
-     computed:{
-         filtercon: function(){
-             return this.peps.filter((subcon)=>{
-                 return subcon.SubName.match(this.search);
-             });
-         }
-     },
+    //  computed:{
+    //      filtercon: function(){
+    //          return this.peps.filter((subcon)=>{
+    //              return subcon.SubName.match(this.search);
+    //          });
+    //      }
+    //  },
 
     created(){
         this.$store.state.count = 1;
@@ -156,6 +219,8 @@ export default {
                 const data = result.data;
                 this.peps = data.data;
                 console.log(this.peps)
+                console.log(result);
+                console.log("lalalalala")
             })
 
         axios({

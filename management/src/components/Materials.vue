@@ -91,7 +91,7 @@
             </v-flex>
             <v-flex xs6 sm4 md1>
                 <div style="float: right;">
-                    <v-dialog v-model="hamburger" width="900">
+                    <v-dialog :retain-focus="false" v-model="hamburger" width="900">
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn v-bind="attrs" v-on="on" text>
                          <v-icon v-bind:id="materials.MatDetailsID" v-on:click="Matupdate($event, materialzz)">mdi-pencil</v-icon>

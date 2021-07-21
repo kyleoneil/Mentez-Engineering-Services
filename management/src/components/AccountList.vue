@@ -15,11 +15,29 @@
                 </v-card-title>
 
                 <v-card-text>
-                    <!-- <v-form class="px-3" @submit="postData" method="post" href="http://localhost:3000/register"> -->
-                        <v-text-field :rules="inputRules" label="FullName" prepend-icon="mdi-pencil" v-model="people.name" clearable></v-text-field>
-                        <v-text-field :rules="emailRules" label="Email Address" prepend-icon="mdi-email" v-model="people.email" clearable></v-text-field>
-                        <v-text-field :rules="inputRules" label="UserName"  prepend-icon="mdi-account" v-model="people.username" clearable></v-text-field>
-                        <v-text-field :rules="inputRules" label="Password"  prepend-icon="mdi-lock" v-model="people.password" clearable></v-text-field>
+                    <validation-observer ref="observer" v-slot="{ invalid }">
+                    <v-form @submit.prevent="submit">
+                        <validation-provider v-slot="{ errors }" name="Name" rules="required|max:10">
+                        <v-text-field prepend-icon="mdi-pencil" v-model="people.firstname" :counter="15" :error-messages="errors" label="First Name" required clearable></v-text-field>
+                        </validation-provider>
+
+                        <validation-provider v-slot="{ errors }" name="Name" rules="required|max:10">
+                        <v-text-field prepend-icon="mdi-pencil" v-model="people.middlename" :counter="10" :error-messages="errors" label="Middle Name" required clearable></v-text-field>
+                        </validation-provider>
+
+                        <validation-provider v-slot="{ errors }" name="Name" rules="required|max:10">
+                        <v-text-field prepend-icon="mdi-pencil" v-model="people.lastname" :counter="10" :error-messages="errors" label="Last Name" required clearable></v-text-field>
+                        </validation-provider>
+
+                        <validation-provider v-slot="{ errors }" name="email" rules="required|email">
+                        <v-text-field prepend-icon="mdi-email" v-model="people.email" :error-messages="errors" label="E-mail" required clearable></v-text-field>
+                        </validation-provider>
+
+                        <v-text-field prepend-icon="mdi-account" v-model="people.username" clearable></v-text-field>
+
+                        <validation-provider v-slot="{ errors }" name="Name" rules="required|max:10">
+                        <v-text-field prepend-icon="mdi-lock" v-model="people.password" :counter="10" :error-messages="errors" label="Password" required clearable></v-text-field>
+                        </validation-provider>
                         
                         <v-divider></v-divider>
 
@@ -29,11 +47,12 @@
                                 Cancel
                             </v-btn>
                     
-                            <v-btn color="primary" text @click="dialog = false" v-on:click="postData()">
+                            <v-btn color="primary" text @click="dialog = false" v-on:click="postData()" type="submit" :disabled="invalid">
                                 Submit
                             </v-btn>
                         </v-card-actions>
-                    <!-- </v-form> -->
+                    </v-form>
+                    </validation-observer>
                 </v-card-text>
             </v-card>
         </v-dialog>
@@ -48,7 +67,12 @@
                             </v-avatar>
                         </v-responsive>
                         <v-card-text>
-                            <div class="font-weight-bold">{{person.Name}}</div>
+                            <div class="font-weight-bold">
+                                {{person.FirstName}}
+                                {{person.MiddleName}}
+                                {{person.LastName}}
+                            </div>
+                            <div class="grey--text">{{person.Username}}</div>
                             <div class="grey--text">{{person.Email}}</div>
                         </v-card-text>
                        
@@ -72,8 +96,18 @@
                                         <v-card-text>
                                             <div class="font-weight-bold ma-2">
                                                 <v-icon small left>mdi-pencil</v-icon>
-                                                <span v-show="hide">{{Fullname}}</span>
-                                                <span class="ml-3"><input type="text"  v-show="!hide" v-model="Fullname" /></span>
+                                                <span v-show="hide">{{Firstname}}</span>
+                                                <span class="ml-3"><input type="text"  v-show="!hide" v-model="Firstname" /></span>
+                                            </div>
+                                            <div class="font-weight-bold ma-2">
+                                                <v-icon small left>mdi-pencil</v-icon>
+                                                <span v-show="hide">{{Middlename}}</span>
+                                                <span class="ml-3"><input type="text"  v-show="!hide" v-model="Middlename" /></span>
+                                            </div>
+                                            <div class="font-weight-bold ma-2">
+                                                <v-icon small left>mdi-pencil</v-icon>
+                                                <span v-show="hide">{{Lastname}}</span>
+                                                <span class="ml-3"><input type="text"  v-show="!hide" v-model="Lastname" /></span>
                                             </div>
                                             <div class="font-weight-bold ma-2">
                                                 <v-icon small left>mdi-email</v-icon>
@@ -117,7 +151,42 @@
 </template>
 <script>
 import axios from 'axios';
+import { required, digits, email, max, regex } from 'vee-validate/dist/rules'
+import {extend, ValidationObserver, ValidationProvider, setInteractionMode} from 'vee-validate'
+
+setInteractionMode('eager')
+
+extend('digits', {
+    ...digits,
+    message: '{_field_} needs to be {length} digits. ({_value_})',
+  })
+
+  extend('required', {
+    ...required,
+    message: '{_field_} can not be empty',
+  })
+
+  extend('max', {
+    ...max,
+    message: '{_field_} may not be greater than {length} characters',
+  })
+
+  extend('regex', {
+    ...regex,
+    message: '{_field_} {_value_} does not match {regex}',
+  })
+
+  extend('email', {
+    ...email,
+    message: 'Email must be valid',
+  })
+
+
 export default {
+    components: {
+      ValidationProvider,
+      ValidationObserver,
+    },
     data() {
         return{
             // people: [
@@ -131,15 +200,19 @@ export default {
             //     {name: 'Lance Tezon Maurice', contact: '09876347654', avatar:'/diona.jpg', username:'Username', password:'Password'},
             // ],
             picture: '/qiqi.jpg',
-            people:{name:'', email:'', username: '', password: ''},
+            people:{firstname:'', middlename:'', lastname:'', email:'', username: '', password: ''},
             use:"",
             gwapo: false,
             dialog: false,
             hide: true,
-            Fullname:"",
+            Firstname:"",
+            Middlename:"",
+            Lastname:"",
             EmailAddress:"",
             Username:"",
             id:"",
+
+
             inputRules:[
                 v => v.length >= 3 || '3 Characters above'
             ],
@@ -157,7 +230,9 @@ export default {
                 url: 'http://localhost:3000/register',
                 data: {
                     data:{
-                    name: this.people.name,
+                    FirstName: this.people.firstname,
+                    MiddleName: this.people.middlename,
+                    LastName: this.people.lastname,
                     email: this.people.email,
                     username: this.people.username,
                     password: this.people.password
@@ -180,7 +255,9 @@ export default {
             })
             .then((result)=>{
                 const data = result.data;
-                this.Fullname = data[0].Name;
+                this.Firstname = data[0].FirstName;
+                this.Middlename = data[0].MiddleName;
+                this.Lastname = data[0].LastName;
                 this.EmailAddress = data[0].Email;
                 this.Username = data[0].Username
                 console.log(data[0].Username)
@@ -191,14 +268,14 @@ export default {
         downdateBtn: function(){
             this.hide = true
 
-            console.log(this.Fullname)
-            console.log(this.EmailAddress)
             axios({
                 method: 'POST',
                 url: 'http://localhost:3000/users/update?id=' + this.id,
                 data: {
                     data:{
-                        Name: this.Fullname,
+                        FirstName: this.Firstname,
+                        MiddleName: this.Middlename,
+                        LastName: this.Lastname,
                         Email: this.EmailAddress,
                         Username: this.Username
                     }
@@ -225,7 +302,11 @@ export default {
                 this.$router.go()
             })
 
-        }
+        },
+
+        submit: function() {
+            this.$refs.observer.validate()
+        },
 
     },
     created(){
