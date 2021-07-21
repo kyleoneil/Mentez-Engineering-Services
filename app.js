@@ -259,8 +259,8 @@ app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
             connection.query('SELECT * FROM project WHERE ProjectID=?',quots[0].ProjectID,(err2,proj)=>{
                 connection.query('UPDATE quotation SET summation=?,DeliveryCharges=?,LaborCharges=?,Bendingcharges=?,updated=CURRENT_TIMESTAMP WHERE QuoID=?',[data.quotation_summation,data.quotation_delivery,data.quotation_labor,data.quotation_bendingcharges,id])
             connection.query('UPDATE project_site SET City=?,Barangay=?,StreetNumber=?,PostalCode=? WHERE ProjSiteID=?',[data.project_city,data.project_barangay,data.project_street,data.project_postal_code,proj[0].ProjSiteID],(err,result)=>{
-        connection.query('UPDATE project_type SET ProjDesc=?,ProjType=? WHERE ProjTypeID=?',[data.project_description,data.project_type,proj[0].ProjTypeID],(err,type)=>{
-            connection.query('INSERT INTO mat_list SET TotalListPrice=?',[data.totalListPrice],(err,mat)=>{
+        connection.query('UPDATE project_type SET ProjDesc=?,ProjType=? WHERE ProjTypeID=?',[data.proj_description,data.project_type,proj[0].ProjTypeID],(err,type)=>{
+            
                 connection.query('SELECT * FROM mat_list WHERE MatListID=?',[proj[0].MatListID],(ers,mats)=>{
                     if(data.materials.length>0){
                         connection.query('INSERT INTO mat_list SET TotalListPrice=?',[data.totalListPrice],(erri,mati)=>{
@@ -279,6 +279,9 @@ app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
                                     }
                                 })
                             }
+                            connection.query('UPDATE project SET MatListID=? WHERE ProjectID=?',[mati.insertId,proj[0].MatListID],(errd,resw)=>{
+
+                            })
                         })
                         
                     }else{
@@ -290,8 +293,8 @@ app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
                     }
                     
                 })
-                connection.query('UPDATE project SET ProjStart=?,ProjEnd=?,MatListID=? WHERE ProjectID=?',[data.date_from,data.date_until,mat.insertId,quots[0].ProjectID],(err,project)=>{
-                    connection.query('UPDATE customers SET FirstName=?,LastName=? WHERE CustID=?',[data.customer_firstname,data.customer_middlename,data.customer_lastname,quots[0].CustID],(err,cust)=>{
+                connection.query('UPDATE project SET ProjStart=?,ProjEnd=? WHERE ProjectID=?',[data.date_from,data.date_until,quots[0].ProjectID],(err,project)=>{
+                    connection.query('UPDATE customers SET FirstName=?,MiddleName=?,LastName=? WHERE CustID=?',[data.customer_firstname,data.customer_middlename,data.customer_lastname,quots[0].CustID],(err,cust)=>{
                         
                     })
                 })
@@ -300,6 +303,7 @@ app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
                 })
                 connection.query('SELECT * FROM sub_contractors_labor WHERE QuoID=?',id,(errrr,subdis)=>{
                     connection.query('SELECT * FROM sub_contractors WHERE SubListID = ?',subdis[0].SubListID,(erry,dsub)=>{
+                        console.log(erry)
                         connection.query('DELETE FROM sub_contractors WHERE SubID = ?',dsub[0].SubID,(erru,dsubs)=>{
                             console.log(dsubs)
                         })
@@ -310,7 +314,7 @@ app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
                     })
                 })
                 
-            })
+            
         })
     })
             })
@@ -411,7 +415,7 @@ app.delete("/material/categories/delete",urlencodedParser,(req,res)=>{
 
 app.get('/materials',(req,res)=>{                                               //GET MATERIAL
     // if(req.session.loggedIn){
-        connection.query("SELECT * FROM materials WHERE deleted IS NULL",(err,result)=>{
+        connection.query("SELECT * FROM mat_details WHERE deleted",(err,result)=>{
             res.json({data:result});
         })
     // }else{
