@@ -290,6 +290,7 @@ app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
                                 console.log(errg)
                             })
                         })
+                        
                     }
                     
                 })
@@ -415,7 +416,8 @@ app.delete("/material/categories/delete",urlencodedParser,(req,res)=>{
 
 app.get('/materials',(req,res)=>{                                               //GET MATERIAL
     // if(req.session.loggedIn){
-        connection.query("SELECT * FROM mat_details WHERE deleted",(err,result)=>{
+        connection.query("SELECT * FROM mat_details WHERE deleted IS NULL",(err,result)=>{
+            console.log(err)
             res.json({data:result});
         })
     // }else{
