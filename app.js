@@ -175,7 +175,7 @@ app.get('/dashboard/quotation',(req,res)=>{
 app.get('/quotation',(req,res)=>{
     // if(req.session.loggedIn){
         console.log(req.session.loggedIn)
-        connection.query('SELECT Q.*,P.ProjectID,PT.ProjDesc,PT.ProjType,PS.*,C.FirstName,C.MiddleName,C.LastName,SE.ServiceName,group_concat(S.FirstName," ",S.MiddleName," ",S.LastName) AS subcontractors FROM quotation Q JOIN customers C ON Q.CustID=C.CustID JOIN users U ON Q.UserID = U.UserID JOIN project P ON Q.ProjectID = P.ProjectID JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID JOIN project_site PS ON P.ProjectID=PS.ProjSiteID JOIN sub_contractors_labor SL ON SL.QuoID= Q.QuoID JOIN sub_contractors S ON SL.SubListID=S.SubListID JOIN services SE ON S.ServiceID=SE.ServiceID GROUP BY SL.QuoID',(err,result)=>{
+        connection.query('SELECT Q.*,P.ProjectID,PT.ProjDesc,PT.ProjType,PS.*,C.FirstName,C.MiddleName,C.LastName,SE.ServiceName,group_concat(S.FirstName," ",S.MiddleName," ",S.LastName) AS subcontractors FROM quotation Q JOIN customers C ON Q.CustID=C.CustID JOIN users U ON Q.UserID = U.UserID JOIN project P ON Q.ProjectID = P.ProjectID JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID JOIN project_site PS ON P.ProjSiteID=PS.ProjSiteID JOIN sub_contractors_labor SL ON SL.QuoID= Q.QuoID JOIN sub_contractors S ON SL.SubListID=S.SubListID JOIN services SE ON S.ServiceID=SE.ServiceID GROUP BY SL.QuoID',(error2,result)=>{
         console.log(result);
         connection.query('SELECT MD.MatName,MD.MatDescription,M.*,MD.MatPrice,P.ProjectID FROM project P JOIN mat_list ML ON P.MatListID= ML.MatListID JOIN materials M ON M.MatListID = ML.MatListID JOIN mat_details MD ON MD.MatDetailsID=M.MatDetailsID',(err,mat)=>{
             res.status(200).json({data:result,materials:mat});
@@ -259,11 +259,13 @@ app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
             connection.query('SELECT * FROM project WHERE ProjectID=?',quots[0].ProjectID,(err2,proj)=>{
                 connection.query('UPDATE quotation SET summation=?,DeliveryCharges=?,LaborCharges=?,Bendingcharges=?,updated=CURRENT_TIMESTAMP WHERE QuoID=?',[data.quotation_summation,data.quotation_delivery,data.quotation_labor,data.quotation_bendingcharges,id])
             connection.query('UPDATE project_site SET City=?,Barangay=?,StreetNumber=?,PostalCode=? WHERE ProjSiteID=?',[data.project_city,data.project_barangay,data.project_street,data.project_postal_code,proj[0].ProjSiteID],(err,result)=>{
-        connection.query('UPDATE project_type SET ProjDesc=?,ProjType=? WHERE ProjTypeID=?',[data.proj_description,data.project_type,proj[0].ProjTypeID],(err,type)=>{
+        connection.query('UPDATE project_type SET ProjDesc=?,ProjType=? WHERE ProjTypeID=?',[data.project_description,data.project_type,proj[0].ProjTypeID],(err,type)=>{
             
                 connection.query('SELECT * FROM mat_list WHERE MatListID=?',[proj[0].MatListID],(ers,mats)=>{
                     if(data.materials.length>0){
                         connection.query('INSERT INTO mat_list SET TotalListPrice=?',[data.totalListPrice],(erri,mati)=>{
+                            console.log("MATI HERE")
+                            console.log(mati)
                             for(let index=0;index<data.materials.length;index++){
                                 connection.query('SELECT * FROM mat_details WHERE MatDescription=? ',[data.materials[index].material_description],(err,dets)=>{
                                     if(dets!=null){
@@ -495,26 +497,27 @@ app.post('/subcontractors/add',urlencodedParser,(req,res)=>{                    
         var catcher = JSON.stringify(req.body);
         var data = JSON.parse(catcher);
         console.log(data)
-        connection.query('INSERT INTO sub_contractors(ServiceID,SubListID,FirstName,MiddleName,LastName,created) VALUES('+data.ServiceID+','+data.SubListID+',"'+data.FirstName+'","'+data.MiddleName+'","'+data.LastName+'",CURRENT_TIMESTAMP)',(err,result)=>{
+        connection.query('INSERT INTO sub_contractors(ServiceID,FirstName,MiddleName,LastName,created) VALUES('+data.ServiceID+',"'+data.FirstName+'","'+data.MiddleName+'","'+data.LastName+'",CURRENT_TIMESTAMP)',(err,result)=>{
             console.log(err);
+            console.log(result);
             res.json({data:result});
         })
     // }else{
     //     res.status(400).send({message:"Session Timeout"})
     // }
 })
-app.post('/subcontractors/addsub',urlencodedParser,(req,res)=>{                                          //ADD SUBCONTRACTORS
-    // if(req.session.loggedIn){
-        var catcher = JSON.stringify(req.body);
-        var data = JSON.parse(catcher);
-        connection.query('INSERT INTO sub_contractors(ServiceID,SubListID,FirstName,MiddleName,LastName,created) VALUES('+data.ServiceID+','+data.SubListID+',"'+data.FirstName+'","'+data.MiddleName+'","'+data.LastName+'",CURRENT_TIMESTAMP)',(err,result)=>{
-            console.log(err);
-            res.json({data:result});
-        })
-    // }else{
-    //     res.status(400).send({message:"Session Timeout"})
-    // }
-})
+// app.post('/subcontractors/addsub',urlencodedParser,(req,res)=>{                                          //ADD SUBCONTRACTORS
+//     // if(req.session.loggedIn){
+//         var catcher = JSON.stringify(req.body);
+//         var data = JSON.parse(catcher);
+//         connection.query('INSERT INTO sub_contractors(ServiceID,SubListID,FirstName,MiddleName,LastName,created) VALUES('+data.ServiceID+','+data.SubListID+',"'+data.FirstName+'","'+data.MiddleName+'","'+data.LastName+'",CURRENT_TIMESTAMP)',(err,result)=>{
+//             console.log(err);
+//             res.json({data:result});
+//         })
+//     // }else{
+//     //     res.status(400).send({message:"Session Timeout"})
+//     // }
+// })
 
 app.post('/subcontractors/update',urlencodedParser,(req,res)=>{                                          //UPDATE SUBCONTRACTORS
     if(req.session.loggedIn){

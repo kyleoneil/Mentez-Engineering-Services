@@ -438,7 +438,7 @@
             <div class="subtitle-2">{{quotation.project.date_from}} - {{quotation.project.date_until}}</div>
           </v-flex>
           <v-flex xs12 md3 pr-1>
-            <div class="subtitle-2">{{quotation.subcontractor.subcontractor_name}}</div>
+            <div class="subtitle-2">{{quotation.subcontractor.subcontractor_firstname}} {{quotation.subcontractor.subcontractor_middlename}} {{quotation.subcontractor.subcontractor_lastname}}</div>
           </v-flex>
           <v-flex xs12 md3 pr-1>
             <div class="subtitle-2">{{quotation.subcontractor.subcontractor_service}}</div>
@@ -1400,10 +1400,11 @@ export default {
               materials: Quotation_Materials,
         
               subcontractor: {
-                // subcontractor_firstname: response.data.data[ctr].  selectedSubcontractor.split(' ')[0],
-                // subcontractor_middlename: response.data.data[ctr].  selectedSubcontractor.split(' ')[1],
-                // subcontractor_lastname: response.data.data[ctr].  selectedSubcontractor.split(' ')[2],
-                // subcontractor_service: response.data.data[ctr].  selectedService,
+                subcontractor_firstname: response.data.data[ctr].subcontractors.split(' ')[0],
+                subcontractor_middlename: response.data.data[ctr].subcontractors.split(' ')[1],
+                subcontractor_lastname: response.data.data[ctr].subcontractors.split(' ')[2],
+                SublistID: response.data.data[ctr].SublistID,
+                subcontractor_service: response.data.data[ctr].ServiceName,
               },
             },
           )
@@ -1487,8 +1488,9 @@ export default {
       this.dialog2 = true;
       this.step2 = 1;
       this.current_quotation = this.quotations[id];
+      console.log(this.current_quotation)
       this.selectedService = this.current_quotation.subcontractor.subcontractor_service
-      this.selectedSubcontractor = this.current_quotation.subcontractor.subcontractor_fullname
+      this.selectedSubcontractor = this.current_quotation.subcontractor.subcontractor_firstname + ' ' + this.current_quotation.subcontractor.subcontractor_middlename + ' ' + this.current_quotation.subcontractor.subcontractor_lastname
 
       var totalPrice = 0;
       for(var ctr=0; ctr < this.current_quotation.materials.length; ctr++){
@@ -1499,8 +1501,11 @@ export default {
     },
     edit: function(id){
       this.summation2()
-      for(var ctr=0; ctr<this.subcontractors.length && (this.subcontractors[ctr].subcontractor_name != this.selectedSubcontractor && this.subcontractors[ctr].subcontractor_service != this.selectedService); ctr++)
+      for(var ctr=0; ctr<this.subcontractors.length && (this.subcontractors[ctr].subcontractor_name != this.selectedSubcontractor && this.subcontractors[ctr].ServiceName != this.selectedService); ctr++)
       this.selectedServiceID = this.subcontractors[ctr].ServiceID
+      console.log(id)
+      console.log(ctr)
+      console.log(this.subcontractors[ctr].SublistID)
       axios({
         method: 'PUT',
         url: 'http://localhost:3000/quotation/'+id+'/edit',
@@ -1522,9 +1527,9 @@ export default {
           project_city: this.current_quotation.project.project_city,
           project_postal_code: this.current_quotation.project.project_postal_code,
 
-          customer_firstname: this.customer.customer_Fname,
-          customer_middlename: this.customer.customer_Mname,
-          customer_lastname: this.customer.customer_Lname,
+          customer_firstname: this.current_quotation.customer.customer_Fname,
+          customer_middlename: this.current_quotation.customer.customer_Mname,
+          customer_lastname: this.current_quotation.customer.customer_Lname,
 
           materials: this.current_quotation.materials,
           totalListPrice: this.addMaterialTotalPrice2,
@@ -1532,9 +1537,9 @@ export default {
           amount: parseInt(this.amount),
           userid: 1,
 
-          subcontractor_FirstName: this.selectedSubcontractor.split(' ')[0],
-          subcontractor_MiddleName: this.selectedSubcontractor.split(' ')[1],
-          subcontractor_LastName: this.selectedSubcontractor.split(' ')[2],
+          subcontractor_firstname: this.selectedSubcontractor.split(' ')[0],
+          subcontractor_middlename: this.selectedSubcontractor.split(' ')[1],
+          subcontractor_lastname: this.selectedSubcontractor.split(' ')[2],
           subcontractor_service: this.selectedService,
 
           ServiceID: parseInt(this.subcontractors[ctr].ServiceID),
@@ -1542,7 +1547,7 @@ export default {
         }
       })
       .then(
-        this.$router.go()
+        // this.$router.go()
       )
     },
     remove: function(id){
@@ -1571,19 +1576,25 @@ export default {
           }
         )
       }
-      var material_status = 0
+      var material_status = ""
       var filtered =  revised.filter(function(entry){
         return entry.MatName == data[0] && entry.MatDescription == data[1];
       });
 
-      for(ctr=0; ctr<this.materials.length && this.affixMaterial.material_name != this.materials[ctr].material_name && this.affixMaterial.material_description != this.materials[ctr].material_description; ctr++);
+
+      console.log(this.affixMaterial.material_name)
+      for(ctr=0; ctr<this.materials.length; ctr++){
+        if(this.affixMaterial.material_name == this.materials[ctr].material_name && this.affixMaterial.material_description == this.materials[ctr].material_description){
+          break
+        }
+      }
+    
       if(ctr < this.materials.length){
         this.materials[ctr].material_quantity = parseInt(this.materials[ctr].material_quantity) + parseInt(this.affixMaterial.material_quantity)
 
         this.materials[ctr].MatStatus = ((filtered[0].MatQty - parseInt(this.materials[ctr].material_quantity)) > 0)?"IN STOCK":"FOR ORDER"
-        this.materials[ctr].MatPrice = parseInt(filtered[0].MatPrice *  this.materials[ctr].material_quantity)
+        this.materials[ctr].material_price = filtered[0].MatPrice *  parseInt(this.materials[ctr].material_quantity)
 
-        this.addMaterialTotalPrice = this.addMaterialTotalPrice + parseInt(this.materials[ctr].material_price)
       }else{
         material_status = ((filtered[0].MatQty - this.affixMaterial.material_quantity) > 0)?"IN STOCK":"FOR ORDER";
 
@@ -1598,6 +1609,11 @@ export default {
         this.addMaterialTotalPrice += mat.material_price
         this.materials.push(mat);
       }
+      this.addMaterialTotalPrice = 0
+      for(ctr=0; ctr<this.materials.length; ctr++){
+        this.addMaterialTotalPrice += parseInt(this.materials[ctr].material_price)
+      }
+      console.log(this.addMaterialTotalPrice)
     },
     addMaterial2: function(data){
       var revised = []
@@ -1606,27 +1622,62 @@ export default {
           {
             MatDescription: this.listed_materials[ctr].MatDescription,
             MatName: this.listed_materials[ctr].MatName,
+            MatStatus: this.listed_materials[ctr].MatStatus,
             MatPrice: this.listed_materials[ctr].MatPrice,
             MatQty: this.listed_materials[ctr].MatQty, 
-            ProjectId: this.current_quotation.ProjectID
+            
           }
         )
       }
 
+      var material_status = ""
       var filtered =  revised.filter(function(entry){
         return entry.MatName == data[0] && entry.MatDescription == data[1];
       });
 
-      var material_status = ((filtered[0].MatQty - this.affixMaterial.material_quantity) > 0)?"IN STOCK":"FOR ORDER";
+      material_status = ((filtered[0].MatQty - this.affixMaterial.material_quantity) > 0)?"IN STOCK":"FOR ORDER";
 
-      var mat = {
-        material_name: this.affixMaterial.material_name,
-        material_description: this.affixMaterial.material_description,
-        MatStatus: material_status,
-        material_quantity: this.affixMaterial.material_quantity,
-        material_price:  parseInt(filtered[0].MatPrice *  this.affixMaterial.material_quantity)
+      for(ctr=0; ctr<this.current_quotation.materials.length; ctr++){
+        if(this.affixMaterial.material_name == this.current_quotation.materials[ctr].material_name && this.affixMaterial.material_description == this.current_quotation.materials[ctr].material_description){
+          break
+        }
       }
-      this.current_quotation.materials.push(mat);
+      
+      if(ctr < this.current_quotation.materials.length){
+        this.current_quotation.materials[ctr].material_quantity = parseInt(this.current_quotation.materials[ctr].material_quantity) + parseInt(this.affixMaterial.material_quantity)
+
+        this.current_quotation.materials[ctr].MatStatus = ((filtered[0].MatQty - parseInt(this.current_quotation.materials[ctr].material_quantity)) > 0)?"IN STOCK":"FOR ORDER"
+        this.current_quotation.materials[ctr].material_price = filtered[0].MatPrice *  parseInt(this.current_quotation.materials[ctr].material_quantity)
+        
+      }else{
+        material_status = ((filtered[0].MatQty - this.affixMaterial.material_quantity) > 0)?"IN STOCK":"FOR ORDER";
+
+        var mat = {
+          material_name: this.affixMaterial.material_name,
+          material_description: this.affixMaterial.material_description,
+          MatStatus: material_status,
+          material_quantity: this.affixMaterial.material_quantity,
+          material_price: parseInt(filtered[0].MatPrice *  this.affixMaterial.material_quantity)
+        }
+        this.current_quotation.materials.push(mat);
+      }
+     this.addMaterialTotalPrice = 0
+      for(var ctr2 = 0; ctr2<this.current_quotation.materials.length; ctr2++){
+        this.addMaterialTotalPrice += parseInt(this.current_quotation.materials[ctr2].material_price)
+      }
+
+      //   this.addMaterialTotalPrice += mat.material_price
+      //   this.materials.push(mat);
+
+
+      // var mat = {
+      //   material_name: this.affixMaterial.material_name,
+      //   material_description: this.affixMaterial.material_description,
+      //   MatStatus: material_status,
+      //   material_quantity: this.affixMaterial.material_quantity,
+      //   material_price:  parseInt(filtered[0].MatPrice *  this.affixMaterial.material_quantity)
+      // }
+      // this.current_quotation.materials.push(mat);
       
     },
     removeMaterial: function(index){
