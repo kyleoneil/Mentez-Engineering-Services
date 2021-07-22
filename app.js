@@ -483,7 +483,6 @@ app.get('/subcontractors',(req,res)=>{                                          
     // if(req.session.loggedIn){
         connection.query("SELECT SC.FirstName, SC.MiddleName, SC.LastName, S.ServiceName,SC.SubID,SC.ServiceID,SC.SublistID FROM sub_contractors SC JOIN services S ON  SC.ServiceID = S.ServiceID WHERE deleted IS NULL ",(err,result)=>{
             console.log(err);
-            console.log(result);
             res.json({data:result});
         })
     // }else{
@@ -496,9 +495,20 @@ app.post('/subcontractors/add',urlencodedParser,(req,res)=>{                    
         var catcher = JSON.stringify(req.body);
         var data = JSON.parse(catcher);
         console.log(data)
-        connection.query('INSERT INTO sub_contractors(ServiceID,FirstName,MiddleName,LastName,created) VALUES('+data.ServiceID+',"'+data.FirstName+'","'+data.MiddleName+'","'+data.LastName+'",CURRENT_TIMESTAMP)',(err,result)=>{
+        connection.query('INSERT INTO sub_contractors(ServiceID,SubListID,FirstName,MiddleName,LastName,created) VALUES('+data.ServiceID+','+data.SubListID+',"'+data.FirstName+'","'+data.MiddleName+'","'+data.LastName+'",CURRENT_TIMESTAMP)',(err,result)=>{
             console.log(err);
-            console.log(result);
+            res.json({data:result});
+        })
+    // }else{
+    //     res.status(400).send({message:"Session Timeout"})
+    // }
+})
+app.post('/subcontractors/addsub',urlencodedParser,(req,res)=>{                                          //ADD SUBCONTRACTORS
+    // if(req.session.loggedIn){
+        var catcher = JSON.stringify(req.body);
+        var data = JSON.parse(catcher);
+        connection.query('INSERT INTO sub_contractors(ServiceID,SubListID,FirstName,MiddleName,LastName,created) VALUES('+data.ServiceID+','+data.SubListID+',"'+data.FirstName+'","'+data.MiddleName+'","'+data.LastName+'",CURRENT_TIMESTAMP)',(err,result)=>{
+            console.log(err);
             res.json({data:result});
         })
     // }else{
@@ -542,18 +552,7 @@ app.post('/subcontractors/delete',urlencodedParser,(req,res)=>{                 
 //         res.status(400).send({message:"Session Timeout"})
 //     }
 // })
-app.post('/subcontractors/addsub',urlencodedParser,(req,res)=>{                                          //ADD SUBCONTRACTORS
-    // if(req.session.loggedIn){
-        var catcher = JSON.stringify(req.body);
-        var data = JSON.parse(catcher);
-        connection.query('INSERT INTO sub_contractors(ServiceID,SubListID,FirstName,MiddleName,LastName,created) VALUES('+data.ServiceID+','+data.SubListID+',"'+data.FirstName+'","'+data.MiddleName+'","'+data.LastName+'",CURRENT_TIMESTAMP)',(err,result)=>{
-            console.log(err);
-            res.json({data:result});
-        })
-    // }else{
-    //     res.status(400).send({message:"Session Timeout"})
-    // }
-})
+
 
 app.get('/materials/:id',(req,res)=>{
     let id = req.params.id;

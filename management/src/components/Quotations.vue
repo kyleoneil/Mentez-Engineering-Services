@@ -58,7 +58,7 @@
                           <v-col>
                             <v-text-field
                               v-model="project.project_description"
-                              label="Project Description"
+                              label="Project Name"
                             ></v-text-field>
                           </v-col>
                           <v-col>
@@ -222,16 +222,11 @@
                           <v-col>
                             <v-select
                               :items="filteredsubcontractorsFname"
-                              v-model="selectedSubcontractorFname"
-                              label="First Name"
+                              v-model="selectedSubcontractor"
+                              label="Name"
                               dense
                             ></v-select>
-                            <v-select
-                              :items="filteredsubcontractorsLname"
-                              v-model="selectedSubcontractorLname"
-                              label="Last Name"
-                              dense
-                            ></v-select>
+                            
                           </v-col>
                         </v-row>
                       </v-card-text>
@@ -416,7 +411,7 @@
             <div class="caption grey--text">Schedule</div>
           </v-flex>
           <v-flex xs12 md3>
-            <div class="caption grey--text">SubContractor(s)</div>
+            <div class="caption grey--text">SubContractor</div>
           </v-flex>
           <v-flex xs12 md3>
             <div class="caption grey--text">Service</div>
@@ -437,7 +432,7 @@
             <div class="subtitle-2">{{quotation.project.project_type}}</div>
           </v-flex>
           <v-flex xs12 md3 pr-1>
-            <div class="subtitle-2">{{quotation.customer.customer_Fname}}</div>
+            <div class="subtitle-2">{{quotation.customer.customer_Fname}} {{quotation.customer.customer_Lname}}</div>
           </v-flex>
           <v-flex xs12 md4 pr-1>
             <div class="subtitle-2">{{quotation.project.date_from}} - {{quotation.project.date_until}}</div>
@@ -543,7 +538,7 @@
                   <v-col>
                     <v-text-field
                       v-model="current_quotation.project.project_description"
-                      label="Project Description"
+                      label="Project Name"
                     ></v-text-field>
                   </v-col>
                   <v-col>
@@ -707,14 +702,8 @@
                           <v-col>
                             <v-select
                               :items="filteredsubcontractorsFname"
-                              v-model="selectedSubcontractorFname"
-                              label="First Name"
-                              dense
-                            ></v-select>
-                            <v-select
-                              :items="filteredsubcontractorsLname"
-                              v-model="selectedSubcontractorLname"
-                              label="Last Name"
+                              v-model="selectedSubcontractor"
+                              label="Name"
                               dense
                             ></v-select>
                           </v-col>
@@ -884,10 +873,9 @@
               <div class="text-overline text-center" >Poblacion, LILOAN, CEBU</div>
               <div class="pl-8 pt-6 pr-8">
                 <v-row>
-                  <v-col><div class="text-overline"><b>{{current_quotation.customer.customer_name}}</b></div></v-col>
+                  <v-col><div class="text-overline"><b>{{current_quotation.customer.customer_Fname}} {{current_quotation.customer.customer_Mname}} {{current_quotation.customer.customer_Lname}}</b></div></v-col>
                   <v-col><div class="text-overline text-right"><b>July 20, 2020</b></div></v-col>
                 </v-row>
-                <div class="text-caption">Casuntingan, Mandaue City</div>
 
                 <div class="pt-6">
                   <div class="text-caption">Project:</div>
@@ -1044,7 +1032,9 @@ export default {
       services: ["Roofing", "Masonry", "Electrical", "Plumbing"],
       
       selectedService: "",
+      selectedSubcontractor: "",
       selectedSubcontractorFname: "",
+      selectedSubcontractorMname: "",
       selectedSubcontractorLname: "",
       selectedSubID: "",
       selectedServiceID: "",
@@ -1251,6 +1241,20 @@ export default {
     filteredsubcontractorsFname() {
       // DATA STATIC
       var test = [];
+      // for(var ctr=0; ctr<this.subcontractors.length; ctr++){
+      //   test.push(
+      //     {
+      //       subcontractor_Fname: this.subcontractors[ctr].FirstName,
+      //       subcontractor_Mname: this.subcontractors[ctr].MiddleName,
+      //       subcontractor_Lname: this.subcontractors[ctr].LastName,
+      //       subcontractor_service: this.subcontractors[ctr].ServiceName,
+      //       SubId: this.subcontractors[ctr].SubId,
+      //       SublistID: this.subcontractors[ctr].SublistID,
+      //       ServiceID: this.subcontractors[ctr].SerivceID
+      //     }
+      //   )
+      // }
+
       for(var ctr=0; ctr<this.subcontractors.length; ctr++){
         test.push(
           {
@@ -1258,13 +1262,13 @@ export default {
             subcontractor_Mname: this.subcontractors[ctr].MiddleName,
             subcontractor_Lname: this.subcontractors[ctr].LastName,
             subcontractor_service: this.subcontractors[ctr].ServiceName,
+            subcontractor_FullName: this.subcontractors[ctr].FirstName + ' ' + this.subcontractors[ctr].MiddleName + ' ' + this.subcontractors[ctr].LastName,
             SubId: this.subcontractors[ctr].SubId,
             SublistID: this.subcontractors[ctr].SublistID,
             ServiceID: this.subcontractors[ctr].SerivceID
           }
         )
       }
-
 
       var subcontractors = [];
       var service = this.selectedService;
@@ -1273,39 +1277,39 @@ export default {
       });
       
       for( ctr=0; ctr<filtered.length; ctr++){
-        subcontractors.push(filtered[ctr].subcontractor_Fname)
+        subcontractors.push(filtered[ctr].subcontractor_FullName)
       }
       return subcontractors;
     },
-    filteredsubcontractorsLname() {
-      // DATA STATIC
-      var test = [];
-      for(var ctr=0; ctr<this.subcontractors.length; ctr++){
-        test.push(
-          {
-            subcontractor_Fname: this.subcontractors[ctr].FirstName,
-            subcontractor_Mname: this.subcontractors[ctr].MiddleName,
-            subcontractor_Lname: this.subcontractors[ctr].LastName,
-            subcontractor_service: this.subcontractors[ctr].ServiceName,
-            SubId: this.subcontractors[ctr].SubId,
-            SublistID: this.subcontractors[ctr].SublistID,
-            ServiceID: this.subcontractors[ctr].SerivceID
-          }
-        )
-      }
+    // filteredsubcontractorsLname() {
+    //   // DATA STATIC
+    //   var test = [];
+    //   for(var ctr=0; ctr<this.subcontractors.length; ctr++){
+    //     test.push(
+    //       {
+    //         subcontractor_Fname: this.subcontractors[ctr].FirstName,
+    //         subcontractor_Mname: this.subcontractors[ctr].MiddleName,
+    //         subcontractor_Lname: this.subcontractors[ctr].LastName,
+    //         subcontractor_service: this.subcontractors[ctr].ServiceName,
+    //         SubId: this.subcontractors[ctr].SubId,
+    //         SublistID: this.subcontractors[ctr].SublistID,
+    //         ServiceID: this.subcontractors[ctr].SerivceID
+    //       }
+    //     )
+    //   }
 
 
-      var subcontractors = [];
-      var service = this.selectedService;
-      var filtered =  test.filter(function(entry){
-        return entry.subcontractor_service == service;
-      });
+    //   var subcontractors = [];
+    //   var service = this.selectedService;
+    //   var filtered =  test.filter(function(entry){
+    //     return entry.subcontractor_service == service;
+    //   });
       
-      for( ctr=0; ctr<filtered.length; ctr++){
-        subcontractors.push(filtered[ctr].subcontractor_Lname)
-      }
-      return subcontractors;
-    },
+    //   for( ctr=0; ctr<filtered.length; ctr++){
+    //     subcontractors.push(filtered[ctr].subcontractor_Lname)
+    //   }
+    //   return subcontractors;
+    // },
     getListedMaterials(){
       var mats = []
       for(var ctr=0; ctr<this.listed_materials.length; ctr++){
@@ -1396,8 +1400,10 @@ export default {
               materials: Quotation_Materials,
         
               subcontractor: {
-                subcontractor_name: response.data.data[ctr].subcontractors.split('-')[0],
-                subcontractor_service: response.data.data[ctr].subcontractors.split('-')[1],
+                // subcontractor_firstname: response.data.data[ctr].  selectedSubcontractor.split(' ')[0],
+                // subcontractor_middlename: response.data.data[ctr].  selectedSubcontractor.split(' ')[1],
+                // subcontractor_lastname: response.data.data[ctr].  selectedSubcontractor.split(' ')[2],
+                // subcontractor_service: response.data.data[ctr].  selectedService,
               },
             },
           )
@@ -1422,6 +1428,7 @@ export default {
     })
     .then((response) =>{
       this.subcontractors = response.data.data
+      console.log(response)
     })
     
     
@@ -1430,8 +1437,8 @@ export default {
   methods:{
     createQuotation: function(){
       this.summation()
-      for(var ctr=0; ctr<this.subcontractors.length && (this.subcontractors[ctr].subcontractor_Fname == this.selectedSubcontractor && this.subcontractors[ctr].subcontractor_service == this.selectedService); ctr++)
-      this.selectedServiceID = this.subcontractors[ctr].ServiceID
+      for(var ctr=0; ctr<this.subcontractors.length && ((this.subcontractors[ctr].FirstName + ' ' + this.subcontractors[ctr].MiddleName + ' ' + this.subcontractors[ctr].LastName) != this.selectedSubcontractor && this.subcontractors[ctr].ServiceName != this.selectedService); ctr++);
+
       axios({
         method: 'POST',
         url: 'http://localhost:3000/quotation/add',
@@ -1443,7 +1450,7 @@ export default {
           
           ProjectID: this.quotation.ProjectID,
           proj_description: this.project.project_description,
-          project_type: this.project.project_description,
+          project_type: this.project.project_type,
           date_from: new Date(this.project.date_from),
           date_until: new Date(this.project.date_until),
 
@@ -1462,7 +1469,11 @@ export default {
           amount: parseInt(this.amount),
           userid: 1,
 
-          subcontractor_name: this.selectedSubcontractor,
+          subcontractor_firstname: this.selectedSubcontractor.split(' ')[0],
+          subcontractor_middlename: this.selectedSubcontractor.split(' ')[1],
+          subcontractor_lastname: this.selectedSubcontractor.split(' ')[2],
+          subcontractor_service: this.selectedService,
+
           ServiceID: parseInt(this.subcontractors[ctr].ServiceID),
           SublistID: parseInt(this.subcontractors[ctr].SublistID),
         }
@@ -1477,7 +1488,7 @@ export default {
       this.step2 = 1;
       this.current_quotation = this.quotations[id];
       this.selectedService = this.current_quotation.subcontractor.subcontractor_service
-      this.selectedSubcontractor = this.current_quotation.subcontractor.subcontractor_name
+      this.selectedSubcontractor = this.current_quotation.subcontractor.subcontractor_fullname
 
       var totalPrice = 0;
       for(var ctr=0; ctr < this.current_quotation.materials.length; ctr++){
@@ -1488,7 +1499,7 @@ export default {
     },
     edit: function(id){
       this.summation2()
-      for(var ctr=0; ctr<this.subcontractors.length && (this.subcontractors[ctr].subcontractor_name == this.selectedSubcontractor && this.subcontractors[ctr].subcontractor_service == this.selectedService); ctr++)
+      for(var ctr=0; ctr<this.subcontractors.length && (this.subcontractors[ctr].subcontractor_name != this.selectedSubcontractor && this.subcontractors[ctr].subcontractor_service != this.selectedService); ctr++)
       this.selectedServiceID = this.subcontractors[ctr].ServiceID
       axios({
         method: 'PUT',
@@ -1521,7 +1532,11 @@ export default {
           amount: parseInt(this.amount),
           userid: 1,
 
-          subcontractor_name: this.selectedSubcontractor,
+          subcontractor_FirstName: this.selectedSubcontractor.split(' ')[0],
+          subcontractor_MiddleName: this.selectedSubcontractor.split(' ')[1],
+          subcontractor_LastName: this.selectedSubcontractor.split(' ')[2],
+          subcontractor_service: this.selectedService,
+
           ServiceID: parseInt(this.subcontractors[ctr].ServiceID),
           SublistID: parseInt(this.subcontractors[ctr].SublistID),
         }
@@ -1552,30 +1567,37 @@ export default {
             MatName: this.listed_materials[ctr].MatName,
             MatPrice: this.listed_materials[ctr].MatPrice,
             MatStatus: this.listed_materials[ctr].MatStatus,
-            MatQty: this.listed_materials[ctr].MatQty, 
-            ProjectId: this.listed_materials[ctr].ProjectId
+            MatQty: this.listed_materials[ctr].MatQuantity, 
           }
         )
       }
-
+      var material_status = 0
       var filtered =  revised.filter(function(entry){
         return entry.MatName == data[0] && entry.MatDescription == data[1];
       });
 
-      var material_status = ((filtered[0].MatQty - this.affixMaterial.material_quantity) > 0)?"IN STOCK":"FOR ORDER";
+      for(ctr=0; ctr<this.materials.length && this.affixMaterial.material_name != this.materials[ctr].material_name && this.affixMaterial.material_description != this.materials[ctr].material_description; ctr++);
+      if(ctr < this.materials.length){
+        this.materials[ctr].material_quantity = parseInt(this.materials[ctr].material_quantity) + parseInt(this.affixMaterial.material_quantity)
 
+        this.materials[ctr].MatStatus = ((filtered[0].MatQty - parseInt(this.materials[ctr].material_quantity)) > 0)?"IN STOCK":"FOR ORDER"
+        this.materials[ctr].MatPrice = parseInt(filtered[0].MatPrice *  this.materials[ctr].material_quantity)
 
-      var mat = {
-        material_name: this.affixMaterial.material_name,
-        material_description: this.affixMaterial.material_description,
-        MatStatus: material_status,
-        material_quantity: this.affixMaterial.material_quantity,
-        material_price: parseInt(filtered[0].MatPrice *  this.affixMaterial.material_quantity)
+        this.addMaterialTotalPrice = this.addMaterialTotalPrice + parseInt(this.materials[ctr].material_price)
+      }else{
+        material_status = ((filtered[0].MatQty - this.affixMaterial.material_quantity) > 0)?"IN STOCK":"FOR ORDER";
+
+        var mat = {
+          material_name: this.affixMaterial.material_name,
+          material_description: this.affixMaterial.material_description,
+          MatStatus: material_status,
+          material_quantity: this.affixMaterial.material_quantity,
+          material_price: parseInt(filtered[0].MatPrice *  this.affixMaterial.material_quantity)
+        }
+
+        this.addMaterialTotalPrice += mat.material_price
+        this.materials.push(mat);
       }
-
-      this.addMaterialTotalPrice += mat.material_price
-
-      this.materials.push(mat);
     },
     addMaterial2: function(data){
       var revised = []
@@ -1586,7 +1608,7 @@ export default {
             MatName: this.listed_materials[ctr].MatName,
             MatPrice: this.listed_materials[ctr].MatPrice,
             MatQty: this.listed_materials[ctr].MatQty, 
-            ProjectId: this.listed_materials[ctr].ProjectId
+            ProjectId: this.current_quotation.ProjectID
           }
         )
       }
@@ -1595,9 +1617,12 @@ export default {
         return entry.MatName == data[0] && entry.MatDescription == data[1];
       });
 
+      var material_status = ((filtered[0].MatQty - this.affixMaterial.material_quantity) > 0)?"IN STOCK":"FOR ORDER";
+
       var mat = {
         material_name: this.affixMaterial.material_name,
         material_description: this.affixMaterial.material_description,
+        MatStatus: material_status,
         material_quantity: this.affixMaterial.material_quantity,
         material_price:  parseInt(filtered[0].MatPrice *  this.affixMaterial.material_quantity)
       }
