@@ -591,6 +591,7 @@
                         <v-btn
                           text
                           color="primary"
+                          v-on:click="changeDate2()"
                           @click="$refs.menu.save(current_quotation.project.date_from)"
                         >
                           OK
@@ -621,7 +622,7 @@
                       <v-date-picker
                         v-model="current_quotation.project.date_until"
                         no-title
-                        :min="mindate_until"
+                        :min="mindate_from"
                         scrollable
                       >
                         <v-spacer></v-spacer>
@@ -875,7 +876,7 @@
               <div class="pl-8 pt-6 pr-8">
                 <v-row>
                   <v-col><div class="text-overline"><b>{{current_quotation.customer.customer_Fname}} {{current_quotation.customer.customer_Mname}} {{current_quotation.customer.customer_Lname}}</b></div></v-col>
-                  <v-col><div class="text-overline text-right"><b>July 20, 2020</b></div></v-col>
+                  <v-col><div class="text-overline text-right"><b>July 24, 2020</b></div></v-col>
                 </v-row>
 
                 <div class="pt-6">
@@ -1439,7 +1440,6 @@ export default {
     })
     .then((response) =>{
       this.listed_materials = response.data.data
-      console.log(response)
     })
 
     axios({
@@ -1448,7 +1448,6 @@ export default {
     })
     .then((response) =>{
       this.subcontractors = response.data.data
-      console.log(response)
     })
     
     
@@ -1510,7 +1509,6 @@ export default {
       this.mindate_from = this.current_quotation.project.date_from
       this.mindate_until = this.mindate_from
       this.check9 = true
-      console.log(this.current_quotation)
       this.selectedService = this.current_quotation.subcontractor.subcontractor_service
       this.selectedSubcontractor = this.current_quotation.subcontractor.subcontractor_firstname + ' ' + this.current_quotation.subcontractor.subcontractor_middlename + ' ' + this.current_quotation.subcontractor.subcontractor_lastname
 
@@ -1525,9 +1523,6 @@ export default {
       this.summation2()
       for(var ctr=0; ctr<this.subcontractors.length && (this.subcontractors[ctr].subcontractor_name != this.selectedSubcontractor && this.subcontractors[ctr].ServiceName != this.selectedService); ctr++)
       this.selectedServiceID = this.subcontractors[ctr].ServiceID
-      console.log(id)
-      console.log(ctr)
-      console.log(this.subcontractors[ctr].SublistID)
       axios({
         method: 'PUT',
         url: 'http://localhost:3000/quotation/'+id+'/edit',
@@ -1607,7 +1602,6 @@ export default {
       });
 
 
-      console.log(this.affixMaterial.material_name)
       for(ctr=0; ctr<this.materials.length; ctr++){
         if(this.affixMaterial.material_name == this.materials[ctr].material_name && this.affixMaterial.material_description == this.materials[ctr].material_description){
           break
@@ -1638,7 +1632,6 @@ export default {
       for(ctr=0; ctr<this.materials.length; ctr++){
         this.addMaterialTotalPrice += parseInt(this.materials[ctr].material_price)
       }
-      console.log(this.addMaterialTotalPrice)
     },
     addMaterial2: function(data){
       var revised = []
@@ -1671,17 +1664,13 @@ export default {
           }
         }
       }
-      console.log(this.current_quotation)
 
-      console.log(this.current_quotation.materials)
       for(ctr=0; ctr<this.current_quotation.materials.length; ctr++){
         if(this.affixMaterial.material_name == this.current_quotation.materials[ctr].material_name && this.affixMaterial.material_description == this.current_quotation.materials[ctr].material_description){
           break
         }
       }
 
-
-      console.log(this.current_quotation.materials)
       
       if(ctr < this.current_quotation.materials.length){
         this.current_quotation.materials[ctr].material_quantity = parseInt(this.current_quotation.materials[ctr].material_quantity) + parseInt(this.affixMaterial.material_quantity)
@@ -1739,10 +1728,11 @@ export default {
       this.amount = total * 1.2
     },
     changeDate: function() {
-      console.log(this.project.date_from)
       this.mindate_until = this.project.date_from
-    // this.mindate_until = this.project.date_from;
-    // this.project.date_until = this.mindate_until
+    },
+    changeDate2: function() {
+      this.mindate_until = this.current_quotation.project.date_from
+      console.log(this.mindate_until)
     },
   },
 }
