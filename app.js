@@ -212,7 +212,7 @@ app.post('/quotation/add',urlencodedParser,(req,res)=>{
         connection.query('INSERT INTO project_type SET ProjDesc=?,ProjType=?',[data.proj_description,data.project_type],(err,type)=>{
             connection.query('INSERT INTO mat_list SET TotalListPrice=?',[data.totalListPrice],(err,mat)=>{
                 for(let index=0;index<data.materials.length;index++){
-                    connection.query('SELECT * FROM mat_details WHERE MatDescription=?',[data.materials[index].material_description],(err2,dets)=>{
+                    connection.query('SELECT * FROM mat_details WHERE MatName=?',[data.materials[index].material_name],(err2,dets)=>{
                         connection.query('INSERT INTO materials SET MatListID=?,MatDetailsID=?,MatQty=?,TotalPrice=?',[mat.insertId,dets[0].MatDetailsID,data.materials[index].material_quantity,data.materials[index].material_price],(err3,res)=>{})
                         var ham = parseInt(data.materials[index].material_quantity)
                         connection.query('UPDATE mat_details SET MatQuantity=?,MatStatus=? WHERE MatDetailsID=?',[ham,data.materials[index].MatStatus,dets[0].MatDetailsID])
@@ -267,7 +267,7 @@ app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
                             console.log("MATI HERE")
                             console.log(mati)
                             for(let index=0;index<data.materials.length;index++){
-                                connection.query('SELECT * FROM mat_details WHERE MatDescription=? ',[data.materials[index].material_description],(err,dets)=>{
+                                connection.query('SELECT * FROM mat_details WHERE MatName=? ',[data.materials[index].material_name],(err,dets)=>{
                                     if(dets!=null){
                                         connection.query('INSERT INTO materials SET MatListID=?,MatDetailsID=?,MatQty=?,TotalPrice=?',[mati.insertId,dets[0].MatDetailsID,data.materials[index].material_quantity,data.materials[index].material_price],(errs,ret)=>{
                                         })
