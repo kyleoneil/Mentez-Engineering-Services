@@ -52,8 +52,8 @@
                         <v-text-field v-show="hide" label="Quantity"  prepend-icon="mdi-minus" v-model="Mat.quantity" :error-messages="errors" required clearable></v-text-field>
                         </validation-provider>
 
-                        <validation-provider v-slot="{ errors }" name="Price" :rules="{required: true, numeric: true}"> 
-                        <v-text-field v-show="hide" label="Price"  prepend-icon="mdi-plus" v-model="Mat.prize" :error-messages="errors" required clearable></v-text-field>
+                        <validation-provider v-slot="{ errors }" name="Price" :rules="{required: true}"> 
+                        <v-text-field v-show="hide" label="Price"  prepend-icon="mdi-plus" v-model="Mat.prize" :error-messages="errors" @input="onlyNumbers" required clearable></v-text-field>
                         </validation-provider>
 
                         <validation-provider v-slot="{ errors }" name="Status" rules="required">
@@ -271,6 +271,8 @@ export default {
             hide: true,
             hamburger: false,
             Mat: {name:'', Description:'', status:'', quantity:'', prize:'', serviceid: null},
+
+            checkbox: null,
             
             nameMat:"",
             DescriptionMat:"",
@@ -442,6 +444,10 @@ export default {
             this.checkbox = null
             this.$refs.observer.reset()
       },
+
+      onlyNumbers: function() {
+       this.Mat.prize = this.Mat.prize.replace(/[^0-9.]/g,'');
+    }
         
        
     },

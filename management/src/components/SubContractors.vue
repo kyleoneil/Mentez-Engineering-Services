@@ -143,6 +143,8 @@ export default {
             sub:[],
             search:'',
             id:"",
+
+            checkbox: null,
             inputRules: [
                 v => v.length >= 3 || '3 Characters above'
             ]
