@@ -2,7 +2,7 @@
   <div>
     <v-container style="text-align: left;">
       <h1 class="ml-3">Quotations</h1>
-      <v-form>
+      <v-form ref="form1">
         <v-container>
           <v-row class="mt-1">
             <v-col cols="12" sm="6" md="4">
@@ -40,14 +40,20 @@
                         <v-text-field
                           v-model="customer.customer_Fname"
                           label="First Name"
+                          :rules="nameRules"
+                          required
                         ></v-text-field>
                         <v-text-field
                           v-model="customer.customer_Mname"
                           label="Middle Name"
+                          :rules="nameRules"
+                          required
                         ></v-text-field>
                         <v-text-field
                           v-model="customer.customer_Lname"
                           label="Last Name"
+                          :rules="nameRules"
+                          required
                         ></v-text-field>
                       </v-card-text>
                     </v-window-item>
@@ -59,12 +65,16 @@
                             <v-text-field
                               v-model="project.project_description"
                               label="Project Name"
+                              :rules="nameRules"
+                          required
                             ></v-text-field>
                           </v-col>
                           <v-col>
                             <v-text-field
                               v-model="project.project_type"
                               label="Type of Project"
+                              :rules="nameRules"
+                          required
                             ></v-text-field>
                             
                           </v-col>
@@ -89,6 +99,8 @@
                                   label="Date from"
                                   prepend-icon="mdi-calendar"
                                   readonly
+                                  :rules="nameRules"
+                          required
                                   v-bind="attrs"
                                   v-on="on"
                                 ></v-text-field>
@@ -136,6 +148,8 @@
                                   readonly
                                   v-bind="attrs"
                                   v-on="on"
+                                  :rules="nameRules"
+                          required
                                 ></v-text-field>
                               </template>
                               <v-date-picker
@@ -172,12 +186,16 @@
                             <v-text-field
                               v-model="project.project_street"
                               label="Street"
+                              :rules="nameRules"
+                          required
                             ></v-text-field>
                           </v-col>
                           <v-col>
                             <v-text-field
                               v-model="project.project_barangay"
                               label="Barangay"
+                              :rules="nameRules"
+                          required
                             ></v-text-field>
                           </v-col>
                         </v-row>
@@ -186,6 +204,8 @@
                             <v-text-field
                               v-model="project.project_city"
                               label="City"
+                              :rules="nameRules"
+                          required
                             ></v-text-field>
                           </v-col>
                           <v-col>
@@ -194,6 +214,8 @@
                               type="number"
                               min="0"
                               label="Postal Code"
+                              :rules="nameRules"
+                          required
                             ></v-text-field>
                           </v-col>
                         </v-row>
@@ -213,6 +235,8 @@
                               label="Service"
                               outlined
                               dense
+                              :rules="nameRules"
+                          required
                             ></v-select>
                           </v-col>
                         </v-row>
@@ -226,6 +250,8 @@
                               v-model="selectedSubcontractor"
                               label="Name"
                               dense
+                              :rules="nameRules"
+                          required
                             ></v-select>
                             
                           </v-col>
@@ -243,7 +269,6 @@
                               :items="getListedMaterials"
                               color="pink"
                               label="Material"
-                              required
                               dense
                             ></v-select>
                           </v-flex>
@@ -253,7 +278,6 @@
                               :items="filteredMaterial"
                               color="pink"
                               label="Description"
-                              required
                               dense
                             ></v-select>
                           </v-flex>
@@ -276,6 +300,17 @@
                           </v-flex>
                         </v-layout>
                       </v-card>
+                      <div>
+                        <div class="mt-8" style="width:300px;margin-left:29%" v-if="chkmat == false">
+                          <v-alert
+                          dense
+                          outlined
+                          type="error"
+                        >
+                          Atleast 1 Material required.
+                        </v-alert>
+                        </div>
+                      </div>
                       <div class="caption grey--text mt-8 ml-12">Material List</div>
                       <v-card flat class="mb-4 mx-12 pa-7" style="background-color: #F8F8F8;">
                         <v-layout row wrap>
@@ -332,6 +367,8 @@
                               prefix="₱"
                               min="0"
                               label="Delivery"
+                              :rules="nameRules"
+                          required
                             ></v-text-field>
                           </v-col>
                           <v-col>
@@ -340,6 +377,8 @@
                               prefix="₱"
                               min="0"
                               label="Labor"
+                              :rules="nameRules"
+                          required
                             ></v-text-field>
                           </v-col>
                           <v-col>
@@ -348,6 +387,8 @@
                               prefix="₱"
                               min="0"
                               label="Bending Charges"
+                              :rules="nameRules"
+                          required
                             ></v-text-field>
                           </v-col>
                         </v-row>
@@ -497,372 +538,416 @@
       </v-card>
 
       <!-- ------------------------- Edit Modal -------------------------->
-      <v-dialog v-model="dialog2" width="700">
-        <v-card
-          class="mx-auto"
-          max-width="700"
-        >
-          <v-card-title class="title font-weight-regular justify-space-between">
-            <span>{{ currentTitle2 }}</span>
-            <v-icon
-              @click="dialog2 = false"
-            >
-              mdi-close
-            </v-icon>
-          </v-card-title>
+      <v-form ref="form2">
+        <v-dialog v-model="dialog2" width="700">
+          <v-card
+            class="mx-auto"
+            max-width="700"
+          >
+            <v-card-title class="title font-weight-regular justify-space-between">
+              <span>{{ currentTitle2 }}</span>
+              <v-icon
+                @click="dialog2 = false"
+              >
+                mdi-close
+              </v-icon>
+            </v-card-title>
 
-          <v-window v-model="step2">
+            <v-window v-model="step2">
 
-            <v-window-item :value="1">
-              <v-card-text>
-                <v-text-field
-                  v-model="current_quotation.customer.customer_Fname"
-                  type="text"
-                  label="First Name"
-                ></v-text-field>
-                <v-text-field
-                  v-model="current_quotation.customer.customer_Mname"
-                  type="text"
-                  label="Middle Name"
-                ></v-text-field>
-                <v-text-field
-                  v-model="current_quotation.customer.customer_Lname"
-                  type="text"
-                  label="Last Name"
-                ></v-text-field>
-              </v-card-text>
-            </v-window-item>
+              <v-window-item :value="1">
+                <v-card-text>
+                  <v-text-field
+                    v-model="current_quotation.customer.customer_Fname"
+                    type="text"
+                    label="First Name"
+                    :rules="nameRules"
+                          required
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="current_quotation.customer.customer_Mname"
+                    type="text"
+                    label="Middle Name"
+                    :rules="nameRules"
+                          required
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="current_quotation.customer.customer_Lname"
+                    type="text"
+                    label="Last Name"
+                    :rules="nameRules"
+                          required
+                  ></v-text-field>
+                </v-card-text>
+              </v-window-item>
 
-            <v-window-item :value="2">
-              <v-card-text>
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                      v-model="current_quotation.project.project_description"
-                      label="Project Name"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field
-                      v-model="current_quotation.project.project_type"
-                      label="Type of Project"
-                    ></v-text-field>
-                    
-                  </v-col>
-                </v-row>
-                <div class=".text-md-body-1">
-                  Schedule Date
-                </div>
-                <v-row>
-                  <v-col>
-                    <v-menu
-                      ref="menu"
-                      v-model="menu"
-                      :close-on-content-click="false"
-                      :return-value.sync="current_quotation.project.date_from"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
+              <v-window-item :value="2">
+                <v-card-text>
+                  <v-row>
+                    <v-col>
+                      <v-text-field
+                        v-model="current_quotation.project.project_description"
+                        label="Project Name"
+                        :rules="nameRules"
+                          required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col>
+                      <v-text-field
+                        v-model="current_quotation.project.project_type"
+                        label="Type of Project"
+                        :rules="nameRules"
+                          required
+                      ></v-text-field>
+                      
+                    </v-col>
+                  </v-row>
+                  <div class=".text-md-body-1">
+                    Schedule Date
+                  </div>
+                  <v-row>
+                    <v-col>
+                      <v-menu
+                        ref="menu"
+                        v-model="menu"
+                        :close-on-content-click="false"
+                        :return-value.sync="current_quotation.project.date_from"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="current_quotation.project.date_from"
+                            label="Date from"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                            :rules="nameRules"
+                          required
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
                           v-model="current_quotation.project.date_from"
-                          label="Date from"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="current_quotation.project.date_from"
-                        no-title
-                        :min="mindate_from"
-                        scrollable
+                          no-title
+                          :min="mindate_from"
+                          scrollable
+                        >
+                          <v-spacer></v-spacer>
+                          <v-btn
+                            text
+                            color="primary"
+                            @click="menu = false"
+                          >
+                            Cancel
+                          </v-btn>
+                          <v-btn
+                            text
+                            color="primary"
+                            v-on:click="changeDate2()"
+                            @click="$refs.menu.save(current_quotation.project.date_from)"
+                          >
+                            OK
+                          </v-btn>
+                        </v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col>
+                      <v-menu
+                        ref="menu2"
+                        v-model="menu2"
+                        :close-on-content-click="false"
+                        :return-value.sync="current_quotation.project.date_until"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
                       >
-                        <v-spacer></v-spacer>
-                        <v-btn
-                          text
-                          color="primary"
-                          @click="menu = false"
-                        >
-                          Cancel
-                        </v-btn>
-                        <v-btn
-                          text
-                          color="primary"
-                          v-on:click="changeDate2()"
-                          @click="$refs.menu.save(current_quotation.project.date_from)"
-                        >
-                          OK
-                        </v-btn>
-                      </v-date-picker>
-                    </v-menu>
-                  </v-col>
-                  <v-col>
-                    <v-menu
-                      ref="menu2"
-                      v-model="menu2"
-                      :close-on-content-click="false"
-                      :return-value.sync="current_quotation.project.date_until"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="current_quotation.project.date_until"
+                            label="Date until"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                            :rules="nameRules"
+                          required
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
                           v-model="current_quotation.project.date_until"
-                          label="Date until"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="current_quotation.project.date_until"
-                        no-title
-                        :min="mindate_from"
-                        scrollable
+                          no-title
+                          :min="mindate_from"
+                          scrollable
+                        >
+                          <v-spacer></v-spacer>
+                          <v-btn
+                            text
+                            color="primary"
+                            @click="menu2 = false"
+                          >
+                            Cancel
+                          </v-btn>
+                          <v-btn
+                            text
+                            color="primary"
+                            @click="$refs.menu2.save(current_quotation.project.date_until)"
+                          >
+                            OK
+                          </v-btn>
+                        </v-date-picker>
+                      </v-menu>
+                    </v-col>
+                  </v-row>
+
+                  <div class=".text-md-body-1">
+                    Site Address
+                  </div>
+                  <v-row>
+                    <v-col>
+                      <v-text-field
+                        v-model="current_quotation.project.project_street"
+                        label="Street"
+                        :rules="nameRules"
+                          required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col>
+                      <v-text-field
+                        v-model="current_quotation.project.project_barangay"
+                        label="Barangay"
+                        :rules="nameRules"
+                          required
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col>
+                      <v-text-field
+                        v-model="current_quotation.project.project_city"
+                        label="City"
+                        :rules="nameRules"
+                          required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col>
+                      <v-text-field
+                        v-model="current_quotation.project.project_postal_code"
+                        type="number"
+                        min="0"
+                        label="Postal Code"
+                        :rules="nameRules"
+                          required
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-window-item>
+
+              <v-window-item :value="3">
+                <v-card-text>
+                  <v-row>
+                            <div class=".text-md-body-1" style="width:100px">
+                              Service:
+                            </div>
+                            <v-col>
+                              <v-select 
+                                :items="services"
+                                v-model="selectedService"
+                                label="Service"
+                                outlined
+                                dense
+                                :rules="nameRules"
+                          required
+                              ></v-select>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <div class=".text-md-body-1" style="width:100px">
+                              SubContractor:
+                            </div>
+                            <v-col>
+                              <v-select
+                                :items="filteredsubcontractorsFname"
+                                v-model="selectedSubcontractor"
+                                label="Name"
+                                dense
+                                :rules="nameRules"
+                          required
+                              ></v-select>
+                            </v-col>
+                          </v-row>
+                </v-card-text>
+              </v-window-item>
+
+              <v-window-item :value="4">
+                <div class="caption grey--text ml-12">Affix Material</div>
+                <v-card flat class=" mx-12 pa-7" style="background-color: #F8F8F8;">
+                  <v-layout row wrap>
+                    <v-flex xs12 md4 pr-1>
+                      <v-select
+                        v-model="affixMaterial.material_name"
+                        :items="getListedMaterials"
+                        color="pink"
+                        label="Material"
+                        dense
+
+                      ></v-select>
+                    </v-flex>
+                    <v-flex xs12 md5 pr-1>
+                      <v-select
+                        v-model="affixMaterial.material_description"
+                        :items="filteredMaterial"
+                        color="pink"
+                        label="Description"
+                        dense
+                      ></v-select>
+                    </v-flex>
+                    <v-flex xs12 md2 pr-1>
+                      <v-text-field
+                        label="Qty"
+                        v-model="affixMaterial.material_quantity"
+                        type="number"
+                        min="0"
+                        dense
+                      ></v-text-field>
+                    </v-flex>
+                    <v-flex xs6 xs4 md1 style="margin: 4px 0px 0px 0px">
+                      <v-btn 
+                        text
+                        v-on:click="addMaterial2([affixMaterial.material_name,affixMaterial.material_description])"
                       >
-                        <v-spacer></v-spacer>
-                        <v-btn
-                          text
-                          color="primary"
-                          @click="menu2 = false"
-                        >
-                          Cancel
-                        </v-btn>
-                        <v-btn
-                          text
-                          color="primary"
-                          @click="$refs.menu2.save(current_quotation.project.date_until)"
-                        >
-                          OK
-                        </v-btn>
-                      </v-date-picker>
-                    </v-menu>
-                  </v-col>
-                </v-row>
+                        <v-icon small color="black">mdi-plus</v-icon>
+                      </v-btn>
+                    </v-flex>
+                  </v-layout>
+                </v-card>
 
-                <div class=".text-md-body-1">
-                  Site Address
-                </div>
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                      v-model="current_quotation.project.project_street"
-                      label="Street"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field
-                      v-model="current_quotation.project.project_barangay"
-                      label="Barangay"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                      v-model="current_quotation.project.project_city"
-                      label="City"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field
-                      v-model="current_quotation.project.project_postal_code"
-                      type="number"
-                      min="0"
-                      label="Postal Code"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-card-text>
-            </v-window-item>
-
-            <v-window-item :value="3">
-              <v-card-text>
-                <v-row>
-                          <div class=".text-md-body-1" style="width:100px">
-                            Service:
-                          </div>
-                          <v-col>
-                            <v-select 
-                              :items="services"
-                              v-model="selectedService"
-                              label="Service"
-                              outlined
-                              dense
-                            ></v-select>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <div class=".text-md-body-1" style="width:100px">
-                            SubContractor:
-                          </div>
-                          <v-col>
-                            <v-select
-                              :items="filteredsubcontractorsFname"
-                              v-model="selectedSubcontractor"
-                              label="Name"
-                              dense
-                            ></v-select>
-                          </v-col>
-                        </v-row>
-              </v-card-text>
-            </v-window-item>
-
-            <v-window-item :value="4">
-              <div class="caption grey--text ml-12">Affix Material</div>
-              <v-card flat class=" mx-12 pa-7" style="background-color: #F8F8F8;">
-                <v-layout row wrap>
-                  <v-flex xs12 md4 pr-1>
-                    <v-select
-                      v-model="affixMaterial.material_name"
-                      :items="getListedMaterials"
-                      color="pink"
-                      label="Material"
-                      required
-                      dense
-                    ></v-select>
-                  </v-flex>
-                  <v-flex xs12 md5 pr-1>
-                    <v-select
-                      v-model="affixMaterial.material_description"
-                      :items="filteredMaterial"
-                      color="pink"
-                      label="Description"
-                      required
-                      dense
-                    ></v-select>
-                  </v-flex>
-                  <v-flex xs12 md2 pr-1>
-                    <v-text-field
-                      label="Qty"
-                      v-model="affixMaterial.material_quantity"
-                      type="number"
-                      min="0"
-                      dense
-                    ></v-text-field>
-                  </v-flex>
-                  <v-flex xs6 xs4 md1 style="margin: 4px 0px 0px 0px">
-                    <v-btn 
-                      text
-                      v-on:click="addMaterial2([affixMaterial.material_name,affixMaterial.material_description])"
-                    >
-                      <v-icon small color="black">mdi-plus</v-icon>
-                    </v-btn>
-                  </v-flex>
-                </v-layout>
-              </v-card>
-              <div class="caption grey--text mt-8 ml-12">Material List</div>
-              <v-card flat class="mb-4 mx-12 pa-7" style="background-color: #F8F8F8;">
-                <v-layout row wrap>
-                  <v-flex xs12 md3>
-                    <div class="caption grey--text">Material</div>
-                  </v-flex>
-                  <v-flex xs12 md5>
-                    <div class="caption grey--text">Description</div>
-                  </v-flex>
-                  <v-flex xs12 md1>
-                    <div class="caption grey--text">Qty</div>
-                  </v-flex>
-                  <v-flex xs12 md2>
-                    <div class="caption grey--text">Price</div>
-                  </v-flex>
-                  <v-flex xs6 xs4 md1></v-flex>
-                </v-layout>
-
-                <v-layout row wrap
-                  v-for="(material, index) in current_quotation.materials" :key="index"
+                <div class="mt-8" style="width:300px;margin-left:29%" v-if="chkmat == false">
+                  <v-alert
+                  dense
+                  outlined
+                  type="error"
                 >
-                  <v-flex xs12 md3 pr-1 style="margin: 10px 0px;">
-                    <div class="text-caption">{{material.material_name}}</div>
-                  </v-flex>
-                  <v-flex xs12 md5 pr-1 style="margin: 10px 0px">
-                    <div class="text-caption">{{material.material_description}}</div>
-                  </v-flex>
-                  <v-flex xs12 md1 pr-1 style="margin: 10px 0px">
-                    <div class="text-caption">{{material.material_quantity}}</div>
-                  </v-flex>
-                  <v-flex xs12 md2 pr-1 style="margin: 10px 0px">
-                    <div class="text-caption">₱{{material.material_price}}.00</div>
-                  </v-flex>
-                  <v-flex xs6 xs4 md1 style="margin: 10px 0px">
-                    <v-btn text height="20px">
-                      <v-icon 
-                        small color="black"
-                        v-on:click="removeMaterial2(index)"
-                      >mdi-minus</v-icon>
-                    </v-btn>
-                  </v-flex>
-                </v-layout>
-              </v-card>
-            </v-window-item>
+                  Atleast 1 Material required.
+                </v-alert>
+                </div>
 
-            <v-window-item :value="5">
-              <v-card-text>
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                      v-model="current_quotation.quotation_delivery"
-                      type="number"
-                      prefix="₱"
-                      label="Delivery"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field
-                      v-model="current_quotation.quotation_labor"
-                      type="number"
-                      prefix="₱"
-                      label="Labor"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field
-                      v-model="current_quotation.quotation_bendingcharges"
-                      type="number"
-                      prefix="₱"
-                      label="Bending Charges"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-card-text>
-            </v-window-item>
-          </v-window>
+                <div class="caption grey--text mt-8 ml-12">Material List</div>
+                <v-card flat class="mb-4 mx-12 pa-7" style="background-color: #F8F8F8;">
+                  <v-layout row wrap>
+                    <v-flex xs12 md3>
+                      <div class="caption grey--text">Material</div>
+                    </v-flex>
+                    <v-flex xs12 md5>
+                      <div class="caption grey--text">Description</div>
+                    </v-flex>
+                    <v-flex xs12 md1>
+                      <div class="caption grey--text">Qty</div>
+                    </v-flex>
+                    <v-flex xs12 md2>
+                      <div class="caption grey--text">Price</div>
+                    </v-flex>
+                    <v-flex xs6 xs4 md1></v-flex>
+                  </v-layout>
 
-          <v-divider></v-divider>
+                  <v-layout row wrap
+                    v-for="(material, index) in current_quotation.materials" :key="index"
+                  >
+                    <v-flex xs12 md3 pr-1 style="margin: 10px 0px;">
+                      <div class="text-caption">{{material.material_name}}</div>
+                    </v-flex>
+                    <v-flex xs12 md5 pr-1 style="margin: 10px 0px">
+                      <div class="text-caption">{{material.material_description}}</div>
+                    </v-flex>
+                    <v-flex xs12 md1 pr-1 style="margin: 10px 0px">
+                      <div class="text-caption">{{material.material_quantity}}</div>
+                    </v-flex>
+                    <v-flex xs12 md2 pr-1 style="margin: 10px 0px">
+                      <div class="text-caption">₱{{material.material_price}}.00</div>
+                    </v-flex>
+                    <v-flex xs6 xs4 md1 style="margin: 10px 0px">
+                      <v-btn text height="20px">
+                        <v-icon 
+                          small color="black"
+                          v-on:click="removeMaterial2(index)"
+                        >mdi-minus</v-icon>
+                      </v-btn>
+                    </v-flex>
+                  </v-layout>
+                </v-card>
+              </v-window-item>
 
-          <v-card-actions>
-            <v-btn
-              :disabled="step2 === 1"
-              text
-              @click="step2--"
-            >
-              Back
-            </v-btn>
-            <v-spacer></v-spacer>
-            <v-btn v-if="step2 !== 5"
-              :disabled="step2 === 5"
-              color="primary"
-              depressed
-              @click="step2++"
-            >
-              Next
-            </v-btn>
-            <v-btn v-else
-              color="primary"
-              depressed
-              v-on:click="edit(current_quotation.quotation_id)"
-            >
-              Submit
-            </v-btn>
-          </v-card-actions>
+              <v-window-item :value="5">
+                <v-card-text>
+                  <v-row>
+                    <v-col>
+                      <v-text-field
+                        v-model="current_quotation.quotation_delivery"
+                        type="number"
+                        prefix="₱"
+                        label="Delivery"
+                        :rules="nameRules"
+                          required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col>
+                      <v-text-field
+                        v-model="current_quotation.quotation_labor"
+                        type="number"
+                        prefix="₱"
+                        label="Labor"
+                        :rules="nameRules"
+                          required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col>
+                      <v-text-field
+                        v-model="current_quotation.quotation_bendingcharges"
+                        type="number"
+                        prefix="₱"
+                        label="Bending Charges"
+                        :rules="nameRules"
+                          required
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-window-item>
+            </v-window>
 
-        </v-card>
-      </v-dialog>
+            <v-divider></v-divider>
+
+            <v-card-actions>
+              <v-btn
+                :disabled="step2 === 1"
+                text
+                @click="step2--"
+              >
+                Back
+              </v-btn>
+              <v-spacer></v-spacer>
+              <v-btn v-if="step2 !== 5"
+                :disabled="step2 === 5"
+                color="primary"
+                depressed
+                @click="step2++"
+              >
+                Next
+              </v-btn>
+              <v-btn v-else
+                color="primary"
+                depressed
+                v-on:click="edit(current_quotation.quotation_id)"
+              >
+                Submit
+              </v-btn>
+            </v-card-actions>
+
+          </v-card>
+        </v-dialog>
+      </v-form>
       <!-- END OF EDIT MODAL -------------------->
       <template>
         <v-row justify="center">
@@ -1191,6 +1276,12 @@ export default {
       check9: false,
       search: "",
 
+      nameRules: [
+        v => !!v || 'Required.',
+      ],
+
+      chkmat: true,
+
       direction: 'top',
       fab: false,
       hover: false,
@@ -1254,21 +1345,7 @@ export default {
       }
     },
     filteredsubcontractorsFname() {
-      // DATA STATIC
       var test = [];
-      // for(var ctr=0; ctr<this.subcontractors.length; ctr++){
-      //   test.push(
-      //     {
-      //       subcontractor_Fname: this.subcontractors[ctr].FirstName,
-      //       subcontractor_Mname: this.subcontractors[ctr].MiddleName,
-      //       subcontractor_Lname: this.subcontractors[ctr].LastName,
-      //       subcontractor_service: this.subcontractors[ctr].ServiceName,
-      //       SubId: this.subcontractors[ctr].SubId,
-      //       SublistID: this.subcontractors[ctr].SublistID,
-      //       ServiceID: this.subcontractors[ctr].SerivceID
-      //     }
-      //   )
-      // }
 
       for(var ctr=0; ctr<this.subcontractors.length; ctr++){
         test.push(
@@ -1296,35 +1373,6 @@ export default {
       }
       return subcontractors;
     },
-    // filteredsubcontractorsLname() {
-    //   // DATA STATIC
-    //   var test = [];
-    //   for(var ctr=0; ctr<this.subcontractors.length; ctr++){
-    //     test.push(
-    //       {
-    //         subcontractor_Fname: this.subcontractors[ctr].FirstName,
-    //         subcontractor_Mname: this.subcontractors[ctr].MiddleName,
-    //         subcontractor_Lname: this.subcontractors[ctr].LastName,
-    //         subcontractor_service: this.subcontractors[ctr].ServiceName,
-    //         SubId: this.subcontractors[ctr].SubId,
-    //         SublistID: this.subcontractors[ctr].SublistID,
-    //         ServiceID: this.subcontractors[ctr].SerivceID
-    //       }
-    //     )
-    //   }
-
-
-    //   var subcontractors = [];
-    //   var service = this.selectedService;
-    //   var filtered =  test.filter(function(entry){
-    //     return entry.subcontractor_service == service;
-    //   });
-      
-    //   for( ctr=0; ctr<filtered.length; ctr++){
-    //     subcontractors.push(filtered[ctr].subcontractor_Lname)
-    //   }
-    //   return subcontractors;
-    // },
     getListedMaterials(){
       var mats = []
       for(var ctr=0; ctr<this.listed_materials.length; ctr++){
@@ -1455,52 +1503,61 @@ export default {
   },
   methods:{
     createQuotation: function(){
-      this.summation()
-      for(var ctr=0; ctr<this.subcontractors.length && ((this.subcontractors[ctr].FirstName + ' ' + this.subcontractors[ctr].MiddleName + ' ' + this.subcontractors[ctr].LastName) != this.selectedSubcontractor && this.subcontractors[ctr].ServiceName != this.selectedService); ctr++);
-
-      axios({
-        method: 'POST',
-        url: 'http://localhost:3000/quotation/add',
-        data: {
-          quotation_summation: parseInt(this.quotation.quotation_summation),
-          quotation_delivery: parseInt(this.quotation.quotation_delivery),
-          quotation_labor: parseInt(this.quotation.quotation_labor),
-          quotation_bendingcharges: parseInt(this.quotation.quotation_bendingcharges),
-          
-          ProjectID: this.quotation.ProjectID,
-          proj_description: this.project.project_description,
-          project_type: this.project.project_type,
-          date_from: new Date(this.project.date_from).toISOString().substr(0, 10),
-          date_until: new Date(this.project.date_until).toISOString().substr(0, 10),
-
-          project_street: this.project.project_street,
-          project_barangay: this.project.project_barangay,
-          project_city: this.project.project_city,
-          project_postal_code: this.project.project_postal_code,
-
-          customer_firstname: this.customer.customer_Fname,
-          customer_middlename: this.customer.customer_Mname,
-          customer_lastname: this.customer.customer_Lname,
-
-          materials: this.materials,
-          totalListPrice: parseInt(this.addMaterialTotalPrice),
-
-          amount: parseInt(this.amount),
-          userid: 1,
-
-          subcontractor_firstname: this.selectedSubcontractor.split(' ')[0],
-          subcontractor_middlename: this.selectedSubcontractor.split(' ')[1],
-          subcontractor_lastname: this.selectedSubcontractor.split(' ')[2],
-          subcontractor_service: this.selectedService,
-
-          ServiceID: parseInt(this.subcontractors[ctr].ServiceID),
-          SublistID: parseInt(this.subcontractors[ctr].SublistID),
+      if(!(this.$refs.form1.validate())){
+        if(this.materials.length == 0){
+          this.chkmat = false
         }
-      })
-      .then(
-        this.$router.go()
-      )
+        else{
+          this.chkmat = true
+        }
+        this.summation()
+        for(var ctr=0; ctr<this.subcontractors.length && ((this.subcontractors[ctr].FirstName + ' ' + this.subcontractors[ctr].MiddleName + ' ' + this.subcontractors[ctr].LastName) != this.selectedSubcontractor && this.subcontractors[ctr].ServiceName != this.selectedService); ctr++);
 
+        axios({
+          method: 'POST',
+          url: 'http://localhost:3000/quotation/add',
+          data: {
+            quotation_summation: parseInt(this.quotation.quotation_summation),
+            quotation_delivery: parseInt(this.quotation.quotation_delivery),
+            quotation_labor: parseInt(this.quotation.quotation_labor),
+            quotation_bendingcharges: parseInt(this.quotation.quotation_bendingcharges),
+            
+            ProjectID: this.quotation.ProjectID,
+            proj_description: this.project.project_description,
+            project_type: this.project.project_type,
+            date_from: new Date(this.project.date_from).toISOString().substr(0, 10),
+            date_until: new Date(this.project.date_until).toISOString().substr(0, 10),
+
+            project_street: this.project.project_street,
+            project_barangay: this.project.project_barangay,
+            project_city: this.project.project_city,
+            project_postal_code: this.project.project_postal_code,
+
+            customer_firstname: this.customer.customer_Fname,
+            customer_middlename: this.customer.customer_Mname,
+            customer_lastname: this.customer.customer_Lname,
+
+            materials: this.materials,
+            totalListPrice: parseInt(this.addMaterialTotalPrice),
+
+            amount: parseInt(this.amount),
+            userid: 1,
+
+            subcontractor_firstname: this.selectedSubcontractor.split(' ')[0],
+            subcontractor_middlename: this.selectedSubcontractor.split(' ')[1],
+            subcontractor_lastname: this.selectedSubcontractor.split(' ')[2],
+            subcontractor_service: this.selectedService,
+
+            ServiceID: parseInt(this.subcontractors[ctr].ServiceID),
+            SublistID: parseInt(this.subcontractors[ctr].SublistID),
+          }
+        })
+        .then(
+          this.$router.go()
+        )
+
+      }
+      
     },
     editmodal: function(id) {
       this.dialog2 = true;
@@ -1520,52 +1577,60 @@ export default {
       this.addMaterialTotalPrice2 = totalPrice
     },
     edit: function(id){
-      this.summation2()
-      for(var ctr=0; ctr<this.subcontractors.length && (this.subcontractors[ctr].subcontractor_name != this.selectedSubcontractor && this.subcontractors[ctr].ServiceName != this.selectedService); ctr++)
-      this.selectedServiceID = this.subcontractors[ctr].ServiceID
-      axios({
-        method: 'PUT',
-        url: 'http://localhost:3000/quotation/'+id+'/edit',
-        data: {
-
-          quotation_summation: this.current_quotation.quotation_summation,
-          quotation_delivery: this.current_quotation.quotation_delivery,
-          quotation_labor: this.current_quotation.quotation_labor,
-          quotation_bendingcharges: this.current_quotation.quotation_bendingcharges,
-          
-          ProjectID: this.current_quotation.ProjectID,
-          project_description: this.current_quotation.project.project_description,
-          project_type: this.current_quotation.project.project_type,
-          date_from: new Date(this.current_quotation.project.date_from).toISOString().substr(0, 10),
-          date_until: new Date(this.current_quotation.project.date_until).toISOString().substr(0, 10),
-
-          project_street: this.current_quotation.project.project_street,
-          project_barangay: this.current_quotation.project.project_barangay,
-          project_city: this.current_quotation.project.project_city,
-          project_postal_code: this.current_quotation.project.project_postal_code,
-
-          customer_firstname: this.current_quotation.customer.customer_Fname,
-          customer_middlename: this.current_quotation.customer.customer_Mname,
-          customer_lastname: this.current_quotation.customer.customer_Lname,
-
-          materials: this.current_quotation.materials,
-          totalListPrice: this.addMaterialTotalPrice2,
-
-          amount: parseInt(this.amount),
-          userid: 1,
-
-          subcontractor_firstname: this.selectedSubcontractor.split(' ')[0],
-          subcontractor_middlename: this.selectedSubcontractor.split(' ')[1],
-          subcontractor_lastname: this.selectedSubcontractor.split(' ')[2],
-          subcontractor_service: this.selectedService,
-
-          ServiceID: parseInt(this.subcontractors[ctr].ServiceID),
-          SublistID: parseInt(this.subcontractors[ctr].SublistID),
+      if(!(this.$refs.form1.validate())){
+        if(this.materials.length == 0){
+          this.chkmat = false
         }
-      })
-      .then(
-        // this.$router.go()
-      )
+        else{
+          this.chkmat = true
+        }
+        this.summation2()
+        for(var ctr=0; ctr<this.subcontractors.length && (this.subcontractors[ctr].subcontractor_name != this.selectedSubcontractor && this.subcontractors[ctr].ServiceName != this.selectedService); ctr++)
+        this.selectedServiceID = this.subcontractors[ctr].ServiceID
+        axios({
+          method: 'PUT',
+          url: 'http://localhost:3000/quotation/'+id+'/edit',
+          data: {
+
+            quotation_summation: this.current_quotation.quotation_summation,
+            quotation_delivery: this.current_quotation.quotation_delivery,
+            quotation_labor: this.current_quotation.quotation_labor,
+            quotation_bendingcharges: this.current_quotation.quotation_bendingcharges,
+            
+            ProjectID: this.current_quotation.ProjectID,
+            project_description: this.current_quotation.project.project_description,
+            project_type: this.current_quotation.project.project_type,
+            date_from: new Date(this.current_quotation.project.date_from).toISOString().substr(0, 10),
+            date_until: new Date(this.current_quotation.project.date_until).toISOString().substr(0, 10),
+
+            project_street: this.current_quotation.project.project_street,
+            project_barangay: this.current_quotation.project.project_barangay,
+            project_city: this.current_quotation.project.project_city,
+            project_postal_code: this.current_quotation.project.project_postal_code,
+
+            customer_firstname: this.current_quotation.customer.customer_Fname,
+            customer_middlename: this.current_quotation.customer.customer_Mname,
+            customer_lastname: this.current_quotation.customer.customer_Lname,
+
+            materials: this.current_quotation.materials,
+            totalListPrice: this.addMaterialTotalPrice2,
+
+            amount: parseInt(this.amount),
+            userid: 1,
+
+            subcontractor_firstname: this.selectedSubcontractor.split(' ')[0],
+            subcontractor_middlename: this.selectedSubcontractor.split(' ')[1],
+            subcontractor_lastname: this.selectedSubcontractor.split(' ')[2],
+            subcontractor_service: this.selectedService,
+
+            ServiceID: parseInt(this.subcontractors[ctr].ServiceID),
+            SublistID: parseInt(this.subcontractors[ctr].SublistID),
+          }
+        })
+        .then(
+          this.$router.go()
+        )
+      }
     },
     remove: function(id){
       axios({

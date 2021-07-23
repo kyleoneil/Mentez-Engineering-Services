@@ -239,8 +239,7 @@ export default {
             EmailAddress:"",
             Username:"",
             id:"",
-
-            checkbox:null,
+            checkbox: null,
 
             number:[191817,234563,123558,243698,189543,345267,198264,192560],
 

@@ -147,7 +147,7 @@ export default {
             checkbox: null,
             inputRules: [
                 v => v.length >= 3 || '3 Characters above'
-            ]
+            ],
         }
     },
     methods:{

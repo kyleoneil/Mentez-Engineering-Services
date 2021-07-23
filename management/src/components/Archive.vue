@@ -154,10 +154,10 @@
                       <div class="text-caption pt-2 pb-4" ><b>{{material.material_name}}</b></div>
                     </v-flex>
                     <v-flex sm-12 md2>
-                      <div class="text-overline pr-4" >- {{material.material_price}}</div>
+                      <div class="text-overline pr-4" >₱ {{material.material_price}}</div>
                     </v-flex>
                     <v-flex sm-12 md2>
-                      <div class="text-overline pr-4" >- {{computeAmount(index)}}</div>
+                      <div class="text-overline pr-4" >₱ {{computeAmount(index)}}</div>
                     </v-flex>
                   </v-row>
                   <v-row class="mt-10">
@@ -167,7 +167,7 @@
                       <div class="text-caption pt-2 pb-2">Delivery</div>
                     </v-flex>
                     <v-flex sm-12 md2>
-                      <div class="text-overline pr-4" >- {{current_quotation.quotation_delivery}}</div>
+                      <div class="text-overline pr-4" >₱ {{current_quotation.quotation_delivery}}</div>
                     </v-flex>
                   </v-row>
                   <v-row>
@@ -177,7 +177,7 @@
                       <div class="text-caption pt-2 pb-2">Labor</div>
                     </v-flex>
                     <v-flex sm-12 md2>
-                      <div class="text-overline pr-4">- {{current_quotation.quotation_labor}}</div>
+                      <div class="text-overline pr-4">₱ {{current_quotation.quotation_labor}}</div>
                     </v-flex>
                   </v-row>
                   <v-row>
@@ -187,7 +187,7 @@
                       <div class="text-caption pt-2 pb-2">Bending charges</div>
                     </v-flex>
                     <v-flex sm-12 md2>
-                      <div class="text-overline pr-4">- {{current_quotation.quotation_bendingcharges}} </div>
+                      <div class="text-overline pr-4">₱ {{current_quotation.quotation_bendingcharges}} </div>
                     </v-flex>
                   </v-row>
                   <v-row>
@@ -202,7 +202,7 @@
                       <div class="text-overline">TOTAL</div>
                     </v-flex>
                     <v-flex sm-12 md2>
-                      <div class="text-overline pr-4">- {{current_quotation.quotation_summation}}</div>
+                      <div class="text-overline pr-4">₱ {{current_quotation.quotation_summation}}</div>
                     </v-flex>
                   </v-row>
                 </div>

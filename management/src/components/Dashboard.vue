@@ -212,9 +212,11 @@ export default {
           // SALES THIS MONTH
           var data0 = [0]
           var check = false
-          for(ctr=0; ctr<this.quotations.length && this.quotations[ctr] && this.quotations[ctr].month == this.month; ctr++){
-            data0.push(parseInt(this.quotations[ctr].quotation_summation))
-            check = true
+          for(ctr=0; ctr<this.quotations.length; ctr++){
+            if(this.quotations[ctr].month == this.month){
+              data0.push(parseInt(this.quotations[ctr].quotation_summation))
+              check = true
+              }
           }
           if(check == true){
             this.value = data0
@@ -224,9 +226,12 @@ export default {
           // SALES THIS DAY
           var data1 = [0]
           var check2 = false
-          for(ctr=0; ctr<this.quotations.length && this.quotations[ctr].day == this.day; ctr++){
-            data1.push(parseInt(this.quotations[ctr].quotation_summation))
-            check2 = true
+          console.log(this.quotations)
+          for(ctr=0; ctr<this.quotations.length; ctr++){
+            if(this.quotations[ctr].day == this.day){
+              data1.push(parseInt(this.quotations[ctr].quotation_summation))
+              check2 = true
+            }
           }
           if(check2 == true){
             this.value2 = data1
