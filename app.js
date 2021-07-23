@@ -259,7 +259,7 @@ app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
             connection.query('SELECT * FROM project WHERE ProjectID=?',quots[0].ProjectID,(err2,proj)=>{
                 connection.query('UPDATE quotation SET summation=?,DeliveryCharges=?,LaborCharges=?,Bendingcharges=?,updated=CURRENT_TIMESTAMP WHERE QuoID=?',[data.quotation_summation,data.quotation_delivery,data.quotation_labor,data.quotation_bendingcharges,id])
             connection.query('UPDATE project_site SET City=?,Barangay=?,StreetNumber=?,PostalCode=? WHERE ProjSiteID=?',[data.project_city,data.project_barangay,data.project_street,data.project_postal_code,proj[0].ProjSiteID],(err,result)=>{
-        connection.query('UPDATE project_type SET ProjDesc=?,ProjType=? WHERE ProjTypeID=?',[data.project_description,data.project_type,proj[0].ProjTypeID],(err,type)=>{
+        connection.query('UPDATE project_type SET ProjDesc=?,ProjType=? WHERE ProjTypeID=?',[data.proj_description,data.project_type,proj[0].ProjTypeID],(err,type)=>{
             
                 connection.query('SELECT * FROM mat_list WHERE MatListID=?',[proj[0].MatListID],(ers,mats)=>{
                     if(data.materials.length>0){
@@ -281,8 +281,10 @@ app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
                                     }
                                 })
                             }
-                            connection.query('UPDATE project SET MatListID=? WHERE ProjectID=?',[mati.insertId,proj[0].MatListID],(errd,resw)=>{
-
+                            console.log("look")
+                            console.log(mati.insertId)
+                            connection.query('UPDATE project SET MatListID=? WHERE ProjectID=?',[mati.insertId,quots[0].ProjectID],(errd,resw)=>{
+                                console.log(errd)
                             })
                         })
                         
