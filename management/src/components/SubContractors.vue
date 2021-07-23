@@ -25,19 +25,19 @@
                 <v-card-text>
                      <validation-observer ref="observer" v-slot="{ invalid }">
                        <v-form @submit.prevent="submit">
-                        <validation-provider v-slot="{ errors }" name="Name" rules="required|max:10">
+                        <validation-provider v-slot="{ errors }" name="First Name" rules="required|max:10">
                         <v-text-field prepend-icon="mdi-pencil" v-model="people.firstname" :counter="15" :error-messages="errors" label="First Name" required clearable></v-text-field>
                         </validation-provider>
 
-                        <validation-provider v-slot="{ errors }" name="Name" rules="required|max:10">
+                        <validation-provider v-slot="{ errors }" name="Middle Name" rules="required|max:10">
                         <v-text-field prepend-icon="mdi-pencil" v-model="people.middlename" :counter="10" :error-messages="errors" label="Middle Name" required clearable></v-text-field>
                         </validation-provider>
 
-                        <validation-provider v-slot="{ errors }" name="Name" rules="required|max:10">
+                        <validation-provider v-slot="{ errors }" name=" Last Name" rules="required|max:10">
                         <v-text-field prepend-icon="mdi-pencil" v-model="people.lastname" :counter="10" :error-messages="errors" label="Last Name" required clearable></v-text-field>
                         </validation-provider>
 
-                        <validation-provider v-slot="{ errors }" name="select" rules="required">
+                        <validation-provider v-slot="{ errors }" name="Category" rules="required">
                         <v-select :items="selected" label="Category" prepend-icon="mdi-menu" v-model="category" :error-messages="errors" data-vv-name="select" required clearable></v-select>
                         </validation-provider>
                         
@@ -65,7 +65,7 @@
        
 
         <v-divider class="mx-3"></v-divider>
-        <v-card flat class="my-3 mx-12 pa-5" style="background-color: #F8F8F8" v-for="(subcon, x) in peps" :key="x">
+        <v-card flat class="my-3 mx-12 pa-5" style="background-color: #F8F8F8" v-for="(subcon, x) in filtercon" :key="x">
             <v-layout row wrap >
             <v-flex xs12 md6>
                 <div class="caption grey--text">Sub Contarctor</div>
@@ -170,7 +170,7 @@ export default {
                         },
                     })
                     .then(()=>{
-                        // this.$router.go()
+                        this.$router.go()
                     })
 
                     break;
@@ -200,13 +200,24 @@ export default {
     
     },
 
-    //  computed:{
-    //      filtercon: function(){
-    //          return this.peps.filter((subcon)=>{
-    //              return subcon.SubName.match(this.search);
-    //          });
-    //      }
-    //  },
+     computed:{
+         filtercon: function(){
+
+            var all = []
+
+            all = this.peps.filter((subcon)=>{
+                 return subcon.FirstName.concat(" " + subcon.MiddleName + " " + subcon.LastName).match(this.search);
+             });
+
+            if (all.length == 0) {
+                all = this.peps.filter((subcon)=>{
+                 return subcon.ServiceName.match(this.search);
+             });
+            }
+
+            return all
+         }
+     },
 
     created(){
         this.$store.state.count = 1;

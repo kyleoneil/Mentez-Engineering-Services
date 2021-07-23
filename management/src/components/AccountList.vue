@@ -17,27 +17,54 @@
                 <v-card-text>
                     <validation-observer ref="observer" v-slot="{ invalid }">
                     <v-form @submit.prevent="submit">
-                        <validation-provider v-slot="{ errors }" name="Name" rules="required|max:10">
-                        <v-text-field prepend-icon="mdi-pencil" v-model="people.firstname" :counter="15" :error-messages="errors" label="First Name" required clearable></v-text-field>
+                        <validation-provider v-slot="{ errors }" name="First Name" rules="required|max:10">
+                        <v-text-field v-show="ambot" prepend-icon="mdi-pencil" v-model="people.firstname" :counter="15" :error-messages="errors" label="First Name" required clearable></v-text-field>
                         </validation-provider>
 
-                        <validation-provider v-slot="{ errors }" name="Name" rules="required|max:10">
-                        <v-text-field prepend-icon="mdi-pencil" v-model="people.middlename" :counter="10" :error-messages="errors" label="Middle Name" required clearable></v-text-field>
+                        <validation-provider v-slot="{ errors }" name="Middle Name" rules="required|max:10">
+                        <v-text-field v-show="ambot" prepend-icon="mdi-pencil" v-model="people.middlename" :counter="10" :error-messages="errors" label="Middle Name" required clearable></v-text-field>
                         </validation-provider>
 
-                        <validation-provider v-slot="{ errors }" name="Name" rules="required|max:10">
-                        <v-text-field prepend-icon="mdi-pencil" v-model="people.lastname" :counter="10" :error-messages="errors" label="Last Name" required clearable></v-text-field>
+                        <validation-provider v-slot="{ errors }" name="Last Name" rules="required|max:10">
+                        <v-text-field v-show="ambot" prepend-icon="mdi-pencil" v-model="people.lastname" :counter="10" :error-messages="errors" label="Last Name" required clearable></v-text-field>
                         </validation-provider>
 
-                        <validation-provider v-slot="{ errors }" name="email" rules="required|email">
-                        <v-text-field prepend-icon="mdi-email" v-model="people.email" :error-messages="errors" label="E-mail" required clearable></v-text-field>
-                        </validation-provider>
+                        <!-- <v-btn style="margin-left: 65px; font-size: 12px" color="primary" v-show="ambot" v-bind="people" text @click="checking(use)">
+                           Click to check if User already exists.
+                         </v-btn> -->
+                         <validation-provider v-slot="{ errors }" rules="required" name="checkbox">
+                         <v-checkbox style="margin-left: 160px;" v-show="ambot" v-bind="people" v-model="checkbox" :error-messages="errors" value="1" label="Verify User" type="checkbox" @click="checking(use)" required></v-checkbox>
+                         </validation-provider>
+                         <div style="margin-left: 145px; font-size: 18px" v-show="!ambot">User Already Exists!!!</div>
+                         <v-btn style="margin-left: 190px" color="primary" v-show="!ambot" text @click="ambot = true" v-on:click="clear()">
+                           Back
+                         </v-btn>
 
-                        <v-text-field prepend-icon="mdi-account" v-model="people.username" clearable></v-text-field>
+                        <!-- <validation-provider v-slot="{ errors }" name="Email" rules="required|email">
+                        <v-text-field v-show="ambot" prepend-icon="mdi-email" v-model="people.email" :error-messages="errors" label="E-mail" required clearable></v-text-field>
+                        </validation-provider> -->
+                        
+                        <div v-show="ambot" v-bind="EmailCombine(people.firstname, people.lastname)">
+                            <v-icon> mdi-email</v-icon>
+                            {{people.firstname}}.{{people.lastname}}@MentezEngineering.com
+                        </div>
+                        <div style="margin: 25px"></div>
+                        <div v-show="ambot" v-bind="UserCombine(people.firstname, people.lastname)">
+                            <v-icon>mdi-account</v-icon>
+                            {{people.firstname}}_{{people.lastname}}
+                        </div>
+                        <div style="margin: 25px"></div>
+                        <div v-show="ambot" v-bind="PasswordCombine(people.firstname, people.lastname)">
+                            <v-icon>mdi-lock</v-icon>
+                            {{people.firstname}}{{people.lastname}}
+                        </div>
+                        <div style="margin: 25px"></div>
 
-                        <validation-provider v-slot="{ errors }" name="Name" rules="required|max:10">
-                        <v-text-field prepend-icon="mdi-lock" v-model="people.password" :counter="10" :error-messages="errors" label="Password" required clearable></v-text-field>
-                        </validation-provider>
+                        <!-- <v-text-field v-show="ambot" prepend-icon="mdi-account" v-model="people.username" clearable></v-text-field> -->
+
+                        <!-- <validation-provider v-slot="{ errors }" name="Password" rules="required|max:10">
+                        <v-text-field v-show="ambot" prepend-icon="mdi-lock" v-model="people.password" :counter="10" :error-messages="errors" label="Password" required clearable></v-text-field>
+                        </validation-provider> -->
                         
                         <v-divider></v-divider>
 
@@ -205,6 +232,7 @@ export default {
             gwapo: false,
             dialog: false,
             hide: true,
+            ambot: true,
             Firstname:"",
             Middlename:"",
             Lastname:"",
@@ -212,6 +240,7 @@ export default {
             Username:"",
             id:"",
 
+            number:[191817,234563,123558,243698,189543,345267,198264,192560],
 
             inputRules:[
                 v => v.length >= 3 || '3 Characters above'
@@ -307,6 +336,41 @@ export default {
         submit: function() {
             this.$refs.observer.validate()
         },
+
+        checking: function (kaja){
+            
+            for (let index = 0; index < kaja.length; index++) {
+                if (this.people.firstname == kaja[index].FirstName) {
+                    this.ambot = false
+                    break
+                }
+            }
+        },
+
+        clear () {
+            this.people.firstname = ''
+            this.people.middlename = ''
+            this.people.lastname = ''
+            this.people.email = ''
+            this.people.username = ''
+            this.people.password = ''
+            this.checkbox = null
+            this.$refs.observer.reset()
+      },
+
+      EmailCombine: function (first, last){
+          this.people.email = first + '.' + last + '@MentezEngineering.com'
+      },
+
+      UserCombine: function (first, last){
+          this.people.username = first + '_' + last
+      },
+
+      PasswordCombine: function (first, last){
+          var ya = first.charCodeAt(0);
+          var yo = last.charCodeAt(0);
+          this.people.password = first + last + ya + yo
+      },
 
     },
     created(){

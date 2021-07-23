@@ -23,14 +23,43 @@
                 </v-card-title>
 
                 <v-card-text > 
-                    <!-- <v-form class="px-3"> -->
-                        <v-select :items="selected" label="Category" prepend-icon="mdi-menu" v-model="category" clearable></v-select>
-                        <v-text-field :rules="inputRules" label="Name" prepend-icon="mdi-pencil" v-model="Mat.name" clearable></v-text-field>
-                        <v-text-field :rules="inputRules" label="Decription"  prepend-icon="fa-edit" v-model="Mat.Description" clearable></v-text-field>
-                        <v-text-field :rules="inputRules" label="Quantity"  prepend-icon="mdi-minus" v-model="Mat.quantity" clearable></v-text-field>
-                        <v-text-field :rules="inputRules" label="Price"  prepend-icon="mdi-plus" v-model="Mat.prize" clearable></v-text-field>
-                        <v-select :items="items" label="Status" prepend-icon="mdi-widgets" v-model="Mat.status" clearable></v-select>
-                        
+                    <validation-observer ref="observer" v-slot="{ invalid }">
+                    <v-form @submit.prevent="submit">
+                        <validation-provider v-slot="{ errors }" name="category" rules="required">
+                        <v-select v-show="hide" :items="selected" label="Category" prepend-icon="mdi-menu" v-model="category" :error-messages="errors" data-vv-name="select" required clearable></v-select>
+                        </validation-provider>
+
+                        <validation-provider v-slot="{ errors }" name="Material Name" rules="required|max:15">
+                        <v-text-field v-show="hide" label=" Material Name" prepend-icon="mdi-pencil" v-model="Mat.name" :counter="15" :error-messages="errors" required clearable></v-text-field>
+                        </validation-provider>
+
+                        <validation-provider v-slot="{ errors }" name="Description" rules="required|max:30">
+                        <v-text-field v-show="hide" label="Decription"  prepend-icon="fa-edit" v-model="Mat.Description" :counter="30" :error-messages="errors" required clearable></v-text-field>
+                        </validation-provider>
+
+                        <!-- <v-btn style="margin-left: 55px; font-size: 12px" color="primary" v-show="hide" v-bind="Mat" text @click="checking(materialzz)">
+                           Click to check if Material already exists.
+                         </v-btn> -->
+                         <validation-provider v-slot="{ errors }" rules="required" name="checkbox">
+                         <v-checkbox style="margin-left: 160px;" v-show="hide" v-bind="Mat" v-model="checkbox" :error-messages="errors" value="1" label="Verify Material" type="checkbox" @click="checking(materialzz)" required></v-checkbox>
+                         </validation-provider>
+                         <div style="margin-left: 80px; font-size: 18px" v-show="!hide">Name and Description Already Exists!!!</div>
+                         <v-btn style="margin-left: 190px" color="primary" v-show="!hide" text @click="hide = true" v-on:click="clear()">
+                           Back
+                         </v-btn>
+
+                        <validation-provider v-slot="{ errors }" name="Quantity" :rules="{required: true, numeric: true}">   
+                        <v-text-field v-show="hide" label="Quantity"  prepend-icon="mdi-minus" v-model="Mat.quantity" :error-messages="errors" required clearable></v-text-field>
+                        </validation-provider>
+
+                        <validation-provider v-slot="{ errors }" name="Price" :rules="{required: true, numeric: true}"> 
+                        <v-text-field v-show="hide" label="Price"  prepend-icon="mdi-plus" v-model="Mat.prize" :error-messages="errors" required clearable></v-text-field>
+                        </validation-provider>
+
+                        <validation-provider v-slot="{ errors }" name="Status" rules="required">
+                        <v-select v-show="hide" :items="items" label="Status" prepend-icon="mdi-widgets" v-model="Mat.status" :error-messages="errors" data-vv-name="select" required clearable></v-select>
+                        </validation-provider>
+
                         <v-divider></v-divider>
 
                         <v-card-actions>
@@ -39,11 +68,12 @@
                                 Cancel
                             </v-btn>
                     
-                            <v-btn color="primary" text @click="dialog = false" v-on:click="postData(service)">
+                            <v-btn color="primary" text @click="dialog = false" v-on:click="postData(service)" :disabled="invalid">
                                 Submit
                             </v-btn>
                         </v-card-actions>
-                    <!-- </v-form> -->
+                    </v-form>
+                    </validation-observer>
                 </v-card-text>
             </v-card>
         </v-dialog>
@@ -163,7 +193,50 @@
 
 <script>
 import axios from 'axios';
+
+import { required, digits, email, max, regex, numeric} from 'vee-validate/dist/rules'
+import {extend, ValidationObserver, ValidationProvider, setInteractionMode} from 'vee-validate'
+
+setInteractionMode('eager')
+
+extend('digits', {
+    ...digits,
+    message: '{_field_} needs to be {length} digits. ({_value_})',
+  })
+
+  extend('required', {
+    ...required,
+    message: '{_field_} can not be empty',
+  })
+
+  extend('numeric', {
+    ...numeric,
+    message: '{_field_} only accepts numeric value',
+  })
+
+  extend('max', {
+    ...max,
+    message: '{_field_} may not be greater than {length} characters',
+  })
+
+
+  extend('regex', {
+    ...regex,
+    message: '{_field_} {_value_} is not a number',
+  })
+
+  extend('email', {
+    ...email,
+    message: 'Email must be valid',
+  })
+
 export default {
+
+    components: {
+      ValidationProvider,
+      ValidationObserver,
+    },
+
     data() {
         return {
             // roofing:[
@@ -191,7 +264,7 @@ export default {
             //     {name:'Durarib', Description:'discription', status:'status', quantity:'10', prize:'234'},
             // ],
             tab: null,
-            items:['In Stock', 'For Order'],
+            items:['IN STOCK', 'FOR ORDER'],
             selected:['Roofing','Masonry','Electrical','Plumbing'],
             category:'',
             dialog: false,
@@ -240,6 +313,7 @@ export default {
                     })
                     .then((result)=>{
                         console.log(result)
+                        this.$router.go()
                     })
 
                     break;
@@ -342,7 +416,33 @@ export default {
                 console.log(response)
             })
 
-        }
+        },
+
+        submit: function() {
+            this.$refs.observer.validate()
+        },
+
+        checking: function (kaja){
+            
+            for (let index = 0; index < kaja.length; index++) {
+                if (this.Mat.name == kaja[index].MatName && this.Mat.Description == kaja[index].MatDescription) {
+                    this.hide = false
+                    break
+                }
+            }
+        },
+
+        clear () {
+            this.Mat.name = ''
+            this.Mat.Description = ''
+            this.Mat.quantity = ''
+            this.Mat.prize = ''
+            this.Mat.status = null
+            this.category = null
+            this.checkbox = null
+            this.$refs.observer.reset()
+      },
+        
        
     },
 
@@ -363,9 +463,25 @@ export default {
 
     computed:{
         filtermat: function(){
-            return this.materialzz.filter((materials)=>{
+            var all = []
+
+            all = this.materialzz.filter((materials)=>{
                 return materials.MatName.match(this.search);
             })
+
+            if(all.length == 0){
+            all = this.materialzz.filter((materials)=>{
+                return materials.MatDescription.match(this.search);
+            })
+            }
+
+            if(all.length == 0){
+            all = this.materialzz.filter((materials)=>{
+                return materials.MatStatus.match(this.search);
+            })
+            }
+            
+            return all
         },
 
     },
