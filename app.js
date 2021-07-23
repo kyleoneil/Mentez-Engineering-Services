@@ -175,7 +175,7 @@ app.get('/dashboard/quotation',(req,res)=>{
 app.get('/quotation',(req,res)=>{
     // if(req.session.loggedIn){
         console.log(req.session.loggedIn)
-        connection.query('SELECT Q.*,P.ProjectID,PT.ProjDesc,PT.ProjType,PS.*,C.FirstName,C.MiddleName,C.LastName,SE.ServiceName,group_concat(S.FirstName," ",S.MiddleName," ",S.LastName) AS subcontractors FROM quotation Q JOIN customers C ON Q.CustID=C.CustID JOIN users U ON Q.UserID = U.UserID JOIN project P ON Q.ProjectID = P.ProjectID JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID JOIN project_site PS ON P.ProjSiteID=PS.ProjSiteID JOIN sub_contractors_labor SL ON SL.QuoID= Q.QuoID JOIN sub_contractors S ON SL.SubListID=S.SubListID JOIN services SE ON S.ServiceID=SE.ServiceID GROUP BY SL.QuoID',(err2,result)=>{
+        connection.query('SELECT ProjStart,ProjEnd, Q.*,P.ProjectID,PT.ProjDesc,PT.ProjType,PS.*,C.FirstName,C.MiddleName,C.LastName,SE.ServiceName,group_concat(S.FirstName," ",S.MiddleName," ",S.LastName) AS subcontractors FROM quotation Q JOIN customers C ON Q.CustID=C.CustID JOIN users U ON Q.UserID = U.UserID JOIN project P ON Q.ProjectID = P.ProjectID JOIN project_type PT ON P.ProjTypeID = PT.ProjTypeID JOIN project_site PS ON P.ProjSiteID=PS.ProjSiteID JOIN sub_contractors_labor SL ON SL.QuoID= Q.QuoID JOIN sub_contractors S ON SL.SubListID=S.SubListID JOIN services SE ON S.ServiceID=SE.ServiceID GROUP BY SL.QuoID',(err2,result)=>{
         // console.log(err2);
         connection.query('SELECT MD.MatName,MD.MatDescription,M.*,MD.MatPrice,P.ProjectID FROM project P JOIN mat_list ML ON P.MatListID= ML.MatListID JOIN materials M ON M.MatListID = ML.MatListID JOIN mat_details MD ON MD.MatDetailsID=M.MatDetailsID',(err,mat)=>{
             res.status(200).json({data:result,materials:mat});
@@ -298,6 +298,9 @@ app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
                     }
                     
                 })
+                console.log("YAWTIAS")
+                console.log(data.date_from)
+                console.log(data.date_until)
                 connection.query('UPDATE project SET ProjStart=?,ProjEnd=? WHERE ProjectID=?',[data.date_from,data.date_until,quots[0].ProjectID],(err,project)=>{
                     connection.query('UPDATE customers SET FirstName=?,MiddleName=?,LastName=? WHERE CustID=?',[data.customer_firstname,data.customer_middlename,data.customer_lastname,quots[0].CustID],(err,cust)=>{
                         

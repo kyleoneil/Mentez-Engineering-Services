@@ -24,7 +24,7 @@
       >
         <v-layout>
           <v-flex xs12 md1>
-            <div class="caption grey--text">ID:</div>
+            <div class="caption grey--text">No:</div>
           </v-flex>
           <v-flex xs12 md3>
             <div class="caption grey--text">Project</div>
@@ -60,13 +60,13 @@
             <div class="subtitle-2">{{quotation.project.project_type}}</div>
           </v-flex>
           <v-flex xs12 md3 pr-1>
-            <div class="subtitle-2">{{quotation.customer.customer_name}}</div>
+            <div class="subtitle-2">{{quotation.customer.customer_Fname}} {{quotation.customer.customer_Lname}}</div>
           </v-flex>
           <v-flex xs12 md4 pr-1>
-            <div class="subtitle-2">{{quotation.project.date_from}} - {{quotation.project.date_until}}</div>
+            <div class="subtitle-2">{{quotation.project.date_from}} -> {{quotation.project.date_until}}</div>
           </v-flex>
           <v-flex xs12 md3 pr-1>
-            <div class="subtitle-2">{{quotation.subcontractor.subcontractor_name}}</div>
+            <div class="subtitle-2">{{quotation.subcontractor.subcontractor_firstname}} {{quotation.subcontractor.subcontractor_middlename}} {{quotation.subcontractor.subcontractor_lastname}}</div>
           </v-flex>
           <v-flex xs12 md3 pr-1>
             <div class="subtitle-2">{{quotation.subcontractor.subcontractor_service}}</div>
@@ -116,10 +116,9 @@
               <div class="text-overline text-center" >Poblacion, LILOAN, CEBU</div>
               <div class="pl-8 pt-6 pr-8">
                 <v-row>
-                  <v-col><div class="text-overline"><b>{{current_quotation.customer.customer_name}}</b></div></v-col>
-                  <v-col><div class="text-overline text-right"><b>July 20, 2020</b></div></v-col>
+                  <v-col><div class="text-overline"><b>{{current_quotation.customer.customer_Fname}} {{current_quotation.customer.customer_Mname}} {{current_quotation.customer.customer_Lname}}</b></div></v-col>
+                  <v-col><div class="text-overline text-right"><b>July 24, 2020</b></div></v-col>
                 </v-row>
-                <div class="text-caption">Casuntingan, Mandaue City</div>
 
                 <div class="pt-6">
                   <div class="text-caption">Project:</div>
@@ -474,20 +473,26 @@ export default {
                 project_postal_code: response.data.data[ctr].PostalCode,
               },
               customer: {
-                customer_name: response.data.data[ctr].CustName,
+                customer_Fname: response.data.data[ctr].FirstName,
+                customer_Mname: response.data.data[ctr].MiddleName,
+                customer_Lname: response.data.data[ctr].LastName,
               },
               
               materials: Quotation_Materials,
         
               subcontractor: {
-                subcontractor_name: response.data.data[ctr].subcontractors.split('-')[0],
-                subcontractor_service: response.data.data[ctr].subcontractors.split('-')[1],
+                subcontractor_firstname: response.data.data[ctr].subcontractors.split(' ')[0],
+                subcontractor_middlename: response.data.data[ctr].subcontractors.split(' ')[1],
+                subcontractor_lastname: response.data.data[ctr].subcontractors.split(' ')[2],
+                SublistID: response.data.data[ctr].SublistID,
+                subcontractor_service: response.data.data[ctr].ServiceName,
               },
             },
           )
         }
         this.quotations = revised
       }
+      console.log()
     })
 
     axios({
@@ -510,9 +515,25 @@ export default {
   },
   computed:{
     filtermat: function(){
-      return this.quotations.filter((quotation)=>{
+      var all = []
+      all = this.quotations.filter((quotation)=>{
         return quotation.project.project_description.match(this.search);
       })
+
+      if(all.length == 0){
+        all = this.quotations.filter((quotation)=>{
+        return quotation.project.project_type.match(this.search)
+      })
+      }
+
+      if(all.length == 0){
+        all = this.quotations.filter((quotation)=>{
+          return quotation.customer.customer_Fname.concat(' ' + quotation.customer.customer_Lname).match(this.search)
+        })
+      }
+      
+      return all
+      
     },
   }
 }

@@ -110,6 +110,7 @@
                                 <v-btn
                                   text
                                   color="primary"
+                                  v-on:click="changeDate()"
                                   @click="$refs.menu.save(project.date_from)"
                                 >
                                   OK
@@ -140,7 +141,7 @@
                               <v-date-picker
                                 v-model="project.date_until"
                                 no-title
-                                :min="mindate_from"
+                                :min="mindate_until"
                                 scrollable
                               >
                                 <v-spacer></v-spacer>
@@ -435,7 +436,7 @@
             <div class="subtitle-2">{{quotation.customer.customer_Fname}} {{quotation.customer.customer_Lname}}</div>
           </v-flex>
           <v-flex xs12 md4 pr-1>
-            <div class="subtitle-2">{{quotation.project.date_from}} - {{quotation.project.date_until}}</div>
+            <div class="subtitle-2">{{quotation.project.date_from}} -> {{quotation.project.date_until}}</div>
           </v-flex>
           <v-flex xs12 md3 pr-1>
             <div class="subtitle-2">{{quotation.subcontractor.subcontractor_firstname}} {{quotation.subcontractor.subcontractor_middlename}} {{quotation.subcontractor.subcontractor_lastname}}</div>
@@ -620,7 +621,7 @@
                       <v-date-picker
                         v-model="current_quotation.project.date_until"
                         no-title
-                        :min="mindate_from"
+                        :min="mindate_until"
                         scrollable
                       >
                         <v-spacer></v-spacer>
@@ -997,8 +998,8 @@ export default {
       project: {
         project_description: "",
         project_type: "",
-        date_from: new Date().toISOString().substr(0, 10),
-        date_until: new Date().toISOString().substr(0, 10),
+        date_from:"",
+        date_until:"",
 
         project_street: "",
         project_barangay: "",
@@ -1180,10 +1181,13 @@ export default {
       },
 
       amount: 0,
-      mindate_from: '2021-07-21',
+      mindate_from: '2021-07-24',
+      mindate_until: '2021-07-24',
 
       listed_materials:{},
 
+
+      check9: false,
       search: "",
 
       direction: 'top',
@@ -1214,9 +1218,19 @@ export default {
       all = this.quotations.filter((quotation)=>{
         return quotation.project.project_description.match(this.search);
       })
-      all.concat(this.quotations.filter((quotation)=>{
-        return quotation.project.project_type.match(this.search);
-      }))
+
+      if(all.length == 0){
+        all = this.quotations.filter((quotation)=>{
+        return quotation.project.project_type.match(this.search)
+      })
+      }
+
+      if(all.length == 0){
+        all = this.quotations.filter((quotation)=>{
+          return quotation.customer.customer_Fname.concat(' ' + quotation.customer.customer_Lname).match(this.search)
+        })
+      }
+      
       return all
       
     },
@@ -1362,10 +1376,16 @@ export default {
                 material_name: response.data.materials[ctr2].MatName,
                 material_description: response.data.materials[ctr2].MatDescription,
                 material_quantity: response.data.materials[ctr2].MatQty,
-                material_price: response.data.materials[ctr2].MatPrice,
+                material_price: response.data.materials[ctr2].MatPrice * response.data.materials[ctr2].MatQty,
               })
             }
           }
+          var date_from = new Date(response.data.data[ctr].ProjStart)
+          var date_until = new Date(response.data.data[ctr].ProjEnd)
+          date_from.setDate(date_from.getDate() + 1)
+          date_until.setDate(date_until.getDate() + 1)
+          var ndf = new Date(date_from).toISOString().substr(0, 10)
+          var ndu = new Date(date_until).toISOString().substr(0, 10)
 
           revised.push(
             {
@@ -1383,8 +1403,8 @@ export default {
               project: {
                 project_description: response.data.data[ctr].ProjDesc,
                 project_type: response.data.data[ctr].ProjType,
-                date_from: new Date().toISOString().substr(0, 10),
-                date_until: new Date().toISOString().substr(0, 10),
+                date_from: ndf,
+                date_until: ndu,
 
                 project_street: response.data.data[ctr].StreetNumber,
                 project_barangay: response.data.data[ctr].Barangay,
@@ -1411,7 +1431,6 @@ export default {
         }
         this.quotations = revised
       }
-      console.log(response)
     })
 
     axios({
@@ -1452,8 +1471,8 @@ export default {
           ProjectID: this.quotation.ProjectID,
           proj_description: this.project.project_description,
           project_type: this.project.project_type,
-          date_from: new Date(this.project.date_from),
-          date_until: new Date(this.project.date_until),
+          date_from: new Date(this.project.date_from).toISOString().substr(0, 10),
+          date_until: new Date(this.project.date_until).toISOString().substr(0, 10),
 
           project_street: this.project.project_street,
           project_barangay: this.project.project_barangay,
@@ -1488,6 +1507,9 @@ export default {
       this.dialog2 = true;
       this.step2 = 1;
       this.current_quotation = this.quotations[id];
+      this.mindate_from = this.current_quotation.project.date_from
+      this.mindate_until = this.mindate_from
+      this.check9 = true
       console.log(this.current_quotation)
       this.selectedService = this.current_quotation.subcontractor.subcontractor_service
       this.selectedSubcontractor = this.current_quotation.subcontractor.subcontractor_firstname + ' ' + this.current_quotation.subcontractor.subcontractor_middlename + ' ' + this.current_quotation.subcontractor.subcontractor_lastname
@@ -1519,8 +1541,8 @@ export default {
           ProjectID: this.current_quotation.ProjectID,
           project_description: this.current_quotation.project.project_description,
           project_type: this.current_quotation.project.project_type,
-          date_from: new Date(this.current_quotation.project.date_from),
-          date_until: new Date(this.current_quotation.project.date_until),
+          date_from: new Date(this.current_quotation.project.date_from).toISOString().substr(0, 10),
+          date_until: new Date(this.current_quotation.project.date_until).toISOString().substr(0, 10),
 
           project_street: this.current_quotation.project.project_street,
           project_barangay: this.current_quotation.project.project_barangay,
@@ -1562,6 +1584,9 @@ export default {
     showdocument: function(id){
       this.document = true;
       this.current_quotation = this.quotations[id];
+      for(var ctr=0; ctr<this.current_quotation.materials.length; ctr++){
+        this.current_quotation.materials[ctr].material_price /= this.current_quotation.materials[ctr].material_quantity
+      }
     },
     addMaterial: function(data){
       var revised = []
@@ -1624,7 +1649,7 @@ export default {
             MatName: this.listed_materials[ctr].MatName,
             MatStatus: this.listed_materials[ctr].MatStatus,
             MatPrice: this.listed_materials[ctr].MatPrice,
-            MatQty: this.listed_materials[ctr].MatQty, 
+            MatQty: this.listed_materials[ctr].MatQuantity, 
             
           }
         )
@@ -1636,12 +1661,27 @@ export default {
       });
 
       material_status = ((filtered[0].MatQty - this.affixMaterial.material_quantity) > 0)?"IN STOCK":"FOR ORDER";
+      if(this.check9 == true){
+        for(ctr=0; ctr<this.current_quotation.materials.length; ctr++){
+          for(var ctr3=0 ; ctr3<revised.length; ctr3++){
+            if(this.current_quotation.materials[ctr].material_name == revised[ctr3].MatName && this.current_quotation.materials[ctr].MatDescription == revised[ctr3].material_description){
+              this.current_quotation.materials[ctr].MatStatus = revised[ctr].MatStatus
+            }
 
+          }
+        }
+      }
+      console.log(this.current_quotation)
+
+      console.log(this.current_quotation.materials)
       for(ctr=0; ctr<this.current_quotation.materials.length; ctr++){
         if(this.affixMaterial.material_name == this.current_quotation.materials[ctr].material_name && this.affixMaterial.material_description == this.current_quotation.materials[ctr].material_description){
           break
         }
       }
+
+
+      console.log(this.current_quotation.materials)
       
       if(ctr < this.current_quotation.materials.length){
         this.current_quotation.materials[ctr].material_quantity = parseInt(this.current_quotation.materials[ctr].material_quantity) + parseInt(this.affixMaterial.material_quantity)
@@ -1665,19 +1705,6 @@ export default {
       for(var ctr2 = 0; ctr2<this.current_quotation.materials.length; ctr2++){
         this.addMaterialTotalPrice += parseInt(this.current_quotation.materials[ctr2].material_price)
       }
-
-      //   this.addMaterialTotalPrice += mat.material_price
-      //   this.materials.push(mat);
-
-
-      // var mat = {
-      //   material_name: this.affixMaterial.material_name,
-      //   material_description: this.affixMaterial.material_description,
-      //   MatStatus: material_status,
-      //   material_quantity: this.affixMaterial.material_quantity,
-      //   material_price:  parseInt(filtered[0].MatPrice *  this.affixMaterial.material_quantity)
-      // }
-      // this.current_quotation.materials.push(mat);
       
     },
     removeMaterial: function(index){
@@ -1710,6 +1737,12 @@ export default {
       total += parseInt(this.current_quotation.quotation_bendingcharges)
       this.current_quotation.quotation_summation = total;
       this.amount = total * 1.2
+    },
+    changeDate: function() {
+      console.log(this.project.date_from)
+      this.mindate_until = this.project.date_from
+    // this.mindate_until = this.project.date_from;
+    // this.project.date_until = this.mindate_until
     },
   },
 }
