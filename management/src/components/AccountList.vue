@@ -17,16 +17,15 @@
                 <v-card-text>
                     <validation-observer ref="observer" v-slot="{ invalid }">
                     <v-form @submit.prevent="submit">
-                        <validation-provider v-slot="{ errors }" name="First Name" rules="required|max:10">
-                        <v-text-field v-show="ambot" prepend-icon="mdi-pencil" v-model="people.firstname" :counter="15" :error-messages="errors" label="First Name" required clearable></v-text-field>
+                        <validation-provider v-slot="{ errors }" name="First Name" rules="required|max:32">
+                        <v-text-field v-show="ambot" prepend-icon="mdi-pencil" v-model="people.firstname" :counter="32" :error-messages="errors" label="First Name" required clearable></v-text-field>
                         </validation-provider>
 
-                        <validation-provider v-slot="{ errors }" name="Middle Name" rules="required|max:10">
-                        <v-text-field v-show="ambot" prepend-icon="mdi-pencil" v-model="people.middlename" :counter="10" :error-messages="errors" label="Middle Name" required clearable></v-text-field>
-                        </validation-provider>
+        
+                        <v-text-field v-show="ambot" prepend-icon="mdi-pencil" v-model="people.middlename" :counter="16"  label="Middle Name" clearable></v-text-field>
 
-                        <validation-provider v-slot="{ errors }" name="Last Name" rules="required|max:10">
-                        <v-text-field v-show="ambot" prepend-icon="mdi-pencil" v-model="people.lastname" :counter="10" :error-messages="errors" label="Last Name" required clearable></v-text-field>
+                        <validation-provider v-slot="{ errors }" name="Last Name" rules="required|max:16">
+                        <v-text-field v-show="ambot" prepend-icon="mdi-pencil" v-model="people.lastname" :counter="16" :error-messages="errors" label="Last Name" required clearable></v-text-field>
                         </validation-provider>
 
                         <!-- <v-btn style="margin-left: 65px; font-size: 12px" color="primary" v-show="ambot" v-bind="people" text @click="checking(use)">
@@ -46,17 +45,17 @@
                         
                         <div v-show="ambot" v-bind="EmailCombine(people.firstname, people.lastname)">
                             <v-icon> mdi-email</v-icon>
-                            {{people.firstname}}.{{people.lastname}}@MentezEngineering.com
+                            {{people.firstname[0]}}.{{people.lastname}}@MentezEng.com
                         </div>
                         <div style="margin: 25px"></div>
                         <div v-show="ambot" v-bind="UserCombine(people.firstname, people.lastname)">
                             <v-icon>mdi-account</v-icon>
-                            {{people.firstname}}_{{people.lastname}}
+                            {{people.firstname[0]}}{{people.firstname[1]}}{{people.firstname[2]}}_{{people.lastname}}
                         </div>
                         <div style="margin: 25px"></div>
                         <div v-show="ambot" v-bind="PasswordCombine(people.firstname, people.lastname)">
                             <v-icon>mdi-lock</v-icon>
-                            {{people.firstname}}{{people.lastname}}
+                            {{people.firstname[0]}}{{people.firstname[1]}}{{people.firstname[2]}}{{people.lastname}}
                         </div>
                         <div style="margin: 25px"></div>
 
@@ -84,7 +83,7 @@
             </v-card>
         </v-dialog>
         <v-divider></v-divider>
-        <v-container class="mx-2">
+        <v-container  class="mx-2">
             <v-layout row wrap>
                 <v-flex xs12 sm6 md4 lg3 v-for="(person, x) in use" :key="x"  >
                     <v-card class="text-center ma-3" style="background-color: #E5E5E5;">
@@ -139,7 +138,7 @@
                                             <div class="font-weight-bold ma-2">
                                                 <v-icon small left>mdi-email</v-icon>
                                                 <span v-show="hide">{{EmailAddress}}</span>
-                                                <span class="ml-3"><input type="text" v-show="!hide" v-model="EmailAddress" /></span>
+                                                <span class="ml-3"><input type="text" size="40" v-show="!hide" v-model="EmailAddress" /></span>
                                             </div>
                                             <div class="font-weight-bold ma-2">
                                                 <v-icon small left>mdi-account</v-icon>
@@ -150,7 +149,7 @@
                                         <v-divider></v-divider>
 
                         <v-card-actions>
-                            <v-btn color="primary" v-show="hide" text @click="updateBtn()">
+                            <v-btn color="red" v-show="hide" text @click="updateBtn()">
                                 <v-icon left>mdi-delete</v-icon>
                             </v-btn>
                             <v-spacer></v-spacer>
@@ -360,17 +359,17 @@ export default {
       },
 
       EmailCombine: function (first, last){
-          this.people.email = first + '.' + last + '@MentezEngineering.com'
+          this.people.email = first[0] + '.' + last + '@MentezEng.com'
       },
 
       UserCombine: function (first, last){
-          this.people.username = first + '_' + last
+          this.people.username = first[0] + first[1] + first[2] + '_' + last
       },
 
       PasswordCombine: function (first, last){
           var ya = first.charCodeAt(0);
           var yo = last.charCodeAt(0);
-          this.people.password = first + last + ya + yo
+          this.people.password = first[0] + first[1] + first[2] + last + ya + yo
       },
 
     },

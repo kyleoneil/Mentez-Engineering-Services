@@ -44,9 +44,7 @@
                          <v-checkbox style="margin-left: 160px;" v-show="hide" v-bind="Mat" v-model="checkbox" :error-messages="errors" value="1" label="Verify Material" type="checkbox" @click="checking(materialzz)" required></v-checkbox>
                          </validation-provider>
                          <div style="margin-left: 80px; font-size: 18px" v-show="!hide">Name and Description Already Exists!!!</div>
-                         <v-btn style="margin-left: 190px" color="primary" v-show="!hide" text @click="hide = true" v-on:click="clear()">
-                           Back
-                         </v-btn>
+                         
 
                         <validation-provider v-slot="{ errors }" name="Quantity" :rules="{required: true, numeric: true}">   
                         <v-text-field v-show="hide" label="Quantity"  prepend-icon="mdi-minus" v-model="Mat.quantity" :error-messages="errors" required clearable></v-text-field>
@@ -64,6 +62,9 @@
 
                         <v-card-actions>
                             <v-spacer></v-spacer>
+                            <v-btn style="margin-right: 200px" color="primary" v-show="!hide" text @click="hide = true" v-on:click="clear()">
+                                Back
+                            </v-btn>
                             <v-btn color="primary" text @click="dialog = false">
                                 Cancel
                             </v-btn>
@@ -116,7 +117,7 @@
             </v-flex>
             <v-flex xs6 sm4 md1>
                 <div class="caption grey--text">Prize</div>
-                <div>{{materials.MatPrice}}</div>
+                <div>₱ {{materials.MatPrice}}</div>
                 <!-- <input size="5" type="text"  v-show="!hide" v-model="prizeMat" /> -->
             </v-flex>
             <v-flex xs6 sm4 md1>
@@ -145,7 +146,7 @@
                                 </v-flex>
                                 <v-flex xs6 sm4 md2>
                                     <div class="caption grey--text">Status</div>
-                                    <div><input size="12" type="text" v-model="statusMat" /></div>
+                                    <div><v-select :items="items" height="10" style="margin-top:-5px" v-model="statusMat" /></div>
                                 </v-flex>
                                 <v-flex xs6 sm4 md2>
                                     <div class="caption grey--text">Quantity</div>
@@ -161,7 +162,7 @@
                        <v-divider></v-divider>
 
                        <v-card-actions>
-                         <v-btn color="primary" text @click="hamburger = false">
+                         <v-btn color="red" text @click="hamburger = false">
                            <v-icon v-on:click="deleteMat()">mdi-delete</v-icon>
                          </v-btn>
                          <v-spacer></v-spacer>
@@ -417,6 +418,7 @@ export default {
             })
             .then((response)=>{
                 console.log(response)
+                this.$router.go()
             })
 
         },
@@ -464,7 +466,6 @@ export default {
                 const data = response.data;
                 this.materialzz = data;
             });
-
     },
     
 

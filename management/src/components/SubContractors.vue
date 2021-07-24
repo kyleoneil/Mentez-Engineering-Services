@@ -25,16 +25,14 @@
                 <v-card-text>
                      <validation-observer ref="observer" v-slot="{ invalid }">
                        <v-form @submit.prevent="submit">
-                        <validation-provider v-slot="{ errors }" name="First Name" rules="required|max:10">
-                        <v-text-field prepend-icon="mdi-pencil" v-model="people.firstname" :counter="15" :error-messages="errors" label="First Name" required clearable></v-text-field>
+                        <validation-provider v-slot="{ errors }" name="First Name" rules="required|max:32">
+                        <v-text-field prepend-icon="mdi-pencil" v-model="people.firstname" :counter="32" :error-messages="errors" label="First Name" required clearable></v-text-field>
                         </validation-provider>
 
-                        <validation-provider v-slot="{ errors }" name="Middle Name" rules="required|max:10">
-                        <v-text-field prepend-icon="mdi-pencil" v-model="people.middlename" :counter="10" :error-messages="errors" label="Middle Name" required clearable></v-text-field>
-                        </validation-provider>
-
+                        <v-text-field prepend-icon="mdi-pencil" v-model="people.middlename" :counter="16" label="Middle Name" clearable></v-text-field>
+                        
                         <validation-provider v-slot="{ errors }" name=" Last Name" rules="required|max:10">
-                        <v-text-field prepend-icon="mdi-pencil" v-model="people.lastname" :counter="10" :error-messages="errors" label="Last Name" required clearable></v-text-field>
+                        <v-text-field prepend-icon="mdi-pencil" v-model="people.lastname" :counter="16" :error-messages="errors" label="Last Name" required clearable></v-text-field>
                         </validation-provider>
 
                         <validation-provider v-slot="{ errors }" name="Category" rules="required">
@@ -83,7 +81,7 @@
            
             <v-flex xs6 sm4 md1>
                 <v-btn text style="float: right;">
-                    <v-icon v-bind:id="subcon.SubID" v-on:click="deleteSubCon($event)">mdi-delete</v-icon>
+                    <v-icon color="red" v-bind:id="subcon.SubID" v-on:click="deleteSubCon($event)">mdi-delete</v-icon>
                 </v-btn>
             </v-flex>
             </v-layout>
@@ -235,6 +233,8 @@ export default {
                 console.log(result);
                 console.log("lalalalala")
             })
+
+            
 
         axios({
                 method: 'GET',
