@@ -25,7 +25,7 @@
           >
             <span style="color:#BDBDBD">{{getMonth}}</span>
             <p class="font-weight-bold" style="margin-bottom:5px">Revenue</p>
-            <b><p style="color: #1976D2;margin-bottom:5px">{{getRevenue}}</p></b>
+            <b><p style="color: #1976D2;margin-bottom:5px">₱ {{getRevenue}}</p></b>
           </v-card>
         </v-col>
         <v-col>
@@ -38,7 +38,7 @@
           >
             <span style="color:#BDBDBD">{{getMonth}}</span>
             <p class="font-weight-bold" style="margin-bottom:5px">Profit</p>
-            <b><p style="color: #1976D2;margin-bottom:5px">{{getProfit}}</p></b>
+            <b><p style="color: #1976D2;margin-bottom:5px">₱ {{getProfit}}</p></b>
           </v-card>
         </v-col>
         <v-col>
@@ -51,7 +51,7 @@
           >
           <span style="color:#BDBDBD">{{getMonth}}</span>
             <p class="font-weight-bold" style="margin-bottom:5px">Cost</p>
-            <b><p style="color: #1976D2;margin-bottom:5px">{{getCost}}</p></b>
+            <b><p style="color: #1976D2;margin-bottom:5px">₱ {{getCost}}</p></b>
           </v-card>
         </v-col>
       </v-row>
@@ -79,7 +79,7 @@
                         smooth
                       >
                         <template v-slot:label="item">
-                          ${{ item.value }}
+                          ₱{{ item.value }}
                         </template>
                       </v-sparkline>
                     </v-sheet>
@@ -114,7 +114,7 @@
                         smooth
                       >
                         <template v-slot:label="item">
-                          ${{ item.value }}
+                          ₱{{ item.value }}
                         </template>
                       </v-sparkline>
                     </v-sheet>

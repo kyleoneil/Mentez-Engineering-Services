@@ -91,15 +91,22 @@
                   </v-icon>
                 </v-btn>
               </template>
-              <v-btn
-                v-on:click="showdocument(index)"
-                fab
-                dark
-                x-small
-                color="indigo"
-              >
-                <v-icon>mdi-text-box-search-outline</v-icon>
-              </v-btn>
+              <v-tooltip right>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-on:click="showdocument(index)"
+                    fab
+                    dark
+                    x-small
+                    color="indigo"
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                  <v-icon>mdi-text-box-search-outline</v-icon>
+                  </v-btn>
+                </template>
+                <span>Show Document</span>
+              </v-tooltip>
             </v-speed-dial>
           </v-flex>
         </v-layout>

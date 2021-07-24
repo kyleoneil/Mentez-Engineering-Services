@@ -46,8 +46,6 @@
                         <v-text-field
                           v-model="customer.customer_Mname"
                           label="Middle Name"
-                          :rules="nameRules"
-                          required
                         ></v-text-field>
                         <v-text-field
                           v-model="customer.customer_Lname"
@@ -465,7 +463,7 @@
 
         <v-layout>
           <v-flex xs12 md1>
-            <div class="subtitle-2">{{index}}</div>
+            <div class="subtitle-2">{{index + 1}}</div>
           </v-flex>
           <v-flex xs12 md3 pr-1>
             <div class="subtitle-2">{{quotation.project.project_description}}</div>
@@ -505,33 +503,57 @@
                   </v-icon>
                 </v-btn>
               </template>
-              <v-btn
-                v-on:click="showdocument(index)"
-                fab
-                dark
-                x-small
-                color="indigo"
-              >
-                <v-icon>mdi-text-box-search-outline</v-icon>
-              </v-btn>
-              <v-btn
-                v-on:click="editmodal(index)"
-                fab
-                dark
-                x-small
-                color="green"
-              >
-                <v-icon>mdi-pencil</v-icon>
-              </v-btn>
-              <v-btn
-                v-on:click="remove(quotation.quotation_id)"
-                fab
-                dark
-                x-small
-                color="red"
-              >
-                <v-icon>mdi-delete</v-icon>
-              </v-btn>
+
+              <v-tooltip right>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-on:click="showdocument(index)"
+                    fab
+                    dark
+                    x-small
+                    color="indigo"
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    <v-icon>mdi-text-box-search-outline</v-icon>
+                  </v-btn>
+                </template>
+                <span>Show Document</span>
+              </v-tooltip>
+
+              <v-tooltip right>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-on:click="editmodal(index)"
+                    fab
+                    dark
+                    x-small
+                    color="green"
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    <v-icon>mdi-pencil</v-icon>
+                  </v-btn>
+                </template>
+                <span>Edit</span>
+              </v-tooltip>
+
+              <v-tooltip right>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-on:click="remove(quotation.quotation_id)"
+                    fab
+                    dark
+                    x-small
+                    color="red"
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                  <v-icon>mdi-delete</v-icon>
+                  </v-btn>
+                </template>
+                <span>Delete</span>
+              </v-tooltip>
             </v-speed-dial>
           </v-flex>
         </v-layout>
@@ -568,8 +590,6 @@
                     v-model="current_quotation.customer.customer_Mname"
                     type="text"
                     label="Middle Name"
-                    :rules="nameRules"
-                          required
                   ></v-text-field>
                   <v-text-field
                     v-model="current_quotation.customer.customer_Lname"
