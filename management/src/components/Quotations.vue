@@ -363,6 +363,7 @@
                             <v-text-field
                               v-model="quotation.quotation_delivery"
                               prefix="₱"
+                              type="number"
                               min="0"
                               label="Delivery"
                               :rules="nameRules"
@@ -373,6 +374,7 @@
                             <v-text-field
                               v-model="quotation.quotation_labor"
                               prefix="₱"
+                              type="number"
                               min="0"
                               label="Labor"
                               :rules="nameRules"
@@ -382,6 +384,7 @@
                           <v-col>
                             <v-text-field
                               v-model="quotation.quotation_bendingcharges"
+                              type="number"
                               prefix="₱"
                               min="0"
                               label="Bending Charges"
