@@ -51,7 +51,7 @@
 
         <v-layout>
           <v-flex xs12 md1>
-            <div class="subtitle-2">{{index}}</div>
+            <div class="subtitle-2">{{index + 1}}</div>
           </v-flex>
           <v-flex xs12 md3 pr-1>
             <div class="subtitle-2">{{quotation.project.project_description}}</div>

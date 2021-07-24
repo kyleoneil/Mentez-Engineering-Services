@@ -337,7 +337,7 @@
                             <div class="text-caption">{{material.material_description}}</div>
                           </v-flex>
                           <v-flex xs12 md1 pr-1 style="margin: 10px 0px">
-                            <div class="text-caption">{{material.material_quantity}}</div>
+                            <div class="text-caption">{{matlastdata[index]}}</div>
                           </v-flex>
                           <v-flex xs12 md2 pr-1 style="margin: 10px 0px">
                             <div class="text-caption">₱{{material.material_price}}</div>
@@ -882,7 +882,7 @@
                       <div class="text-caption">{{material.material_description}}</div>
                     </v-flex>
                     <v-flex xs12 md1 pr-1 style="margin: 10px 0px">
-                      <div class="text-caption">{{material.material_quantity}}</div>
+                      <div class="text-caption">{{material.material_quantity}} {{matlastdata[index]}}</div>
                     </v-flex>
                     <v-flex xs12 md2 pr-1 style="margin: 10px 0px">
                       <div class="text-caption">₱{{material.material_price}}.00</div>
@@ -1300,6 +1300,8 @@ export default {
         v => !!v || 'Required.',
       ],
 
+      matlastdata: [],
+
       chkmat: true,
 
       direction: 'top',
@@ -1523,7 +1525,8 @@ export default {
   },
   methods:{
     createQuotation: function(){
-      if(!(this.$refs.form1.validate())){
+      console.log(this.$refs.form1.validate())
+      if((this.$refs.form1.validate())){
         if(this.materials.length == 0){
           this.chkmat = false
         }
@@ -1597,7 +1600,7 @@ export default {
       this.addMaterialTotalPrice2 = totalPrice
     },
     edit: function(id){
-      if(!(this.$refs.form1.validate())){
+      if((this.$refs.form2.validate())){
         if(this.materials.length == 0){
           this.chkmat = false
         }
@@ -1670,6 +1673,7 @@ export default {
     },
     addMaterial: function(data){
       var revised = []
+      var newMatQty = 0
       for(var ctr=0; ctr<this.listed_materials.length; ctr++){
         revised.push(
           {
@@ -1694,19 +1698,33 @@ export default {
       }
     
       if(ctr < this.materials.length){
-        this.materials[ctr].material_quantity = parseInt(this.materials[ctr].material_quantity) + parseInt(this.affixMaterial.material_quantity)
+        this.materials[ctr].material_quantity_new = parseInt(this.materials[ctr].material_quantity) + parseInt(this.affixMaterial.material_quantity)
 
         this.materials[ctr].MatStatus = ((filtered[0].MatQty - parseInt(this.materials[ctr].material_quantity)) > 0)?"IN STOCK":"FOR ORDER"
+        this.matlastdata[ctr] = parseInt(this.matlastdata[ctr]) + parseInt(this.affixMaterial.material_quantity)
+        if(material_status == "FOR ORDER"){
+          this.materials[ctr].material_quantity = parseInt(this.materials[ctr].material_quantity) + parseInt(this.affixMaterial.material_quantity)
+          this.materials[ctr].material_quantity = this.materials[ctr].material_quantity - parseInt(filtered[0].MatQty)
+        }
+        else {
+          this.materials[ctr].material_quantity = parseInt(this.materials[ctr].material_quantity) + parseInt(this.affixMaterial.material_quantity)
+        }
         this.materials[ctr].material_price = filtered[0].MatPrice *  parseInt(this.materials[ctr].material_quantity)
 
       }else{
+        newMatQty = parseInt(this.affixMaterial.material_quantity)
+        this.matlastdata.push(this.affixMaterial.material_quantity)
         material_status = ((filtered[0].MatQty - this.affixMaterial.material_quantity) > 0)?"IN STOCK":"FOR ORDER";
+        if(material_status == "FOR ORDER"){
+          this.affixMaterial.material_quantity = parseInt(this.affixMaterial.material_quantity) - parseInt(filtered[0].MatQty)
+        }
 
         var mat = {
           material_name: this.affixMaterial.material_name,
           material_description: this.affixMaterial.material_description,
           MatStatus: material_status,
           material_quantity: this.affixMaterial.material_quantity,
+          material_quantity_new: newMatQty,
           material_price: parseInt(filtered[0].MatPrice *  this.affixMaterial.material_quantity)
         }
 
@@ -1720,6 +1738,7 @@ export default {
     },
     addMaterial2: function(data){
       var revised = []
+      var newMatQty = 0
       for(var ctr=0; ctr<this.listed_materials.length; ctr++){
         revised.push(
           {
@@ -1758,19 +1777,34 @@ export default {
 
       
       if(ctr < this.current_quotation.materials.length){
-        this.current_quotation.materials[ctr].material_quantity = parseInt(this.current_quotation.materials[ctr].material_quantity) + parseInt(this.affixMaterial.material_quantity)
-
+        this.current_quotation.materials[ctr].material_quantity_new = parseInt(this.materials[ctr].material_quantity) + parseInt(this.affixMaterial.material_quantity)
         this.current_quotation.materials[ctr].MatStatus = ((filtered[0].MatQty - parseInt(this.current_quotation.materials[ctr].material_quantity)) > 0)?"IN STOCK":"FOR ORDER"
+        this.matlastdata[ctr] = parseInt(this.matlastdata[ctr]) + parseInt(this.affixMaterial.material_quantity)
+        if(material_status == "FOR ORDER"){
+          this.current_quotation.materials[ctr].material_quantity = parseInt(this.current_quotation.materials[ctr].material_quantity) + parseInt(this.affixMaterial.material_quantity)
+          this.current_quotation.materials[ctr].material_quantity = parseInt(this.current_quotation.materials[ctr].material_quantity) - parseInt(filtered[0].MatQty)
+        }
+        else{
+          this.current_quotation.materials[ctr].material_quantity = parseInt(this.current_quotation.materials[ctr].material_quantity) + parseInt(this.affixMaterial.material_quantity)
+        }
         this.current_quotation.materials[ctr].material_price = filtered[0].MatPrice *  parseInt(this.current_quotation.materials[ctr].material_quantity)
-        
+
       }else{
+        this.matlastdata.push(this.affixMaterial.material_quantity)
+        newMatQty = parseInt(this.affixMaterial.material_quantity)
         material_status = ((filtered[0].MatQty - this.affixMaterial.material_quantity) > 0)?"IN STOCK":"FOR ORDER";
+        
+        if(material_status == "FOR ORDER"){
+          this.affixMaterial.material_quantity = parseInt(this.affixMaterial.material_quantity) - parseInt(filtered[0].MatQty)
+        }
+
 
         var mat = {
           material_name: this.affixMaterial.material_name,
           material_description: this.affixMaterial.material_description,
           MatStatus: material_status,
           material_quantity: this.affixMaterial.material_quantity,
+          material_quantity_new: newMatQty,
           material_price: parseInt(filtered[0].MatPrice *  this.affixMaterial.material_quantity)
         }
         this.current_quotation.materials.push(mat);

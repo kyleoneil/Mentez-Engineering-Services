@@ -213,7 +213,7 @@ app.post('/quotation/add',urlencodedParser,(req,res)=>{
             connection.query('INSERT INTO mat_list SET TotalListPrice=?',[data.totalListPrice],(err,mat)=>{
                 for(let index=0;index<data.materials.length;index++){
                     connection.query('SELECT * FROM mat_details WHERE MatName=?',[data.materials[index].material_name],(err2,dets)=>{
-                        connection.query('INSERT INTO materials SET MatListID=?,MatDetailsID=?,MatQty=?,TotalPrice=?',[mat.insertId,dets[0].MatDetailsID,data.materials[index].material_quantity,data.materials[index].material_price],(err3,res)=>{})
+                        connection.query('INSERT INTO materials SET MatListID=?,MatDetailsID=?,MatQty=?,TotalPrice=?',[mat.insertId,dets[0].MatDetailsID,data.materials[index].material_quantity_new,data.materials[index].material_price],(err3,res)=>{})
                         var ham = parseInt(data.materials[index].material_quantity)
                         connection.query('UPDATE mat_details SET MatQuantity=?,MatStatus=? WHERE MatDetailsID=?',[ham,data.materials[index].MatStatus,dets[0].MatDetailsID])
                     })
@@ -269,7 +269,7 @@ app.put('/quotation/:id/edit',urlencodedParser,(req,res)=>{
                             for(let index=0;index<data.materials.length;index++){
                                 connection.query('SELECT * FROM mat_details WHERE MatName=? ',[data.materials[index].material_name],(err,dets)=>{
                                     if(dets!=null){
-                                        connection.query('INSERT INTO materials SET MatListID=?,MatDetailsID=?,MatQty=?,TotalPrice=?',[mati.insertId,dets[0].MatDetailsID,data.materials[index].material_quantity,data.materials[index].material_price],(errs,ret)=>{
+                                        connection.query('INSERT INTO materials SET MatListID=?,MatDetailsID=?,MatQty=?,TotalPrice=?',[mati.insertId,dets[0].MatDetailsID,data.materials[index].material_quantity_new,data.materials[index].material_price],(errs,ret)=>{
                                         })
                                         let ham = parseInt(data.materials[index].material_quantity)
                                         connection.query('UPDATE mat_details SET MatQuantity=?,MatStatus=? WHERE MatDetailsID=?',[ham,data.materials[index].MatStatus,dets[0].MatDetailsID])
